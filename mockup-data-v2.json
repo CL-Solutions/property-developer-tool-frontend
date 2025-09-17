@@ -17,7 +17,6 @@
     {
       "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
-
       "comment_shared": "=== SHARED COLUMNS (BlackVesto + Developer Tool) ===",
       "name": "Gotenstraße 69",
       "street": "Gotenstraße",
@@ -50,7 +49,6 @@
       "max_price": 450000,
       "min_rental_yield": 3.8,
       "max_rental_yield": 4.5,
-
       "comment_developer": "=== DEVELOPER TOOL SPECIFIC COLUMNS ===",
       "developer_purchase_price": 2100000,
       "developer_purchase_date": "2024-01-10",
@@ -60,18 +58,105 @@
       "construction_end_date": "2024-06-30",
       "construction_status": "in_progress",
       "construction_progress": 45,
-
       "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-03-20T14:30:00Z"
+    },
+    {
+      "id": "a8b9c0d1-e2f3-4567-8901-234567890abc",
+      "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Leopoldstraße 155",
+      "street": "Leopoldstraße",
+      "house_number": "155",
+      "city": "Munich",
+      "district": "Schwabing",
+      "state": "Bayern",
+      "country": "Deutschland",
+      "zip_code": "80804",
+      "latitude": 48.1651,
+      "longitude": 11.5831,
+      "construction_year": 1972,
+      "renovation_year": 2025,
+      "total_floors": 6,
+      "total_units": 18,
+      "building_type": "apartment_building",
+      "has_elevator": true,
+      "has_parking": true,
+      "has_basement": true,
+      "has_garden": true,
+      "energy_certificate_type": "demand",
+      "energy_consumption": 95.2,
+      "energy_class": "C",
+      "heating_type": "Fernwärme",
+      "property_developer": "CL Immobilien GmbH",
+      "status": "available",
+      "visibility_status": 1,
+      "property_count": 1,
+      "min_price": 380000,
+      "max_price": 650000,
+      "min_rental_yield": 3.5,
+      "max_rental_yield": 4.2,
+      "developer_purchase_price": 4200000,
+      "developer_purchase_date": "2024-02-15",
+      "renovation_total_budget": 580000,
+      "furnishing_total_budget": 72000,
+      "construction_start_date": "2024-03-01",
+      "construction_end_date": "2024-09-30",
+      "construction_status": "in_progress",
+      "construction_progress": 35,
+      "created_at": "2024-02-20T10:00:00Z",
+      "updated_at": "2024-03-20T14:30:00Z"
+    },
+    {
+      "id": "b9c0d1e2-f345-6789-0123-456789abcdef",
+      "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Isartalstraße 42",
+      "street": "Isartalstraße",
+      "house_number": "42",
+      "city": "Munich",
+      "district": "Sendling",
+      "state": "Bayern",
+      "country": "Deutschland",
+      "zip_code": "81379",
+      "latitude": 48.1051,
+      "longitude": 11.5231,
+      "construction_year": 1958,
+      "renovation_year": 2024,
+      "total_floors": 4,
+      "total_units": 8,
+      "building_type": "apartment_building",
+      "has_elevator": false,
+      "has_parking": true,
+      "has_basement": true,
+      "has_garden": false,
+      "energy_certificate_type": "consumption",
+      "energy_consumption": 142.8,
+      "energy_class": "E",
+      "heating_type": "Gasheizung",
+      "property_developer": "CL Immobilien GmbH",
+      "status": "available",
+      "visibility_status": 1,
+      "property_count": 3,
+      "min_price": 290000,
+      "max_price": 420000,
+      "min_rental_yield": 4,
+      "max_rental_yield": 4.8,
+      "developer_purchase_price": 1800000,
+      "developer_purchase_date": "2024-01-05",
+      "renovation_total_budget": 280000,
+      "furnishing_total_budget": 32000,
+      "construction_start_date": "2024-01-20",
+      "construction_end_date": "2024-05-30",
+      "construction_status": "in_progress",
+      "construction_progress": 65,
+      "created_at": "2024-01-10T10:00:00Z",
       "updated_at": "2024-03-20T14:30:00Z"
     }
   ],
-
   "properties": [
     {
       "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
       "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
       "project_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-
       "comment_shared": "=== SHARED COLUMNS (BlackVesto + Developer Tool) ===",
       "unit_number": "WE1",
       "floor": "EG",
@@ -98,7 +183,6 @@
       "has_cellar": true,
       "active": 1,
       "visibility": 1,
-
       "comment_developer": "=== DEVELOPER TOOL SPECIFIC COLUMNS ===",
       "developer_phase": 1,
       "developer_phase_status": "completed",
@@ -120,7 +204,6 @@
       "developer_construction_status": "completed",
       "developer_construction_progress": 100,
       "developer_construction_visible_blackvesto": false,
-
       "created_at": "2024-01-15T10:30:00Z",
       "updated_at": "2024-03-20T14:35:00Z"
     },
@@ -128,7 +211,6 @@
       "id": "a87ff679-a2f3-572b-9872-d072e0d5b3a9",
       "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
       "project_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-
       "comment_shared": "=== SHARED COLUMNS ===",
       "unit_number": "WE2",
       "floor": "1. OG",
@@ -136,7 +218,7 @@
       "state": "Bayern",
       "zip_code": "80336",
       "property_type": "apartment",
-      "size_sqm": 65.0,
+      "size_sqm": 65,
       "rooms": 3,
       "bathrooms": 1,
       "balcony": "west",
@@ -155,7 +237,6 @@
       "has_cellar": true,
       "active": 5,
       "visibility": 1,
-
       "comment_developer": "=== DEVELOPER TOOL SPECIFIC COLUMNS ===",
       "developer_phase": 4,
       "developer_phase_status": "active",
@@ -177,7 +258,6 @@
       "developer_construction_status": "in_progress",
       "developer_construction_progress": 65,
       "developer_construction_visible_blackvesto": false,
-
       "created_at": "2024-01-15T10:35:00Z",
       "updated_at": "2024-03-21T09:20:00Z"
     },
@@ -185,7 +265,6 @@
       "id": "e4d909c5-a2f3-572b-9872-d072e0d5b3a9",
       "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
       "project_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-
       "comment_shared": "=== SHARED COLUMNS ===",
       "unit_number": "WE3",
       "floor": "2. OG",
@@ -193,7 +272,7 @@
       "state": "Bayern",
       "zip_code": "80336",
       "property_type": "apartment",
-      "size_sqm": 72.0,
+      "size_sqm": 72,
       "rooms": 3,
       "bathrooms": 2,
       "balcony": "south",
@@ -212,7 +291,6 @@
       "has_cellar": true,
       "active": 6,
       "visibility": 1,
-
       "comment_developer": "=== DEVELOPER TOOL SPECIFIC COLUMNS ===",
       "developer_phase": 5,
       "developer_phase_status": "active",
@@ -224,9 +302,21 @@
       "developer_rental_strategy": "wg",
       "has_erstvermietungsgarantie": false,
       "developer_wg_room_pricing": [
-        {"room": "Room 1", "size": 18, "price": 580},
-        {"room": "Room 2", "size": 16, "price": 550},
-        {"room": "Room 3", "size": 14, "price": 480}
+        {
+          "room": "Room 1",
+          "size": 18,
+          "price": 580
+        },
+        {
+          "room": "Room 2",
+          "size": 16,
+          "price": 550
+        },
+        {
+          "room": "Room 3",
+          "size": 14,
+          "price": 480
+        }
       ],
       "developer_traffic_light_energy": "green",
       "developer_traffic_light_yield": "green",
@@ -239,14 +329,235 @@
       "developer_construction_status": "planning",
       "developer_construction_progress": 25,
       "developer_construction_visible_blackvesto": false,
-
       "created_at": "2024-01-15T10:40:00Z",
       "updated_at": "2024-03-22T16:45:00Z"
+    },
+    {
+      "id": "prop-leo-001",
+      "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
+      "project_id": "a8b9c0d1-e2f3-4567-8901-234567890abc",
+      "unit_number": "WE3",
+      "floor": "2. OG",
+      "city": "Munich",
+      "state": "Bayern",
+      "zip_code": "80804",
+      "property_type": "apartment",
+      "size_sqm": 85.5,
+      "rooms": 3,
+      "bathrooms": 2,
+      "balcony": "south",
+      "selling_price": 520000,
+      "monthly_rent": 1850,
+      "additional_costs": 280,
+      "management_fee": 45,
+      "operation_cost_landlord": 150,
+      "operation_cost_tenant": 130,
+      "operation_cost_reserve": 85,
+      "total_purchase_price": 520000,
+      "total_monthly_rent": 1850,
+      "gross_rental_yield": 4.27,
+      "energy_class": "C",
+      "heating_type": "Fernwärme",
+      "has_cellar": true,
+      "active": 1,
+      "visibility": 1,
+      "developer_phase": 2,
+      "developer_phase_status": "active",
+      "developer_sales_partner": "blackvesto",
+      "developer_sales_partner_id": "bv-partner-001",
+      "developer_purchase_price": 420000,
+      "developer_renovation_budget": 65000,
+      "developer_furnishing_budget": 12000,
+      "developer_rental_strategy": "standard",
+      "has_erstvermietungsgarantie": true,
+      "developer_traffic_light_energy": "green",
+      "developer_traffic_light_yield": "green",
+      "developer_traffic_light_hoa": "yellow",
+      "developer_traffic_light_location": "green",
+      "developer_pre_check_result": "approved",
+      "developer_pre_check_date": "2024-02-25T14:00:00Z",
+      "developer_purchase_decision": "proceed",
+      "developer_purchase_decision_date": "2024-02-28T10:00:00Z",
+      "developer_construction_status": "in_progress",
+      "developer_construction_progress": 35,
+      "developer_construction_visible_blackvesto": true,
+      "created_at": "2024-02-20T10:30:00Z",
+      "updated_at": "2024-03-20T14:35:00Z"
+    },
+    {
+      "id": "prop-isar-001",
+      "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
+      "project_id": "b9c0d1e2-f345-6789-0123-456789abcdef",
+      "unit_number": "WE1",
+      "floor": "EG",
+      "city": "Munich",
+      "state": "Bayern",
+      "zip_code": "81379",
+      "property_type": "apartment",
+      "size_sqm": 55,
+      "rooms": 2,
+      "bathrooms": 1,
+      "balcony": null,
+      "selling_price": 310000,
+      "monthly_rent": 1250,
+      "additional_costs": 190,
+      "management_fee": 30,
+      "operation_cost_landlord": 95,
+      "operation_cost_tenant": 95,
+      "operation_cost_reserve": 55,
+      "total_purchase_price": 310000,
+      "total_monthly_rent": 1250,
+      "gross_rental_yield": 4.84,
+      "energy_class": "E",
+      "heating_type": "Gasheizung",
+      "has_cellar": true,
+      "active": 1,
+      "visibility": 1,
+      "developer_phase": 3,
+      "developer_phase_status": "active",
+      "developer_sales_partner": "blackvesto",
+      "developer_sales_partner_id": "bv-partner-001",
+      "developer_purchase_price": 240000,
+      "developer_renovation_budget": 42000,
+      "developer_furnishing_budget": 7000,
+      "developer_rental_strategy": "standard",
+      "has_erstvermietungsgarantie": true,
+      "developer_traffic_light_energy": "red",
+      "developer_traffic_light_yield": "green",
+      "developer_traffic_light_hoa": "green",
+      "developer_traffic_light_location": "yellow",
+      "developer_pre_check_result": "approved_with_modifications",
+      "developer_pre_check_date": "2024-01-12T14:00:00Z",
+      "developer_purchase_decision": "proceed",
+      "developer_purchase_decision_date": "2024-01-15T10:00:00Z",
+      "developer_construction_status": "in_progress",
+      "developer_construction_progress": 65,
+      "developer_construction_visible_blackvesto": true,
+      "created_at": "2024-01-10T10:30:00Z",
+      "updated_at": "2024-03-20T14:35:00Z"
+    },
+    {
+      "id": "prop-isar-002",
+      "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
+      "project_id": "b9c0d1e2-f345-6789-0123-456789abcdef",
+      "unit_number": "WE4",
+      "floor": "3. OG",
+      "city": "Munich",
+      "state": "Bayern",
+      "zip_code": "81379",
+      "property_type": "apartment",
+      "size_sqm": 72.5,
+      "rooms": 3,
+      "bathrooms": 1,
+      "balcony": "south",
+      "selling_price": 395000,
+      "monthly_rent": 1580,
+      "additional_costs": 240,
+      "management_fee": 40,
+      "operation_cost_landlord": 125,
+      "operation_cost_tenant": 115,
+      "operation_cost_reserve": 72,
+      "total_purchase_price": 395000,
+      "total_monthly_rent": 1580,
+      "gross_rental_yield": 4.8,
+      "energy_class": "E",
+      "heating_type": "Gasheizung",
+      "has_cellar": true,
+      "active": 1,
+      "visibility": 1,
+      "developer_phase": 3,
+      "developer_phase_status": "active",
+      "developer_sales_partner": "blackvesto",
+      "developer_sales_partner_id": "bv-partner-001",
+      "developer_purchase_price": 310000,
+      "developer_renovation_budget": 55000,
+      "developer_furnishing_budget": 10000,
+      "developer_rental_strategy": "wg",
+      "has_erstvermietungsgarantie": false,
+      "developer_wg_room_pricing": [
+        {
+          "room": "Room 1",
+          "size": 18,
+          "price": 580
+        },
+        {
+          "room": "Room 2",
+          "size": 16,
+          "price": 520
+        },
+        {
+          "room": "Room 3",
+          "size": 14,
+          "price": 480
+        }
+      ],
+      "developer_traffic_light_energy": "red",
+      "developer_traffic_light_yield": "green",
+      "developer_traffic_light_hoa": "yellow",
+      "developer_traffic_light_location": "green",
+      "developer_pre_check_result": "approved",
+      "developer_pre_check_date": "2024-01-12T14:00:00Z",
+      "developer_purchase_decision": "proceed",
+      "developer_purchase_decision_date": "2024-01-15T10:00:00Z",
+      "developer_construction_status": "in_progress",
+      "developer_construction_progress": 65,
+      "developer_construction_visible_blackvesto": true,
+      "created_at": "2024-01-10T10:30:00Z",
+      "updated_at": "2024-03-20T14:35:00Z"
+    },
+    {
+      "id": "prop-isar-003",
+      "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
+      "project_id": "b9c0d1e2-f345-6789-0123-456789abcdef",
+      "unit_number": "WE6",
+      "floor": "DG",
+      "city": "Munich",
+      "state": "Bayern",
+      "zip_code": "81379",
+      "property_type": "apartment",
+      "size_sqm": 48,
+      "rooms": 1,
+      "bathrooms": 1,
+      "balcony": null,
+      "selling_price": 290000,
+      "monthly_rent": 1100,
+      "additional_costs": 160,
+      "management_fee": 25,
+      "operation_cost_landlord": 80,
+      "operation_cost_tenant": 80,
+      "operation_cost_reserve": 48,
+      "total_purchase_price": 290000,
+      "total_monthly_rent": 1100,
+      "gross_rental_yield": 4.55,
+      "energy_class": "E",
+      "heating_type": "Gasheizung",
+      "has_cellar": false,
+      "active": 1,
+      "visibility": 1,
+      "developer_phase": 3,
+      "developer_phase_status": "active",
+      "developer_sales_partner": "internal",
+      "developer_purchase_price": 220000,
+      "developer_renovation_budget": 35000,
+      "developer_furnishing_budget": 6000,
+      "developer_rental_strategy": "standard",
+      "has_erstvermietungsgarantie": true,
+      "developer_traffic_light_energy": "red",
+      "developer_traffic_light_yield": "yellow",
+      "developer_traffic_light_hoa": "green",
+      "developer_traffic_light_location": "yellow",
+      "developer_pre_check_result": "approved",
+      "developer_pre_check_date": "2024-01-12T14:00:00Z",
+      "developer_purchase_decision": "proceed",
+      "developer_purchase_decision_date": "2024-01-15T10:00:00Z",
+      "developer_construction_status": "in_progress",
+      "developer_construction_progress": 65,
+      "developer_construction_visible_blackvesto": false,
+      "created_at": "2024-01-10T10:30:00Z",
+      "updated_at": "2024-03-20T14:35:00Z"
     }
   ],
-
   "comment_tables": "=== DEVELOPER TOOL SPECIFIC TABLES ===",
-
   "developer_document_requests": [
     {
       "id": "doc-req-001",
@@ -263,7 +574,6 @@
       "updated_at": "2024-03-20T10:00:00Z"
     }
   ],
-
   "developer_construction_milestones": [
     {
       "id": "milestone-001",
@@ -304,7 +614,6 @@
       "updated_at": "2024-03-22T14:30:00Z"
     }
   ],
-
   "developer_construction_trades": [
     {
       "id": "trade-001",
@@ -325,7 +634,6 @@
       "updated_at": "2024-03-01T16:00:00Z"
     }
   ],
-
   "developer_handover_protocols": [
     {
       "id": "handover-001",
@@ -340,7 +648,7 @@
       "gas_meter_photo": "https://storage.example.com/meter-gas.jpg",
       "water_meter_reading": 234.56,
       "water_meter_photo": "https://storage.example.com/meter-water.jpg",
-      "nebenkostenabrechnung_amount": 185.50,
+      "nebenkostenabrechnung_amount": 185.5,
       "nebenkostenabrechnung_pdf": "https://storage.example.com/nk-abrechnung-001.pdf",
       "protocol_signed": true,
       "protocol_pdf": "https://storage.example.com/handover-protocol-001.pdf",
@@ -348,7 +656,6 @@
       "updated_at": "2024-02-28T15:30:00Z"
     }
   ],
-
   "developer_rental_contracts": [
     {
       "id": "rental-001",
@@ -369,7 +676,6 @@
       "updated_at": "2024-03-01T10:00:00Z"
     }
   ],
-
   "developer_notifications": [
     {
       "id": "notif-001",
@@ -398,9 +704,7 @@
       "created_at": "2024-03-21T09:00:00Z"
     }
   ],
-
   "comment_shared_tables": "=== SHARED TABLES (Already exist in BlackVesto) ===",
-
   "reservations": [
     {
       "id": "res-002",
@@ -433,7 +737,6 @@
       "updated_at": "2024-03-15T14:00:00Z"
     }
   ],
-
   "users": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440002",
@@ -457,7 +760,6 @@
       "tenant_id": "550e8400-e29b-41d4-a716-446655440001"
     }
   ],
-
   "tenants": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440001",
@@ -465,17 +767,20 @@
       "type": "property_management"
     }
   ],
-
   "comment_config": "=== CONFIGURATION TABLES ===",
-
   "developer_phase_definitions": [
     {
       "id": 1,
       "name": "Pre-Check",
       "description": "Initial assessment within 48 hours",
       "target_duration_hours": 48,
-      "required_documents": ["floor_plan", "energy_certificate"],
-      "next_phases": [2]
+      "required_documents": [
+        "floor_plan",
+        "energy_certificate"
+      ],
+      "next_phases": [
+        2
+      ]
     },
     {
       "id": 2,
@@ -483,15 +788,23 @@
       "description": "Final acquisition decision",
       "target_duration_hours": 72,
       "required_documents": [],
-      "next_phases": [3]
+      "next_phases": [
+        3
+      ]
     },
     {
       "id": 3,
       "name": "Documentation & Preparation",
       "description": "Document collection and preparation",
       "target_duration_hours": 336,
-      "required_documents": ["declaration_of_division", "land_registry_extract", "hoa_minutes"],
-      "next_phases": [4]
+      "required_documents": [
+        "declaration_of_division",
+        "land_registry_extract",
+        "hoa_minutes"
+      ],
+      "next_phases": [
+        4
+      ]
     },
     {
       "id": 4,
@@ -499,35 +812,80 @@
       "description": "Buyer acquisition and reservation",
       "target_duration_hours": null,
       "required_documents": [],
-      "next_phases": [5]
+      "next_phases": [
+        5
+      ]
     },
     {
       "id": 5,
       "name": "Buyer Process & Notary",
       "description": "Sale transaction execution",
       "target_duration_hours": 720,
-      "required_documents": ["purchase_contract", "financing_confirmation"],
-      "next_phases": [6]
+      "required_documents": [
+        "purchase_contract",
+        "financing_confirmation"
+      ],
+      "next_phases": [
+        6
+      ]
     },
     {
       "id": 6,
       "name": "Handover & Rental Management",
       "description": "Property transfer and rental setup",
       "target_duration_hours": 168,
-      "required_documents": ["handover_protocol", "meter_readings"],
+      "required_documents": [
+        "handover_protocol",
+        "meter_readings"
+      ],
       "next_phases": []
     }
   ],
-
   "developer_trade_types": [
-    {"id": "electrical", "name": "Elektrik", "category": "technical"},
-    {"id": "plumbing", "name": "Sanitär", "category": "technical"},
-    {"id": "heating", "name": "Heizung", "category": "technical"},
-    {"id": "painting", "name": "Malerarbeiten", "category": "finishing"},
-    {"id": "flooring", "name": "Bodenbeläge", "category": "finishing"},
-    {"id": "windows", "name": "Fenster", "category": "structural"},
-    {"id": "roofing", "name": "Dacharbeiten", "category": "structural"},
-    {"id": "bathroom", "name": "Bad-Komplettsanierung", "category": "renovation"},
-    {"id": "kitchen", "name": "Küche", "category": "renovation"}
+    {
+      "id": "electrical",
+      "name": "Elektrik",
+      "category": "technical"
+    },
+    {
+      "id": "plumbing",
+      "name": "Sanitär",
+      "category": "technical"
+    },
+    {
+      "id": "heating",
+      "name": "Heizung",
+      "category": "technical"
+    },
+    {
+      "id": "painting",
+      "name": "Malerarbeiten",
+      "category": "finishing"
+    },
+    {
+      "id": "flooring",
+      "name": "Bodenbeläge",
+      "category": "finishing"
+    },
+    {
+      "id": "windows",
+      "name": "Fenster",
+      "category": "structural"
+    },
+    {
+      "id": "roofing",
+      "name": "Dacharbeiten",
+      "category": "structural"
+    },
+    {
+      "id": "bathroom",
+      "name": "Bad-Komplettsanierung",
+      "category": "renovation"
+    },
+    {
+      "id": "kitchen",
+      "name": "Küche",
+      "category": "renovation"
+    }
   ]
 }

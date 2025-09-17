@@ -627,9 +627,59 @@ The Property Developer Tool will maintain **bidirectional real-time communicatio
 - `has_erstvermietungsgarantie`: Boolean flag visible to BlackVesto
 - `monthly_rent`: Contains guaranteed amount when `has_erstvermietungsgarantie=true`
 
+## Current Implementation Status
+
+### Architecture Overview
+The application has been successfully implemented with the following architecture:
+
+1. **Project-First Hierarchy** (✅ Implemented)
+   - Projects are the primary entities (matching BlackVesto pattern)
+   - Properties exist only within projects
+   - One project can contain multiple properties
+   - Projects represent buildings at specific addresses
+
+2. **Navigation Structure** (✅ Implemented)
+   ```
+   /dashboard - Main dashboard with project overview
+   /projects - List of all development projects
+   /projects/[id] - Project detail page with properties
+   /properties/[id] - Individual property details
+   /analytics - Performance metrics (placeholder)
+   /pre-check - Quick property assessment tool (✅ Implemented)
+   ```
+
+3. **Key Components Built**
+   - **AppSidebar**: Main navigation with collapsible icon mode
+   - **PropertyDashboard**: Project-focused dashboard with stats
+   - **PropertyCard**: Individual property display with traffic lights
+   - **TrafficLightIndicator**: Visual status system (green/yellow/red)
+   - **PhaseIndicator**: Phase progress visualization (1-6)
+   - **PhaseTimeline**: Detailed phase history display
+   - **Pre-Check Forms**: Complete property assessment forms for:
+     - Single apartment (Eigentumswohnung)
+     - Multi-family house (Mehrfamilienhaus) with multiple units
+   - **LiveTrafficLights**: Real-time traffic light preview component
+   - **UnitCard**: Collapsible unit management for MFH
+   - **RentalStrategySelector**: Standard/WG rental configuration
+   - **DocumentUpload**: File upload for floor plans and energy certificates
+
+4. **Data Management**
+   - Mock data service with TypeScript interfaces
+   - Property summaries with traffic light calculations
+   - Project aggregation from property data
+   - URL-safe project ID generation (handles special characters)
+
+5. **UI/UX Features**
+   - Responsive grid layouts
+   - Skeleton loading states
+   - Traffic light system for quick assessment
+   - Construction progress tracking
+   - Critical alert indicators
+   - Sales partner badges (BlackVesto/Internal)
+
 ### Project Setup Steps
 
-1. **Initialize Next.js Project** (already done)
+1. **Initialize Next.js Project** (✅ COMPLETED)
    - TypeScript configuration
    - shadcn/ui component library
    - Tailwind CSS setup
@@ -649,60 +699,69 @@ The Property Developer Tool will maintain **bidirectional real-time communicatio
 
 #### Phase 1: Core Dashboard (Priority 1)
 **Main Dashboard Screen:**
-- [ ] Portfolio overview grid with property cards
-- [ ] Phase indicators (1-6) with visual progress
-- [ ] Sales partner badges (BlackVesto/Internal)
-- [ ] Traffic light status indicators
-- [ ] Construction progress bars
-- [ ] Days in current phase counter
-- [ ] Quick action buttons (Add property, filters)
+- [x] Portfolio overview grid with PROJECT cards (✅ Implemented)
+- [x] Projects overview with property counts (✅ Implemented)
+- [x] Sales partner badges (BlackVesto/Internal) (✅ Implemented)
+- [x] Traffic light status indicators (✅ Implemented)
+- [x] Construction progress bars (✅ Implemented)
+- [x] Days in current phase counter (✅ Implemented)
+- [x] Quick action buttons (Add project, view all) (✅ Implemented)
 - [ ] Notification center with unread count
-- [ ] Critical alerts panel (red lights, delays)
+- [x] Critical alerts panel (red lights, delays) (✅ Implemented)
 
-**Components Needed:**
-- PropertyCard component with traffic lights
-- PhaseIndicator with progress visualization
-- NotificationBadge with count
-- TrafficLightIndicator (green/yellow/red)
+**Components Implemented:**
+- [x] PropertyCard component with traffic lights (✅ Implemented)
+- [x] PhaseIndicator with progress visualization (✅ Implemented)
+- [ ] NotificationBadge with count
+- [x] TrafficLightIndicator (green/yellow/red) (✅ Implemented)
 
-#### Phase 2: Property Entry & Pre-Check (Priority 2)
+#### Phase 2: Property Entry & Pre-Check (Priority 2) ✅ COMPLETED
 **Property Data Entry Form:**
-- [ ] Sales partner selection toggle
-- [ ] Location details with map placeholder
-- [ ] Property specifications form
+- [x] Sales partner selection toggle (✅ Implemented)
+- [x] Location details with map placeholder (✅ Address fields implemented)
+- [x] Property specifications form (✅ Implemented)
+- [x] Property type selection (Single Apartment/MFH) (✅ Implemented)
+- [x] Multi-unit support for MFH with dynamic unit management (✅ Implemented)
+- [x] Building-level sales partner defaults with unit overrides (✅ Implemented)
 - [ ] Automated trade selection checklist
 - [ ] Construction description auto-generation
 - [ ] Furniture planning calculator
-- [ ] Financial parameters input
-- [ ] Rental yield calculator (standard/WG toggle)
-- [ ] Document upload dropzone
-- [ ] Special conditions checklist
+- [x] Financial parameters input (✅ Implemented)
+- [x] Rental yield calculator (standard/WG toggle) (✅ Implemented)
+- [x] WG room-by-room rent configuration (✅ Implemented)
+- [x] Document upload sections (floor plans, energy certificates) (✅ Implemented)
+- [x] Special conditions checklist (✅ Implemented)
+- [x] Kaufpreis and Abgabepreis fields (✅ Implemented)
+- [x] BlackVesto partner dropdown selection (✅ Implemented)
 
 **Traffic Light Assessment Dashboard:**
-- [ ] Real-time calculation display
-- [ ] Energy efficiency rating (A-H scale)
-- [ ] Rental yield percentage with threshold indicators
-- [ ] HOA fee per m² comparison
-- [ ] Location price benchmark
-- [ ] Decision buttons (Go/No Go/Modify)
+- [x] Real-time calculation display (✅ Live preview implemented)
+- [x] Energy efficiency rating (A-H scale) (✅ Implemented)
+- [x] Rental yield percentage with threshold indicators (✅ Implemented)
+- [x] HOA fee per m² comparison (✅ Implemented)
+- [x] Location price benchmark (✅ Implemented)
+- [x] Compact and full view modes (✅ Implemented)
+- [x] Unit-level and aggregate traffic lights for MFH (✅ Implemented)
+- [x] WG rental yield calculation support (✅ Implemented)
+- [x] Decision buttons (Create Project in Phase 1) (✅ Implemented)
 
 #### Phase 3: Property Detail View (Priority 3)
 **Property Detail Screen:**
-- [ ] Phase timeline with milestones
-- [ ] Current phase highlight with time tracking
-- [ ] Sales partner section (conditional UI)
+- [x] Phase timeline with milestones (✅ Implemented)
+- [x] Current phase highlight with time tracking (✅ Implemented)
+- [x] Sales partner section (conditional UI) (✅ Implemented)
 - [ ] Document hub with upload progress
 - [ ] Document request queue from BlackVesto
-- [ ] Traffic light summary panel
-- [ ] Construction monitor (conditional visibility)
+- [x] Traffic light summary panel (✅ Implemented)
+- [x] Construction monitor (conditional visibility) (✅ Implemented)
 - [ ] Photo gallery with date stamps
-- [ ] Action buttons based on current phase
+- [x] Action buttons based on current phase (✅ Implemented)
 
-**Components Needed:**
-- PhaseTimeline component
-- DocumentUploadCard
-- ConstructionMilestone
-- PhotoGallery with metadata
+**Components Implemented:**
+- [x] PhaseTimeline component (✅ Implemented)
+- [ ] DocumentUploadCard
+- [x] ConstructionMilestone (✅ Implemented)
+- [ ] PhotoGallery with metadata
 
 #### Phase 4: Supporting Features (Priority 4)
 **Document Management:**
@@ -760,11 +819,17 @@ The Property Developer Tool will maintain **bidirectional real-time communicatio
 - Mock data served from JSON file initially
 - Prepare for future API integration
 
-**Routing Structure:**
+**Current Routing Structure (Implemented):**
 ```
-/dashboard - Main portfolio overview
-/properties/new - Add new property (Phase 1)
-/properties/[id] - Property detail view
+✅ /dashboard - Main portfolio overview with projects
+✅ /projects - List all development projects
+✅ /projects/[id] - Project detail with properties list
+✅ /properties/[id] - Individual property detail view
+✅ /pre-check - Quick property assessment with live traffic lights
+
+To be implemented:
+/projects/new - Add new project (separate from pre-check)
+/projects/[id]/properties/new - Add property to existing project
 /properties/[id]/documents - Document management
 /properties/[id]/construction - Construction tracking
 /properties/[id]/handover - Handover management
@@ -795,23 +860,56 @@ PUT /api/notifications/[id]/read
 
 ### Development Timeline
 
-**Week 1:**
-- Project setup and configuration
-- Main dashboard implementation
-- Basic navigation structure
+**Week 1: COMPLETED ✅**
+- [x] Project setup and configuration
+- [x] Main dashboard implementation with projects focus
+- [x] Basic navigation structure (sidebar + routing)
+- [x] Project-property hierarchy implementation
+- [x] Mock data integration
 
-**Week 2:**
-- Phase 1 (Pre-Check) screens
-- Property entry form
-- Traffic light calculations
+**Week 2: COMPLETED ✅**
+- [x] Phase 1 (Pre-Check) screens
+- [x] Property entry forms (Single Apartment & MFH)
+- [x] Traffic light calculations with real-time preview
+- [x] Project creation workflow from pre-check data
+- [x] WG rental support with room-by-room configuration
+- [x] Sales partner selection (BlackVesto/Internal)
+- [x] Document upload functionality
 
-**Week 3:**
-- Property detail views
-- Document management
-- Phase timeline implementation
+**Week 3: PLANNED**
+- [x] Property detail views (basic version done)
+- [ ] Document management
+- [x] Phase timeline implementation (basic version done)
+- [ ] BlackVesto integration points
 
-**Week 4:**
-- Construction tracking
-- Handover management
-- Notification system
-- Final polish and testing
+**Week 4: PLANNED**
+- [x] Construction tracking (basic version done)
+- [ ] Handover management
+- [ ] Notification system
+- [ ] Final polish and testing
+
+### Next Development Priorities
+
+1. **Document Management System Enhancement**
+   - Complete document hub with version history
+   - Document checklist by phase
+   - BlackVesto sync indicators
+   - Document request queue from BlackVesto
+
+2. **Construction Tracking Module**
+   - Milestone cards with progress tracking
+   - Trade contractor management
+   - Photo upload per milestone
+   - Delay warnings and visibility toggles
+
+3. **Notification System**
+   - Document request queue
+   - Phase transition alerts
+   - Critical status notifications
+   - BlackVesto sync updates
+
+4. **Handover & Rental Management**
+   - Meter reading forms with photo capture
+   - Nebenkostenabrechnung generator
+   - Tenant management interface
+   - Integration with SEV property management
