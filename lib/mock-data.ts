@@ -6,6 +6,7 @@ import {
   PropertySummary,
   DashboardStats,
   DeveloperPhase,
+  DeveloperPhaseStatus,
   SalesPartner,
   TrafficLightStatus,
   PreCheckResult,
@@ -184,12 +185,12 @@ const calculateTrafficLightStatus = (property: Property): {
   const yieldScore = grossYieldScore * 0.4 + marketComparisonScore * 0.2 + priceScore * 0.2 + renovationScore * 0.2;
 
   // HOA Score Calculation - matching EnhancedTrafficLights exactly
-  const monthlyHOA = (property.operation_cost_landlord || 0) + (property.operation_cost_reserve || 0);
+  const monthlyHOA = (property.hoa_fees_landlord || 0) + (property.hoa_fees_reserve || 0);
   const hoaPerSqm = property.size_sqm ? monthlyHOA / property.size_sqm : 3;
   const monthlyFeesScore = hoaPerSqm <= 2 ? 10 : hoaPerSqm <= 4 ? 7 : hoaPerSqm <= 6 ? 4 : 0;
 
   // Reserve score
-  const reserveScore = property.operation_cost_reserve >= 1 ? 10 : property.operation_cost_reserve >= 0.5 ? 6 : 2;
+  const reserveScore = property.hoa_fees_reserve >= 1 ? 10 : property.hoa_fees_reserve >= 0.5 ? 6 : 2;
 
   // Management quality and building condition (mock values as in EnhancedTrafficLights)
   const managementScore = 8;
@@ -238,7 +239,21 @@ export class MockDataService {
 
   static async getProject(id: string): Promise<Project | null> {
     await simulateApiDelay();
-    return mockData.projects.find(project => project.id === id) || null;
+    
+    // Try to find by UUID first
+    let project = mockData.projects.find(p => p.id === id);
+    
+    // If not found, try to match by encoded name pattern (project-{name})
+    if (!project && id.startsWith('project-')) {
+      const decodedId = decodeURIComponent(id);
+      const projectName = decodedId.replace('project-', '').replace(/-/g, ' ');
+      project = mockData.projects.find(p => 
+        p.name.toLowerCase() === projectName.toLowerCase() ||
+        p.name.toLowerCase().replace(/\s+/g, '-') === projectName.toLowerCase()
+      );
+    }
+    
+    return project || null;
   }
 
   // Properties
@@ -408,6 +423,19 @@ export class MockDataService {
     return newProject;
   }
 
+  static async updateProject(id: string, updates: Partial<Project>): Promise<Project | null> {
+    await simulateApiDelay(800);
+
+    const project = await this.getProject(id);
+    if (!project) return null;
+
+    return {
+      ...project,
+      ...updates,
+      updated_at: new Date().toISOString(),
+    };
+  }
+
   static async createProperty(propertyData: Partial<Property>): Promise<Property> {
     await simulateApiDelay(1000); // Longer delay for create operations
 
@@ -438,7 +466,8 @@ export class MockDataService {
     sellingPrice: number | null;
     renovationBudget: number | null;
     furnishingBudget: number | null;
-    hoaFees: number | null;
+    hoaFeesLandlord: number | null;
+    hoaFeesReserve: number | null;
     hoaTransferable: boolean;
     vacancyStatus: 'vacant' | 'rented';
     currentRent: number | null;
@@ -459,16 +488,32 @@ export class MockDataService {
     const projectId = `project-${Date.now()}`;
     const project: Project = {
       id: projectId,
+      tenant_id: 'tenant-001',
       name: `${preCheckData.street} ${preCheckData.houseNumber}`,
       street: preCheckData.street,
       house_number: preCheckData.houseNumber,
       city: preCheckData.city,
+      state: 'Berlin',
+      country: 'Germany',
       zip_code: preCheckData.zipCode,
       construction_year: preCheckData.constructionYear || undefined,
+      total_floors: 4,
       total_units: 1,
-      images: [],
-      floor_plan_url: null,
-      energy_certificate_url: null
+      building_type: 'apartment_building',
+      has_elevator: false,
+      has_parking: false,
+      has_basement: true,
+      has_garden: false,
+      property_developer: 'CL Immobilien GmbH',
+      status: 'active',
+      visibility_status: 1,
+      property_count: 1,
+      min_price: preCheckData.sellingPrice || 0,
+      max_price: preCheckData.sellingPrice || 0,
+      min_rental_yield: 0,
+      max_rental_yield: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
 
     // Calculate traffic lights
@@ -495,8 +540,9 @@ export class MockDataService {
       grossYield >= 5 ? 'green' :
       grossYield >= 3.5 ? 'yellow' : 'red';
 
-    const hoaPerSqm = preCheckData.livingArea && preCheckData.hoaFees
-      ? preCheckData.hoaFees / preCheckData.livingArea
+    const totalHoaFees = (preCheckData.hoaFeesLandlord || 0) + (preCheckData.hoaFeesReserve || 0);
+    const hoaPerSqm = preCheckData.livingArea && totalHoaFees
+      ? totalHoaFees / preCheckData.livingArea
       : 0;
 
     const hoaStatus: TrafficLightStatus =
@@ -517,25 +563,47 @@ export class MockDataService {
       project_house_number: project.house_number,
       unit_number: preCheckData.apartmentNumber || 'WE01',
       floor: preCheckData.floor || '',
-      living_area: preCheckData.livingArea || 0,
+      size_sqm: preCheckData.livingArea || 0,
       rooms: preCheckData.rooms || 0,
-      purchase_price: preCheckData.purchasePrice || 0,
-      selling_price: preCheckData.sellingPrice,
-      renovation_budget: preCheckData.renovationBudget,
-      furnishing_budget: preCheckData.furnishingBudget,
-      hoa_fees: preCheckData.hoaFees,
-      hoa_transferable: preCheckData.hoaTransferable,
-      vacancy_status: preCheckData.vacancyStatus,
-      current_rent: preCheckData.currentRent,
-      planned_rent: monthlyRent,
-      rental_strategy: preCheckData.rentalStrategy,
-      wg_rooms: preCheckData.wgRooms,
-      sales_partner: preCheckData.salesPartner,
-      blackvesto_partner: preCheckData.blackvestoPartner,
+      city: project.city,
+      state: project.state,
+      zip_code: project.zip_code,
+      property_type: 'apartment',
+      bathrooms: 1,
+      balcony: 'no',
+      selling_price: preCheckData.sellingPrice || 0,
+      monthly_rent: monthlyRent || 0,
+      additional_costs: 0,
+      management_fee: 0,
+      hoa_fees_landlord: preCheckData.hoaFeesLandlord || 0,
+      hoa_fees_tenant: 0,
+      hoa_fees_reserve: preCheckData.hoaFeesReserve || 0,
+      total_purchase_price: preCheckData.purchasePrice || 0,
+      total_monthly_rent: monthlyRent || 0,
+      gross_rental_yield: grossYield,
       energy_class: preCheckData.energyClass,
-      construction_progress: 0,
-      has_critical_alerts: false,
+      has_cellar: false,
+      active: 1,
+      visibility: 1,
+      developer_purchase_price: preCheckData.purchasePrice || 0,
+      developer_renovation_budget: preCheckData.renovationBudget || 0,
+      developer_furnishing_budget: preCheckData.furnishingBudget || 0,
+      developer_rental_strategy: preCheckData.rentalStrategy,
+      has_erstvermietungsgarantie: false,
+      developer_wg_room_pricing: preCheckData.wgRooms?.map(room => ({
+        room: room.name,
+        size: room.size,
+        price: room.rent
+      })),
+      developer_sales_partner: preCheckData.salesPartner,
+      developer_sales_partner_id: preCheckData.blackvestoPartner,
+      developer_traffic_light_energy: energyClassScores[preCheckData.energyClass] || 'yellow',
+      developer_traffic_light_yield: yieldStatus,
+      developer_traffic_light_hoa: hoaStatus,
+      developer_traffic_light_location: locationStatus,
       developer_phase: 1,
+      developer_phase_status: 'completed' as DeveloperPhaseStatus,
+      developer_construction_visible_blackvesto: false,
       developer_pre_check_date: new Date().toISOString(),
       developer_pre_check_result: 'approved' as PreCheckResult,
       developer_initial_traffic_lights: {
@@ -663,17 +731,9 @@ export class MockDataService {
     return [
       {
         id: 'precheck-1',
-        property_id: propertyId,
         date: '2024-01-20T14:00:00Z',
-        result: 'approved',
-        traffic_lights: {
-          energy: 'yellow',
-          yield: 'green',
-          hoa: 'green',
-          location: 'green'
-        },
-        feedback: 'Property approved for purchase. Consider energy efficiency improvements.',
-        modifications: []
+        result: 'approved' as PreCheckResult,
+        feedback: 'Property approved for purchase. Consider energy efficiency improvements.'
       }
     ];
   }
@@ -693,10 +753,7 @@ export class MockDataService {
     avgYield: number;
   } {
     // Mock market data
-    const marketData: Record<string, {
-      apartment: { avgPricePerSqm: number; avgRent: number; avgYield: number };
-      house: { avgPricePerSqm: number; avgRent: number; avgYield: number };
-    }> = {
+    const marketData: Record<string, Record<string, { avgPricePerSqm: number; avgRent: number; avgYield: number }>> = {
       'Munich': {
         apartment: { avgPricePerSqm: 7500, avgRent: 20, avgYield: 3.5 },
         house: { avgPricePerSqm: 8500, avgRent: 25, avgYield: 3.2 }

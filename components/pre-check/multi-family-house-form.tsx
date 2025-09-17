@@ -82,7 +82,8 @@ export interface UnitData {
   sellingPrice: number | null; // Abgabepreis
   renovationBudget: number | null;
   furnishingBudget: number | null;
-  hoaFees: number | null;
+  hoaFeesLandlord: number | null;
+  hoaFeesReserve: number | null;
   hoaTransferable: boolean;
   vacancyStatus: 'vacant' | 'rented';
   currentRent: number | null;
@@ -93,7 +94,38 @@ export interface UnitData {
   wgRooms?: Array<{ name: string; size: number; rent: number }>;
 }
 
-export function MultiFamilyHouseForm() {
+interface MultiFamilyHouseFormProps {
+  initialData?: {
+    buildingAddress?: {
+      street: string;
+      houseNumber: string;
+      zipCode: string;
+      city: string;
+    };
+    buildingDetails?: {
+      buildYear: number;
+      totalPurchasePrice: number;
+      defaultSalesPartner: 'internal' | 'blackvesto';
+      defaultBlackVestoPartner?: string;
+    };
+    energyData?: {
+      energyClass: string;
+      energyValue: number;
+      energyType: string;
+    };
+    units?: Array<Record<string, unknown>>;
+  };
+  onSave?: (data: Record<string, unknown>) => void | Promise<void>;
+  isEditMode?: boolean;
+  isSaving?: boolean;
+}
+
+export function MultiFamilyHouseForm({
+  initialData,
+  onSave,
+  isEditMode = false,
+  isSaving = false
+}: MultiFamilyHouseFormProps = {}) {
   const [buildingData, setBuildingData] = useState<BuildingData>({
     street: '',
     houseNumber: '',
@@ -126,7 +158,8 @@ export function MultiFamilyHouseForm() {
       sellingPrice: null,
       renovationBudget: null,
       furnishingBudget: null,
-      hoaFees: null,
+      hoaFeesLandlord: null,
+      hoaFeesReserve: null,
       hoaTransferable: false,
       vacancyStatus: 'vacant',
       currentRent: null,
@@ -137,7 +170,7 @@ export function MultiFamilyHouseForm() {
     }
   ]);
 
-  const updateBuildingData = (field: keyof BuildingData, value: any) => {
+  const updateBuildingData = (field: keyof BuildingData, value: string | number | boolean) => {
     setBuildingData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -159,7 +192,8 @@ export function MultiFamilyHouseForm() {
       sellingPrice: null,
       renovationBudget: null,
       furnishingBudget: null,
-      hoaFees: null,
+      hoaFeesLandlord: null,
+      hoaFeesReserve: null,
       hoaTransferable: false,
       vacancyStatus: 'vacant',
       currentRent: null,
@@ -284,7 +318,7 @@ export function MultiFamilyHouseForm() {
                       id="constructionYear"
                       type="number"
                       value={buildingData.constructionYear || ''}
-                      onChange={(e) => updateBuildingData('constructionYear', e.target.value ? parseInt(e.target.value) : null)}
+                      onChange={(e) => updateBuildingData('constructionYear', e.target.value ? parseInt(e.target.value) : 0)}
                       placeholder="1990"
                     />
                   </div>
@@ -294,7 +328,7 @@ export function MultiFamilyHouseForm() {
                       id="totalFloors"
                       type="number"
                       value={buildingData.totalFloors || ''}
-                      onChange={(e) => updateBuildingData('totalFloors', e.target.value ? parseInt(e.target.value) : null)}
+                      onChange={(e) => updateBuildingData('totalFloors', e.target.value ? parseInt(e.target.value) : 0)}
                       placeholder="4"
                     />
                   </div>
@@ -304,7 +338,7 @@ export function MultiFamilyHouseForm() {
                       id="totalBuildingArea"
                       type="number"
                       value={buildingData.totalBuildingArea || ''}
-                      onChange={(e) => updateBuildingData('totalBuildingArea', e.target.value ? parseFloat(e.target.value) : null)}
+                      onChange={(e) => updateBuildingData('totalBuildingArea', e.target.value ? parseFloat(e.target.value) : 0)}
                       placeholder="500"
                     />
                   </div>
@@ -344,7 +378,7 @@ export function MultiFamilyHouseForm() {
                       id="buildingRenovationBudget"
                       type="number"
                       value={buildingData.buildingRenovationBudget || ''}
-                      onChange={(e) => updateBuildingData('buildingRenovationBudget', e.target.value ? parseFloat(e.target.value) : null)}
+                      onChange={(e) => updateBuildingData('buildingRenovationBudget', e.target.value ? parseFloat(e.target.value) : 0)}
                       placeholder="50000"
                     />
                     <p className="text-xs text-muted-foreground">
@@ -494,7 +528,7 @@ export function MultiFamilyHouseForm() {
                       id="building-floorPlan"
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => updateBuildingData('floorPlanFile', e.target.files?.[0] || null)}
+                      onChange={(e) => {/* Handle file upload */}}
                       className="hidden"
                     />
                     <label
@@ -527,7 +561,7 @@ export function MultiFamilyHouseForm() {
                       id="building-energyCert"
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => updateBuildingData('energyCertificateFile', e.target.files?.[0] || null)}
+                      onChange={(e) => {/* Handle file upload */}}
                       className="hidden"
                     />
                     <label

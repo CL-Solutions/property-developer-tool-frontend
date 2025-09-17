@@ -24,7 +24,8 @@ interface LiveTrafficLightsProps {
   renovationBudget: number | null;
   furnishingBudget: number | null;
   monthlyRent: number | null;
-  hoaFees: number | null;
+  hoaFeesLandlord: number | null;
+  hoaFeesReserve: number | null;
   energyClass: string;
   constructionYear: number | null;
   city: string;
@@ -38,7 +39,8 @@ export function LiveTrafficLights({
   renovationBudget,
   furnishingBudget,
   monthlyRent,
-  hoaFees,
+  hoaFeesLandlord,
+  hoaFeesReserve,
   energyClass,
   constructionYear,
   city = 'Munich',
@@ -90,7 +92,8 @@ export function LiveTrafficLights({
     const yieldScore = grossYieldScore * 0.5 + priceScore * 0.25 + renovationScore * 0.25;
 
     // HOA Score Calculation
-    const hoaPerSqm = (livingArea && hoaFees) ? hoaFees / livingArea : 0;
+    const totalHoaFees = (hoaFeesLandlord || 0) + (hoaFeesReserve || 0);
+    const hoaPerSqm = (livingArea && totalHoaFees) ? totalHoaFees / livingArea : 0;
 
     const monthlyFeesScore =
       hoaPerSqm === 0 ? 5 :
@@ -121,7 +124,7 @@ export function LiveTrafficLights({
       hoa: { score: hoaScore, status: getStatus(hoaScore), label: 'HOA', perSqm: hoaPerSqm },
       location: { score: locationScore, status: getStatus(locationScore), label: 'Location' }
     };
-  }, [livingArea, purchasePrice, renovationBudget, furnishingBudget, monthlyRent, hoaFees, energyClass, constructionYear, city]);
+  }, [livingArea, purchasePrice, renovationBudget, furnishingBudget, monthlyRent, hoaFeesLandlord, hoaFeesReserve, energyClass, constructionYear, city]);
 
   const getStatusIcon = (status: TrafficLightStatus, size = 'h-5 w-5') => {
     switch (status) {
@@ -241,10 +244,10 @@ export function LiveTrafficLights({
                 </span>
               </div>
               <div className="text-xs mt-1">
-                {key === 'yield' && score.value !== undefined && (
+                {key === 'yield' && 'value' in score && score.value !== undefined && (
                   <span>Yield: {score.value.toFixed(2)}%</span>
                 )}
-                {key === 'hoa' && score.perSqm !== undefined && score.perSqm > 0 && (
+                {key === 'hoa' && 'perSqm' in score && score.perSqm !== undefined && score.perSqm > 0 && (
                   <span>€{score.perSqm.toFixed(2)}/m²</span>
                 )}
                 {key === 'energy' && energyClass && (

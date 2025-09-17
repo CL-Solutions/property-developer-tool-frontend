@@ -403,11 +403,14 @@ The Property Developer Tool will maintain **bidirectional real-time communicatio
      - Filter by phase/status/partner
      - Pending document requests from BlackVesto
      - Critical alerts (red traffic lights, delays)
-   - **Notification Center:**
+   - **Notification Center: (✅ Fully Implemented)**
      - BlackVesto sync updates
      - Document requests
      - Phase transition alerts
      - Reservation status changes
+     - Modern shadcn/ui design with animations
+     - Grouped by date (Today, Yesterday, Earlier)
+     - All/Unread filtering with toggle buttons
 
 2. **Property Detail View**
    - **Phase Timeline (Visual Progress Bar):**
@@ -621,9 +624,9 @@ The Property Developer Tool will maintain **bidirectional real-time communicatio
 
 **Field Clarifications:**
 - `additional_costs`: Nebenkosten - Monthly utility/service charges paid by tenant
-- `operation_cost_landlord`: HOA fee portion paid by landlord (non-recoverable)
-- `operation_cost_tenant`: HOA fee portion passed to tenant (recoverable)
-- `operation_cost_reserve`: Reserve fund contribution (Instandhaltungsrücklage)
+- `hoa_fees_landlord`: HOA fee portion paid by landlord (non-recoverable) [✅ Renamed from operation_cost_landlord]
+- `hoa_fees_tenant`: HOA fee portion passed to tenant (recoverable) [✅ Renamed from operation_cost_tenant]
+- `hoa_fees_reserve`: Reserve fund contribution (Instandhaltungsrücklage) [✅ Renamed from operation_cost_reserve]
 - `has_erstvermietungsgarantie`: Boolean flag visible to BlackVesto
 - `monthly_rent`: Contains guaranteed amount when `has_erstvermietungsgarantie=true`
 
@@ -638,27 +641,31 @@ The application has been successfully implemented with the following architectur
    - One project can contain multiple properties
    - Projects represent buildings at specific addresses
 
-2. **Navigation Structure** (✅ Implemented)
+2. **Navigation Structure** (✅ Implemented & Enhanced)
    ```
    /dashboard - Main dashboard with project overview
    /projects - List of all development projects
    /projects/[id] - Project detail page with properties
+   /projects/[id]/properties/new - Add property within project (✅ With sidebar persistence)
    /properties/[id] - Individual property details
    /analytics - Performance metrics (placeholder)
-   /pre-check - Quick property assessment tool (✅ Implemented)
+   /pre-check - Quick property assessment tool (✅ Fully implemented)
+   /document-requests - Document request management (✅ New page with sidebar)
    ```
 
 3. **Key Components Built**
-   - **AppSidebar**: Main navigation with collapsible icon mode
+   - **AppSidebar**: Enhanced navigation with persistent visibility across all pages
+     - Document Requests menu item added
+     - Proper SidebarProvider integration on all pages
    - **PropertyDashboard**: Project-focused dashboard with stats
    - **PropertyCard**: Individual property display with traffic lights
    - **TrafficLightIndicator**: Visual status system (green/yellow/red)
    - **PhaseIndicator**: Phase progress visualization (1-6)
    - **PhaseTimeline**: Detailed phase history display
    - **Pre-Check Forms**: Complete property assessment forms for:
-     - Single apartment (Eigentumswohnung)
+     - Single apartment (Eigentumswohnung) with split HOA fees
      - Multi-family house (Mehrfamilienhaus) with multiple units
-   - **LiveTrafficLights**: Real-time traffic light preview component
+   - **LiveTrafficLights**: Real-time traffic light preview with HOA fee calculations
    - **UnitCard**: Collapsible unit management for MFH
    - **RentalStrategySelector**: Standard/WG rental configuration
    - **DocumentUpload**: File upload for floor plans and energy certificates
@@ -668,6 +675,10 @@ The application has been successfully implemented with the following architectur
    - Property summaries with traffic light calculations
    - Project aggregation from property data
    - URL-safe project ID generation (handles special characters)
+   - **HOA Fee Structure** (✅ Refactored):
+     - Split into `hoa_fees_landlord` and `hoa_fees_reserve` components
+     - Total HOA calculation for display and yield calculations
+     - Proper TypeScript typing throughout
 
 5. **UI/UX Features**
    - Responsive grid layouts
@@ -676,6 +687,10 @@ The application has been successfully implemented with the following architectur
    - Construction progress tracking
    - Critical alert indicators
    - Sales partner badges (BlackVesto/Internal)
+   - **Enhanced HOA Fee Display**:
+     - Separate input fields for landlord and reserve portions
+     - Real-time total calculation display
+     - Proper integration with yield calculations
 
 ### Project Setup Steps
 
@@ -697,7 +712,7 @@ The application has been successfully implemented with the following architectur
 
 ### Mockup Development Priorities
 
-#### Phase 1: Core Dashboard (Priority 1)
+#### Phase 1: Core Dashboard (Priority 1) - 90% COMPLETED
 **Main Dashboard Screen:**
 - [x] Portfolio overview grid with PROJECT cards (✅ Implemented)
 - [x] Projects overview with property counts (✅ Implemented)
@@ -706,27 +721,32 @@ The application has been successfully implemented with the following architectur
 - [x] Construction progress bars (✅ Implemented)
 - [x] Days in current phase counter (✅ Implemented)
 - [x] Quick action buttons (Add project, view all) (✅ Implemented)
-- [ ] Notification center with unread count
+- [x] Notification center with unread count (✅ Implemented with shadcn/ui)
 - [x] Critical alerts panel (red lights, delays) (✅ Implemented)
+- [x] Document Requests page with sidebar navigation (✅ Implemented)
 
-**Components Implemented:**
+**Components Status:**
+- [x] AppSidebar with Document Requests menu item (✅ Implemented)
 - [x] PropertyCard component with traffic lights (✅ Implemented)
 - [x] PhaseIndicator with progress visualization (✅ Implemented)
-- [ ] NotificationBadge with count
+- [x] NotificationBadge with count (✅ Implemented with animations)
 - [x] TrafficLightIndicator (green/yellow/red) (✅ Implemented)
+- [x] EnhancedTrafficLights with detailed metrics (✅ Implemented)
 
-#### Phase 2: Property Entry & Pre-Check (Priority 2) ✅ COMPLETED
+#### Phase 2: Property Entry & Pre-Check (Priority 2) - 95% COMPLETED
 **Property Data Entry Form:**
 - [x] Sales partner selection toggle (✅ Implemented)
-- [x] Location details with map placeholder (✅ Address fields implemented)
+- [x] Location details with address fields (✅ Implemented)
 - [x] Property specifications form (✅ Implemented)
 - [x] Property type selection (Single Apartment/MFH) (✅ Implemented)
 - [x] Multi-unit support for MFH with dynamic unit management (✅ Implemented)
 - [x] Building-level sales partner defaults with unit overrides (✅ Implemented)
-- [ ] Automated trade selection checklist
-- [ ] Construction description auto-generation
-- [ ] Furniture planning calculator
+- [ ] Automated trade selection checklist (⏳ Pending)
+- [ ] Construction description auto-generation (⏳ Pending)
+- [ ] Furniture planning calculator (⏳ Pending)
 - [x] Financial parameters input (✅ Implemented)
+- [x] HOA fee splitting (Landlord/Reserve) (✅ Implemented)
+- [x] Total HOA calculation display (✅ Implemented)
 - [x] Rental yield calculator (standard/WG toggle) (✅ Implemented)
 - [x] WG room-by-room rent configuration (✅ Implemented)
 - [x] Document upload sections (floor plans, energy certificates) (✅ Implemented)
@@ -738,52 +758,66 @@ The application has been successfully implemented with the following architectur
 - [x] Real-time calculation display (✅ Live preview implemented)
 - [x] Energy efficiency rating (A-H scale) (✅ Implemented)
 - [x] Rental yield percentage with threshold indicators (✅ Implemented)
-- [x] HOA fee per m² comparison (✅ Implemented)
+- [x] HOA fee per m² comparison with split fees (✅ Implemented)
 - [x] Location price benchmark (✅ Implemented)
 - [x] Compact and full view modes (✅ Implemented)
 - [x] Unit-level and aggregate traffic lights for MFH (✅ Implemented)
 - [x] WG rental yield calculation support (✅ Implemented)
 - [x] Decision buttons (Create Project in Phase 1) (✅ Implemented)
+- [x] Project creation from pre-check data (✅ Implemented)
 
-#### Phase 3: Property Detail View (Priority 3)
+#### Phase 3: Property Detail View (Priority 3) - 70% COMPLETED
 **Property Detail Screen:**
 - [x] Phase timeline with milestones (✅ Implemented)
 - [x] Current phase highlight with time tracking (✅ Implemented)
 - [x] Sales partner section (conditional UI) (✅ Implemented)
-- [ ] Document hub with upload progress
-- [ ] Document request queue from BlackVesto
+- [ ] Document hub with upload progress (⏳ Pending)
+- [ ] Document request queue from BlackVesto (⏳ Pending)
 - [x] Traffic light summary panel (✅ Implemented)
+- [x] HOA fees display with split values (✅ Implemented)
 - [x] Construction monitor (conditional visibility) (✅ Implemented)
-- [ ] Photo gallery with date stamps
+- [ ] Photo gallery with date stamps (⏳ Pending)
 - [x] Action buttons based on current phase (✅ Implemented)
+- [x] Pre-check summary display (✅ Implemented)
 
-**Components Implemented:**
+**Components Status:**
 - [x] PhaseTimeline component (✅ Implemented)
-- [ ] DocumentUploadCard
+- [x] PreCheckSummary with actual HOA values (✅ Implemented)
+- [ ] DocumentUploadCard with progress (⏳ Pending)
 - [x] ConstructionMilestone (✅ Implemented)
-- [ ] PhotoGallery with metadata
+- [ ] PhotoGallery with metadata (⏳ Pending)
 
-#### Phase 4: Supporting Features (Priority 4)
+#### Phase 4: Supporting Features (Priority 4) - 10% COMPLETED
 **Document Management:**
-- [ ] Document checklist by phase
-- [ ] Upload interface with drag-and-drop
-- [ ] Version history display
-- [ ] Missing document alerts
-- [ ] BlackVesto request notifications
+- [x] Basic document upload for floor plans & energy certificates (✅ Implemented)
+- [ ] Document checklist by phase (⏳ Pending)
+- [ ] Enhanced drag-and-drop with preview (⏳ Pending)
+- [ ] Version history display (⏳ Pending)
+- [ ] Missing document alerts (⏳ Pending)
+- [ ] BlackVesto request notifications (⏳ Pending)
 
 **Construction Tracking:**
-- [ ] Milestone cards with progress
-- [ ] Trade contractor list
-- [ ] Photo upload per milestone
-- [ ] Delay warnings (>14 days yellow, >30 days red)
-- [ ] Visibility toggle for BlackVesto
+- [x] Basic construction progress display (✅ Implemented)
+- [ ] Milestone cards with detailed progress (⏳ Pending)
+- [ ] Trade contractor list (⏳ Pending)
+- [ ] Photo upload per milestone (⏳ Pending)
+- [ ] Delay warnings (>14 days yellow, >30 days red) (⏳ Pending)
+- [ ] Visibility toggle for BlackVesto (⏳ Pending)
 
 **Handover & Rental:**
-- [ ] Meter reading form with photo capture
-- [ ] Nebenkostenabrechnung generator
-- [ ] Handover protocol checklist
-- [ ] Tenant information form
-- [ ] Rental contract status
+- [ ] Meter reading form with photo capture (⏳ Pending)
+- [ ] Nebenkostenabrechnung generator (⏳ Pending)
+- [ ] Handover protocol checklist (⏳ Pending)
+- [ ] Tenant information form (⏳ Pending)
+- [ ] Rental contract status (⏳ Pending)
+- [ ] SEPA mandate generation (⏳ Pending)
+
+**Additional Features Completed:**
+- [x] TypeScript strict type checking (✅ Implemented)
+- [x] Clean build with no compilation errors (✅ Implemented)
+- [x] Mock data service integration (✅ Implemented)
+- [x] Responsive design with Tailwind CSS (✅ Implemented)
+- [x] Skeleton loading states (✅ Implemented)
 
 ### UI/UX Design Guidelines
 
@@ -819,22 +853,25 @@ The application has been successfully implemented with the following architectur
 - Mock data served from JSON file initially
 - Prepare for future API integration
 
-**Current Routing Structure (Implemented):**
+**Current Routing Structure:**
 ```
+Implemented Pages:
 ✅ /dashboard - Main portfolio overview with projects
-✅ /projects - List all development projects
+✅ /projects - List all development projects  
 ✅ /projects/[id] - Project detail with properties list
+✅ /projects/[id]/properties/new - Add property to project (with sidebar)
 ✅ /properties/[id] - Individual property detail view
 ✅ /pre-check - Quick property assessment with live traffic lights
+✅ /document-requests - Document request management page
+✅ /analytics - Performance metrics (placeholder with sidebar)
 
-To be implemented:
-/projects/new - Add new project (separate from pre-check)
-/projects/[id]/properties/new - Add property to existing project
-/properties/[id]/documents - Document management
-/properties/[id]/construction - Construction tracking
-/properties/[id]/handover - Handover management
-/notifications - Notification center
-/settings - App settings
+Pending Implementation:
+⏳ /projects/new - Add new project (separate from pre-check)
+⏳ /properties/[id]/documents - Document management detail
+⏳ /properties/[id]/construction - Construction tracking detail
+⏳ /properties/[id]/handover - Handover management
+✅ /notifications - Notification center (Implemented with shadcn/ui components)
+⏳ /settings - App settings
 ```
 
 **Mock API Endpoints:**
@@ -882,10 +919,12 @@ PUT /api/notifications/[id]/read
 - [x] Phase timeline implementation (basic version done)
 - [ ] BlackVesto integration points
 
-**Week 4: PLANNED**
+**Week 4: IN PROGRESS**
 - [x] Construction tracking (basic version done)
 - [ ] Handover management
-- [ ] Notification system
+- [x] Notification system (✅ Fully implemented with shadcn/ui components, animations, filtering)
+- [x] Property and Project edit functionality (✅ Implemented using existing forms)
+- [x] Centralized mock data for notifications (✅ Implemented)
 - [ ] Final polish and testing
 
 ### Next Development Priorities
@@ -902,13 +941,27 @@ PUT /api/notifications/[id]/read
    - Photo upload per milestone
    - Delay warnings and visibility toggles
 
-3. **Notification System**
-   - Document request queue
-   - Phase transition alerts
-   - Critical status notifications
-   - BlackVesto sync updates
+3. **Notification System** ✅ COMPLETED
+   - [x] Modern shadcn/ui design with Sheet, ToggleGroup, and DropdownMenu
+   - [x] Grouped notifications by date (Today, Yesterday, Earlier)
+   - [x] All/Unread filtering with toggle buttons
+   - [x] Individual notification actions (Mark as read, Archive, Delete)
+   - [x] Smooth animations for opening/closing and individual items
+   - [x] Custom scrollbar styling
+   - [x] Empty state with helpful messaging
+   - [x] Color-coded notification type icons with Avatars
+   - [x] Priority badges with semantic colors
+   - [x] Animated notification badge with pulse effect
+   - [x] Centralized mock data integration via MockDataService
 
-4. **Handover & Rental Management**
+4. **Edit Functionality** ✅ COMPLETED
+   - [x] Property edit using existing new property form
+   - [x] Project edit using existing new project form
+   - [x] Query parameter-based routing for edit mode
+   - [x] Data prefilling from mock data service
+   - [x] TypeScript type safety throughout
+
+5. **Handover & Rental Management**
    - Meter reading forms with photo capture
    - Nebenkostenabrechnung generator
    - Tenant management interface

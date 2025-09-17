@@ -171,7 +171,7 @@ export function EnhancedTrafficLights({ property, onCalculationUpdate }: Enhance
 
   // Calculate HOA score
   const calculateHOAScore = (): TrafficLightCalculations['hoa'] => {
-    const monthlyHOA = property.operation_cost_landlord + property.operation_cost_reserve;
+    const monthlyHOA = property.hoa_fees_landlord + property.hoa_fees_reserve;
     const hoaPerSqm = monthlyHOA / property.size_sqm;
 
     const factors = {
@@ -182,8 +182,8 @@ export function EnhancedTrafficLights({ property, onCalculationUpdate }: Enhance
         weight: 0.4
       },
       reserves: {
-        value: property.operation_cost_reserve,
-        score: property.operation_cost_reserve >= 1 ? 10 : property.operation_cost_reserve >= 0.5 ? 6 : 2,
+        value: property.hoa_fees_reserve,
+        score: property.hoa_fees_reserve >= 1 ? 10 : property.hoa_fees_reserve >= 0.5 ? 6 : 2,
         maxScore: 10,
         weight: 0.3
       },

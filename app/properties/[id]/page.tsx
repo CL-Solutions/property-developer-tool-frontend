@@ -32,7 +32,8 @@ import {
   Home,
   CheckSquare,
   XCircle,
-  RefreshCw
+  RefreshCw,
+  Edit
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -176,6 +177,14 @@ export default function PropertyDetailPage() {
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push(`/properties/new?edit=${propertyId}`)}
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    Edit Property
+                  </Button>
                   <Badge variant={property.developer_sales_partner === 'blackvesto' ? 'default' : 'secondary'}>
                     {property.developer_sales_partner === 'blackvesto' ? 'BlackVesto' : 'Internal'}
                   </Badge>
@@ -310,18 +319,14 @@ export default function PropertyDetailPage() {
                               property.developer_initial_traffic_lights?.hoa === 'green' ? "bg-green-500" :
                               property.developer_initial_traffic_lights?.hoa === 'yellow' ? "bg-yellow-500" :
                               property.developer_initial_traffic_lights?.hoa === 'red' ? "bg-red-500" :
-                              property.hoa_fees && property.developer_purchase_price &&
-                              (property.hoa_fees / property.developer_purchase_price) * 100 < 0.35 ? "bg-green-500" :
-                              property.hoa_fees && property.developer_purchase_price &&
-                              (property.hoa_fees / property.developer_purchase_price) * 100 < 0.5 ? "bg-yellow-500" :
-                              "bg-red-500"
+                              "bg-gray-500" // Default if no traffic light data
                             )}></div>
                             <span className="text-sm font-medium">HOA</span>
                           </div>
                           <p className="text-xs text-gray-600 ml-10">
                             {property.developer_initial_traffic_lights?.scores?.hoa
                               ? `${property.developer_initial_traffic_lights.scores.hoa.toFixed(1)}/10`
-                              : `€${property.hoa_fees ? property.hoa_fees.toFixed(0) : 'N/A'}/mo`}
+                              : 'N/A'}
                           </p>
                         </div>
                         <div>
@@ -331,16 +336,14 @@ export default function PropertyDetailPage() {
                               property.developer_initial_traffic_lights?.location === 'green' ? "bg-green-500" :
                               property.developer_initial_traffic_lights?.location === 'yellow' ? "bg-yellow-500" :
                               property.developer_initial_traffic_lights?.location === 'red' ? "bg-red-500" :
-                              property.location_score && property.location_score >= 8 ? "bg-green-500" :
-                              property.location_score && property.location_score >= 6 ? "bg-yellow-500" :
-                              property.location_score ? "bg-red-500" : "bg-gray-300"
+                              "bg-gray-500" // Default if no traffic light data
                             )}></div>
                             <span className="text-sm font-medium">Location</span>
                           </div>
                           <p className="text-xs text-gray-600 ml-10">
                             {property.developer_initial_traffic_lights?.scores?.location
                               ? `${property.developer_initial_traffic_lights.scores.location.toFixed(1)}/10`
-                              : `Score: ${property.location_score || 'N/A'}/10`}
+                              : 'N/A'}
                           </p>
                         </div>
                       </div>
@@ -512,10 +515,6 @@ export default function PropertyDetailPage() {
                             property.developer_initial_traffic_lights?.hoa === 'green' ? "bg-green-500" :
                             property.developer_initial_traffic_lights?.hoa === 'yellow' ? "bg-yellow-500" :
                             property.developer_initial_traffic_lights?.hoa === 'red' ? "bg-red-500" :
-                            property.hoa_fees && property.developer_purchase_price &&
-                            (property.hoa_fees / property.developer_purchase_price) * 100 < 0.35 ? "bg-green-500" :
-                            property.hoa_fees && property.developer_purchase_price &&
-                            (property.hoa_fees / property.developer_purchase_price) * 100 < 0.5 ? "bg-yellow-500" :
                             "bg-red-500"
                           )}></div>
                           <p className="text-xs font-medium">HOA</p>
@@ -526,9 +525,7 @@ export default function PropertyDetailPage() {
                             property.developer_initial_traffic_lights?.location === 'green' ? "bg-green-500" :
                             property.developer_initial_traffic_lights?.location === 'yellow' ? "bg-yellow-500" :
                             property.developer_initial_traffic_lights?.location === 'red' ? "bg-red-500" :
-                            property.location_score && property.location_score >= 8 ? "bg-green-500" :
-                            property.location_score && property.location_score >= 6 ? "bg-yellow-500" :
-                            property.location_score ? "bg-red-500" : "bg-gray-300"
+                            "bg-gray-300"
                           )}></div>
                           <p className="text-xs font-medium">Location</p>
                         </div>

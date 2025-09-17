@@ -93,7 +93,7 @@ export default function PreCheckPage() {
                 <CardHeader>
                   <CardTitle>Select Property Type</CardTitle>
                   <CardDescription>
-                    Choose whether you're evaluating a single apartment or a multi-family house
+                    Choose whether you&apos;re evaluating a single apartment or a multi-family house
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">

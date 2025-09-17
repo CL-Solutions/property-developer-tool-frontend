@@ -23,7 +23,8 @@ import {
   AlertTriangle,
   Home,
   FileText,
-  Settings
+  Settings,
+  Edit
 } from 'lucide-react';
 
 export default function ProjectDetailPage() {
@@ -138,10 +139,16 @@ export default function ProjectDetailPage() {
                       {properties[0]?.street} {properties[0]?.house_number}, {properties[0]?.city}
                     </p>
                   </div>
-                  <Button size="default" onClick={() => router.push(`/projects/${projectId}/properties/new`)}>
-                    <Plus className="h-4 w-4" />
-                    Add Property
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="default" onClick={() => router.push(`/projects/new?edit=${projectId}`)}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit Project
+                    </Button>
+                    <Button size="default" onClick={() => router.push(`/projects/${projectId}/properties/new`)}>
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Property
+                    </Button>
+                  </div>
                 </div>
               </div>
 

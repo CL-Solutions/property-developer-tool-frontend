@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,14 +36,21 @@ import {
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
+  SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 
 export default function PropertyEntryPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('edit'); // Get property ID if in edit mode
+  const isEditMode = !!editId;
+  
   const [currentStep, setCurrentStep] = useState(1);
   const [projects, setProjects] = useState<Project[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(isEditMode); // Loading state for fetching existing data
 
   // Form data
   const [formData, setFormData] = useState<PropertyEntryForm>({
@@ -64,9 +71,9 @@ export default function PropertyEntryPage() {
     selling_price: 0,
     monthly_rent: 0,
     additional_costs: 0,
-    operation_cost_landlord: 0,
-    operation_cost_tenant: 0,
-    operation_cost_reserve: 0,
+    hoa_fees_landlord: 0,
+    hoa_fees_tenant: 0,
+    hoa_fees_reserve: 0,
     developer_rental_strategy: 'standard',
     has_erstvermietungsgarantie: false,
     developer_wg_room_pricing: [],
@@ -82,19 +89,52 @@ export default function PropertyEntryPage() {
     location: 'green' as TrafficLightStatus
   });
 
-  // Load projects on mount
+  // Load projects and existing property data on mount
   useEffect(() => {
-    const loadProjects = async () => {
+    const loadData = async () => {
       try {
+        // Always load projects
         const projectsData = await MockDataService.getProjects();
         setProjects(projectsData);
+
+        // If in edit mode, load existing property data
+        if (isEditMode && editId) {
+          setLoading(true);
+          const property = await MockDataService.getProperty(editId);
+          
+          // Map property data to form fields
+          setFormData({
+            ...formData,
+            project_id: property.project_id || '',
+            unit_number: property.unit_number || '',
+            property_type: property.property_type || 'apartment',
+            size_sqm: property.size_sqm || 0,
+            rooms: property.rooms || 0,
+            floor: property.floor || '',
+            developer_purchase_price: property.purchase_price || 0,
+            developer_renovation_budget: property.developer_renovation_budget || 0,
+            developer_furnishing_budget: property.developer_furnishing_budget || 0,
+            selling_price: property.developer_selling_price || 0,
+            monthly_rent: property.rental_price_net || 0,
+            hoa_fees_landlord: property.developer_hoa_fee_landlord || 0,
+            hoa_fees_tenant: property.developer_hoa_fee_tenant || 0,
+            hoa_fees_reserve: property.developer_hoa_fee_reserve || 0,
+            developer_rental_strategy: property.developer_rental_type || 'standard',
+            has_erstvermietungsgarantie: property.has_erstvermietungsgarantie || false,
+            developer_wg_room_pricing: property.developer_wg_rooms || [],
+            required_trades: property.developer_required_trades || [],
+            uploaded_documents: []
+          });
+          setLoading(false);
+        }
       } catch (error) {
-        console.error('Failed to load projects:', error);
+        console.error('Failed to load data:', error);
+        setLoading(false);
       }
     };
 
-    loadProjects();
-  }, []);
+    loadData();
+  }, [isEditMode, editId]);
 
   // Calculate rental yield when relevant fields change
   useEffect(() => {
@@ -156,13 +196,19 @@ export default function PropertyEntryPage() {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      // Simulate API call
-      await MockDataService.createProperty(formData as Partial<Property>);
-
-      // Redirect to dashboard or property detail
-      router.push('/dashboard');
+      if (isEditMode && editId) {
+        // Update existing property
+        await MockDataService.updateProperty(editId, formData as Partial<Property>);
+        // Redirect to property detail page
+        router.push(`/properties/${editId}`);
+      } else {
+        // Create new property
+        const newProperty = await MockDataService.createProperty(formData as Partial<Property>);
+        // Redirect to dashboard or property detail
+        router.push('/dashboard');
+      }
     } catch (error) {
-      console.error('Failed to create property:', error);
+      console.error(`Failed to ${isEditMode ? 'update' : 'create'} property:`, error);
     } finally {
       setSubmitting(false);
     }
@@ -209,8 +255,10 @@ export default function PropertyEntryPage() {
   };
 
   return (
-    <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator
@@ -232,7 +280,7 @@ export default function PropertyEntryPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>New Property</BreadcrumbPage>
+                <BreadcrumbPage>{isEditMode ? 'Edit Property' : 'New Property'}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -242,8 +290,8 @@ export default function PropertyEntryPage() {
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold">Add New Property</h1>
-          <p className="text-muted-foreground">Phase 1: Property Entry & Pre-Check</p>
+          <h1 className="text-3xl font-bold">{isEditMode ? 'Edit Property' : 'Add New Property'}</h1>
+          <p className="text-muted-foreground">{isEditMode ? 'Update property information' : 'Phase 1: Property Entry & Pre-Check'}</p>
         </div>
 
       {/* Progress Steps */}
@@ -298,7 +346,7 @@ export default function PropertyEntryPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="project">Project</Label>
-                  <Select value={formData.project_id} onValueChange={(value) => setFormData(prev => ({ ...prev, project_id: value }))}>
+                  <Select value={formData.project_id || ''} onValueChange={(value) => setFormData(prev => ({ ...prev, project_id: value }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a project" />
                     </SelectTrigger>
@@ -317,7 +365,7 @@ export default function PropertyEntryPage() {
                     <Label htmlFor="unit_number">Unit Number</Label>
                     <Input
                       id="unit_number"
-                      value={formData.unit_number}
+                      value={formData.unit_number || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, unit_number: e.target.value }))}
                       placeholder="e.g., WE1"
                     />
@@ -327,7 +375,7 @@ export default function PropertyEntryPage() {
                     <Label htmlFor="floor">Floor</Label>
                     <Input
                       id="floor"
-                      value={formData.floor}
+                      value={formData.floor || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, floor: e.target.value }))}
                       placeholder="e.g., EG, 1. OG"
                     />
@@ -336,7 +384,7 @@ export default function PropertyEntryPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="property_type">Property Type</Label>
-                  <Select value={formData.property_type} onValueChange={(value) => setFormData(prev => ({ ...prev, property_type: value as PropertyType }))}>
+                  <Select value={formData.property_type || 'apartment'} onValueChange={(value) => setFormData(prev => ({ ...prev, property_type: value as PropertyType }))}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -529,8 +577,8 @@ export default function PropertyEntryPage() {
                     <Input
                       id="hoa_landlord"
                       type="number"
-                      value={formData.operation_cost_landlord || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, operation_cost_landlord: parseFloat(e.target.value) || 0 }))}
+                      value={formData.hoa_fees_landlord || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, hoa_fees_landlord: parseFloat(e.target.value) || 0 }))}
                       placeholder="85"
                     />
                   </div>
@@ -540,8 +588,8 @@ export default function PropertyEntryPage() {
                     <Input
                       id="hoa_tenant"
                       type="number"
-                      value={formData.operation_cost_tenant || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, operation_cost_tenant: parseFloat(e.target.value) || 0 }))}
+                      value={formData.hoa_fees_tenant || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, hoa_fees_tenant: parseFloat(e.target.value) || 0 }))}
                       placeholder="95"
                     />
                   </div>
@@ -825,5 +873,6 @@ export default function PropertyEntryPage() {
       </div>
       </div>
     </SidebarInset>
+    </SidebarProvider>
   );
 }

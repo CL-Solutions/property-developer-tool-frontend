@@ -122,7 +122,8 @@ export function UnitCard({
                     renovationBudget={unit.renovationBudget}
                     furnishingBudget={unit.furnishingBudget}
                     monthlyRent={monthlyRent}
-                    hoaFees={unit.hoaFees}
+                    hoaFeesLandlord={unit.hoaFeesLandlord}
+                    hoaFeesReserve={unit.hoaFeesReserve}
                     energyClass={buildingEnergyClass}
                     constructionYear={buildingConstructionYear}
                     city={city}
@@ -251,24 +252,41 @@ export function UnitCard({
                 </div>
 
                 {/* HOA Fees */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor={`unit-${unit.id}-hoa`}>Monthly HOA Fees (€)</Label>
-                    <Input
-                      id={`unit-${unit.id}-hoa`}
-                      type="number"
-                      value={unit.hoaFees || ''}
-                      onChange={(e) => onUpdate({ hoaFees: e.target.value ? parseFloat(e.target.value) : null })}
-                      placeholder="150"
-                    />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor={`unit-${unit.id}-hoa-landlord`}>HOA - Landlord (€/month)</Label>
+                      <Input
+                        id={`unit-${unit.id}-hoa-landlord`}
+                        type="number"
+                        value={unit.hoaFeesLandlord || ''}
+                        onChange={(e) => onUpdate({ hoaFeesLandlord: e.target.value ? parseFloat(e.target.value) : null })}
+                        placeholder="105"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`unit-${unit.id}-hoa-reserve`}>HOA - Reserve (€/month)</Label>
+                      <Input
+                        id={`unit-${unit.id}-hoa-reserve`}
+                        type="number"
+                        value={unit.hoaFeesReserve || ''}
+                        onChange={(e) => onUpdate({ hoaFeesReserve: e.target.value ? parseFloat(e.target.value) : null })}
+                        placeholder="45"
+                      />
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 pt-8">
-                    <Checkbox
-                      id={`unit-${unit.id}-hoa-transfer`}
-                      checked={unit.hoaTransferable}
-                      onCheckedChange={(checked) => onUpdate({ hoaTransferable: !!checked })}
-                    />
-                    <Label htmlFor={`unit-${unit.id}-hoa-transfer`}>Transferable to tenant</Label>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`unit-${unit.id}-hoa-transfer`}
+                        checked={unit.hoaTransferable}
+                        onCheckedChange={(checked) => onUpdate({ hoaTransferable: !!checked })}
+                      />
+                      <Label htmlFor={`unit-${unit.id}-hoa-transfer`}>Transferable to tenant</Label>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Total: €{((unit.hoaFeesLandlord || 0) + (unit.hoaFeesReserve || 0)).toFixed(2)}/month
+                    </div>
                   </div>
                 </div>
 
@@ -395,7 +413,8 @@ export function UnitCard({
                   renovationBudget={unit.renovationBudget}
                   furnishingBudget={unit.furnishingBudget}
                   monthlyRent={monthlyRent}
-                  hoaFees={unit.hoaFees}
+                  hoaFeesLandlord={unit.hoaFeesLandlord}
+                  hoaFeesReserve={unit.hoaFeesReserve}
                   energyClass={buildingEnergyClass}
                   constructionYear={buildingConstructionYear}
                   city={city}

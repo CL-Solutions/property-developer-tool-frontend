@@ -99,7 +99,7 @@ export default function NewPropertyPage() {
     loadProjectName();
   }, [projectId]);
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -178,17 +178,17 @@ export default function NewPropertyPage() {
         size_sqm: parseFloat(formData.livingArea),
         property_type: 'apartment',
         bathrooms: 1, // Default value
-        balcony: formData.hasBalcony ? 'yes' : 'no',
-        has_cellar: formData.hasBasement,
+        balcony: 'no', // Default value, can be updated later
+        has_cellar: false, // Default value, can be updated later
         selling_price: parseFloat(formData.purchasePrice),
         developer_purchase_price: parseFloat(formData.purchasePrice),
         developer_renovation_budget: parseFloat(formData.renovationBudget) || 0,
         developer_furnishing_budget: 0,
         monthly_rent: monthlyRentTotal,
         total_monthly_rent: monthlyRentTotal,
-        operation_cost_landlord: parseFloat(formData.operationCostLandlord) || 0,
-        operation_cost_tenant: parseFloat(formData.operationCostTenant) || 0,
-        operation_cost_reserve: parseFloat(formData.operationCostReserve) || 0,
+        hoa_fees_landlord: parseFloat(formData.operationCostLandlord) || 0,
+        hoa_fees_tenant: parseFloat(formData.operationCostTenant) || 0,
+        hoa_fees_reserve: parseFloat(formData.operationCostReserve) || 0,
         additional_costs: parseFloat(formData.operationCostTenant) || 0,
         management_fee: 0,
         total_purchase_price: parseFloat(formData.purchasePrice) + (parseFloat(formData.renovationBudget) || 0),
@@ -377,7 +377,7 @@ export default function NewPropertyPage() {
                     </h3>
 
                     {/* Rental Type Selection */}
-                    <RadioGroup value={rentalType} onValueChange={(value: any) => setRentalType(value)}>
+                    <RadioGroup value={rentalType} onValueChange={(value) => setRentalType(value as 'standard' | 'wg')}>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="standard" id="standard" />
                         <Label htmlFor="standard" className="font-normal cursor-pointer">
@@ -560,8 +560,8 @@ export default function NewPropertyPage() {
                 <CardContent className="space-y-4">
                   <RadioGroup
                     value={salesPartner}
-                    onValueChange={(value: any) => {
-                      setSalesPartner(value);
+                    onValueChange={(value) => {
+                      setSalesPartner(value as 'blackvesto' | 'internal');
                       if (value === 'internal') {
                         setSelectedSalesPartnerId('internal-001');
                       }

@@ -91,9 +91,9 @@ export interface Property {
   monthly_rent: number;
   additional_costs: number;
   management_fee: number;
-  operation_cost_landlord: number;
-  operation_cost_tenant: number;
-  operation_cost_reserve: number;
+  hoa_fees_landlord: number;
+  hoa_fees_tenant: number;
+  hoa_fees_reserve: number;
   total_purchase_price: number;
   total_monthly_rent: number;
   gross_rental_yield: number;
@@ -237,14 +237,16 @@ export interface DeveloperNotification {
   id: string;
   tenant_id: string;
   user_id: string;
-  notification_type: string;
-  priority: string;
+  notification_type: 'document_request' | 'status_change' | 'alert' | 'info' | 'reservation_status';
+  priority: 'low' | 'medium' | 'high';
   title: string;
   message: string;
   related_table: string;
   related_id: string;
   read: boolean;
   created_at: string;
+  property_id?: string;
+  property_name?: string;
 }
 
 // Dashboard summary interfaces
@@ -302,9 +304,9 @@ export interface PropertyEntryForm {
   selling_price: number;
   monthly_rent: number;
   additional_costs: number;
-  operation_cost_landlord: number;
-  operation_cost_tenant: number;
-  operation_cost_reserve: number;
+  hoa_fees_landlord: number;
+  hoa_fees_tenant: number;
+  hoa_fees_reserve: number;
 
   // Rental Strategy
   developer_rental_strategy: RentalStrategy;

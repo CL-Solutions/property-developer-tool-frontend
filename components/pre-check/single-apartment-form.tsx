@@ -13,6 +13,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { LiveTrafficLights } from './live-traffic-lights';
 import { RentalStrategySelector } from './rental-strategy-selector';
+import { TradeSelection } from './trade-selection';
+import { ConstructionDescription } from './construction-description';
+import { FurnitureCalculator } from './furniture-calculator';
 import { MockDataService } from '@/lib/mock-data';
 import {
   MapPin,
@@ -47,7 +50,8 @@ interface FormData {
   currentRent: number | null;
 
   // HOA
-  hoaFees: number | null;
+  hoaFeesLandlord: number | null;
+  hoaFeesReserve: number | null;
   hoaTransferable: boolean;
 
   // Financial
@@ -73,9 +77,15 @@ interface FormData {
   propertyDivision: boolean;
   subsidies: string;
   encumbrances: string;
+
   // Document uploads
   floorPlanFile: File | null;
   energyCertificateFile: File | null;
+
+  // New fields for Phase 2 features
+  selectedTrades: string[];
+  renovationLevel: 'light' | 'standard' | 'complete';
+  constructionDescription: string;
 }
 
 // Mock BlackVesto partners
@@ -86,36 +96,57 @@ const BLACKVESTO_PARTNERS = [
   { id: 'bv-004', name: 'BlackVesto Frankfurt' },
 ];
 
-export function SingleApartmentForm() {
+interface SingleApartmentFormProps {
+  initialData?: Partial<FormData>;
+  onSave?: (data: FormData) => void | Promise<void>;
+  isEditMode?: boolean;
+  isSaving?: boolean;
+  isUnitInMFH?: boolean;
+  readOnlyFields?: string[];
+}
+
+export function SingleApartmentForm({
+  initialData,
+  onSave,
+  isEditMode = false,
+  isSaving = false,
+  isUnitInMFH = false,
+  readOnlyFields = []
+}: SingleApartmentFormProps = {}) {
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
-    street: '',
-    houseNumber: '',
-    city: 'Munich',
-    zipCode: '',
-    constructionYear: null,
-    livingArea: null,
-    rooms: null,
-    floor: '',
-    vacancyStatus: 'vacant',
-    currentRent: null,
-    hoaFees: null,
-    hoaTransferable: false,
-    purchasePrice: null,
-    sellingPrice: null,
-    renovationBudget: null,
-    furnishingBudget: null,
-    salesPartner: 'blackvesto',
-    blackvestoPartner: '',
-    rentalStrategy: 'standard',
-    plannedRent: null,
-    energyClass: '',
-    historicPreservation: false,
-    propertyDivision: false,
-    subsidies: '',
-    encumbrances: '',
-    floorPlanFile: null,
-    energyCertificateFile: null
+    street: initialData?.street || '',
+    houseNumber: initialData?.houseNumber || '',
+    city: initialData?.city || 'Munich',
+    zipCode: initialData?.zipCode || '',
+    constructionYear: initialData?.constructionYear || 0,
+    livingArea: initialData?.livingArea || 0,
+    rooms: initialData?.rooms || 0,
+    floor: initialData?.floor || '',
+    vacancyStatus: initialData?.vacancyStatus || 'vacant',
+    currentRent: initialData?.currentRent || 0,
+    hoaFeesLandlord: initialData?.hoaFeesLandlord || 0,
+    hoaFeesReserve: initialData?.hoaFeesReserve || 0,
+    hoaTransferable: initialData?.hoaTransferable || false,
+    purchasePrice: initialData?.purchasePrice || 0,
+    sellingPrice: initialData?.sellingPrice || 0,
+    renovationBudget: initialData?.renovationBudget || 0,
+    furnishingBudget: initialData?.furnishingBudget || 0,
+    salesPartner: initialData?.salesPartner || 'blackvesto',
+    blackvestoPartner: initialData?.blackvestoPartner || '',
+    rentalStrategy: initialData?.rentalStrategy || 'standard',
+    plannedRent: initialData?.plannedRent || 0,
+    wgRooms: initialData?.wgRooms || [],
+    energyClass: initialData?.energyClass || '',
+    historicPreservation: initialData?.historicPreservation || false,
+    propertyDivision: initialData?.propertyDivision || false,
+    subsidies: initialData?.subsidies || '',
+    encumbrances: initialData?.encumbrances || '',
+    floorPlanFile: initialData?.floorPlanFile || null,
+    energyCertificateFile: initialData?.energyCertificateFile || null,
+    selectedTrades: initialData?.selectedTrades || [],
+    renovationLevel: initialData?.renovationLevel || 'standard',
+    constructionDescription: initialData?.constructionDescription || ''
   });
 
   const [showTrafficLights, setShowTrafficLights] = useState(false);
@@ -127,7 +158,7 @@ export function SingleApartmentForm() {
 
     // Check if we have any rental income
     const hasRentalIncome = formData.vacancyStatus === 'rented'
-      ? formData.currentRent > 0
+      ? (formData.currentRent || 0) > 0
       : formData.rentalStrategy === 'wg'
         ? wgTotalRent > 0
         : (formData.plannedRent || 0) > 0;
@@ -140,19 +171,23 @@ export function SingleApartmentForm() {
     setShowTrafficLights(!!hasMinimumData);
   }, [formData]);
 
-  const updateFormData = (field: keyof FormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const updateFormData = (field: keyof FormData, value: string | number | boolean | string[] | File | null) => {
+    setFormData(prev => ({ ...prev, [field]: value } as FormData));
   };
 
   const handleSubmit = async () => {
     try {
-      // Create property from pre-check data
-      const newProperty = await MockDataService.createPropertyFromPreCheck(formData);
-
-      // Navigate to the property detail page
-      router.push(`/properties/${newProperty.id}`);
+      if (onSave) {
+        // If onSave callback is provided (edit mode), use it
+        await onSave(formData);
+      } else {
+        // Otherwise, create new property (create mode)
+        const newProperty = await MockDataService.createPropertyFromPreCheck(formData);
+        // Navigate to the property detail page
+        router.push(`/properties/${newProperty.id}`);
+      }
     } catch (error) {
-      console.error('Failed to create property from pre-check:', error);
+      console.error('Failed to save property:', error);
       // In a real app, show an error toast/notification
     }
   };
@@ -198,6 +233,7 @@ export function SingleApartmentForm() {
                   value={formData.street}
                   onChange={(e) => updateFormData('street', e.target.value)}
                   placeholder="Street name"
+                  disabled={readOnlyFields.includes('street')}
                 />
               </div>
               <div className="space-y-2">
@@ -249,7 +285,7 @@ export function SingleApartmentForm() {
                   id="constructionYear"
                   type="number"
                   value={formData.constructionYear || ''}
-                  onChange={(e) => updateFormData('constructionYear', e.target.value ? parseInt(e.target.value) : null)}
+                  onChange={(e) => updateFormData('constructionYear', e.target.value ? parseInt(e.target.value) : 0)}
                   placeholder="1990"
                 />
               </div>
@@ -270,7 +306,7 @@ export function SingleApartmentForm() {
                   id="livingArea"
                   type="number"
                   value={formData.livingArea || ''}
-                  onChange={(e) => updateFormData('livingArea', e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) => updateFormData('livingArea', e.target.value ? parseFloat(e.target.value) : 0)}
                   placeholder="75"
                 />
               </div>
@@ -280,7 +316,7 @@ export function SingleApartmentForm() {
                   id="rooms"
                   type="number"
                   value={formData.rooms || ''}
-                  onChange={(e) => updateFormData('rooms', e.target.value ? parseInt(e.target.value) : null)}
+                  onChange={(e) => updateFormData('rooms', e.target.value ? parseInt(e.target.value) : 0)}
                   placeholder="3"
                 />
               </div>
@@ -308,7 +344,7 @@ export function SingleApartmentForm() {
                     id="currentRent"
                     type="number"
                     value={formData.currentRent || ''}
-                    onChange={(e) => updateFormData('currentRent', e.target.value ? parseFloat(e.target.value) : null)}
+                    onChange={(e) => updateFormData('currentRent', e.target.value ? parseFloat(e.target.value) : 0)}
                     placeholder="1200"
                   />
                 </div>
@@ -333,7 +369,7 @@ export function SingleApartmentForm() {
                   id="purchasePrice"
                   type="number"
                   value={formData.purchasePrice || ''}
-                  onChange={(e) => updateFormData('purchasePrice', e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) => updateFormData('purchasePrice', e.target.value ? parseFloat(e.target.value) : 0)}
                   placeholder="180000"
                 />
               </div>
@@ -343,7 +379,7 @@ export function SingleApartmentForm() {
                   id="sellingPrice"
                   type="number"
                   value={formData.sellingPrice || ''}
-                  onChange={(e) => updateFormData('sellingPrice', e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) => updateFormData('sellingPrice', e.target.value ? parseFloat(e.target.value) : 0)}
                   placeholder="250000"
                 />
               </div>
@@ -356,7 +392,7 @@ export function SingleApartmentForm() {
                   id="renovationBudget"
                   type="number"
                   value={formData.renovationBudget || ''}
-                  onChange={(e) => updateFormData('renovationBudget', e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) => updateFormData('renovationBudget', e.target.value ? parseFloat(e.target.value) : 0)}
                   placeholder="30000"
                 />
               </div>
@@ -366,7 +402,7 @@ export function SingleApartmentForm() {
                   id="furnishingBudget"
                   type="number"
                   value={formData.furnishingBudget || ''}
-                  onChange={(e) => updateFormData('furnishingBudget', e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) => updateFormData('furnishingBudget', e.target.value ? parseFloat(e.target.value) : 0)}
                   placeholder="10000"
                 />
               </div>
@@ -376,24 +412,41 @@ export function SingleApartmentForm() {
 
             <div className="space-y-4">
               <Label>HOA Fees (Hausgeld)</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="hoaFees">Monthly HOA Fees (€)</Label>
-                  <Input
-                    id="hoaFees"
-                    type="number"
-                    value={formData.hoaFees || ''}
-                    onChange={(e) => updateFormData('hoaFees', e.target.value ? parseFloat(e.target.value) : null)}
-                    placeholder="200"
-                  />
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="hoaFeesLandlord">HOA - Landlord (€/month)</Label>
+                    <Input
+                      id="hoaFeesLandlord"
+                      type="number"
+                      value={formData.hoaFeesLandlord || ''}
+                      onChange={(e) => updateFormData('hoaFeesLandlord', e.target.value ? parseFloat(e.target.value) : 0)}
+                      placeholder="140"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="hoaFeesReserve">HOA - Reserve (€/month)</Label>
+                    <Input
+                      id="hoaFeesReserve"
+                      type="number"
+                      value={formData.hoaFeesReserve || ''}
+                      onChange={(e) => updateFormData('hoaFeesReserve', e.target.value ? parseFloat(e.target.value) : 0)}
+                      placeholder="60"
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2 pt-8">
-                  <Checkbox
-                    id="hoaTransferable"
-                    checked={formData.hoaTransferable}
-                    onCheckedChange={(checked) => updateFormData('hoaTransferable', checked)}
-                  />
-                  <Label htmlFor="hoaTransferable">Transferable to tenant</Label>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="hoaTransferable"
+                      checked={formData.hoaTransferable}
+                      onCheckedChange={(checked) => updateFormData('hoaTransferable', checked)}
+                    />
+                    <Label htmlFor="hoaTransferable">Transferable to tenant</Label>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Total HOA: €{((formData.hoaFeesLandlord || 0) + (formData.hoaFeesReserve || 0)).toFixed(2)}/month
+                  </div>
                 </div>
               </div>
             </div>
@@ -410,6 +463,34 @@ export function SingleApartmentForm() {
             )}
           </CardContent>
         </Card>
+
+        {/* Trade Selection */}
+        <TradeSelection
+          selectedTrades={formData.selectedTrades}
+          onTradesChange={(trades) => updateFormData('selectedTrades', trades)}
+          propertyType="single"
+          renovationLevel={formData.renovationLevel}
+        />
+
+        {/* Construction Description */}
+        <ConstructionDescription
+          selectedTrades={formData.selectedTrades}
+          propertyType="single"
+          livingArea={formData.livingArea || undefined}
+          rooms={formData.rooms || undefined}
+          bathrooms={1}
+          description={formData.constructionDescription}
+          onDescriptionChange={(desc) => updateFormData('constructionDescription', desc)}
+        />
+
+        {/* Furniture Calculator */}
+        <FurnitureCalculator
+          rooms={formData.rooms || 2}
+          propertyType="single"
+          isWG={formData.rentalStrategy === 'wg'}
+          totalBudget={formData.furnishingBudget || 0}
+          onBudgetChange={(budget) => updateFormData('furnishingBudget', budget)}
+        />
 
         {/* Sales Partner */}
         <Card>
@@ -473,10 +554,10 @@ export function SingleApartmentForm() {
           strategy={formData.rentalStrategy}
           onStrategyChange={(strategy) => updateFormData('rentalStrategy', strategy)}
           plannedRent={formData.plannedRent}
-          onPlannedRentChange={(rent) => updateFormData('plannedRent', rent)}
+          onPlannedRentChange={(rent) => updateFormData('plannedRent', rent || 0)}
           wgRooms={formData.wgRooms}
-          onWgRoomsChange={(rooms) => updateFormData('wgRooms', rooms)}
-          livingArea={formData.livingArea}
+          onWgRoomsChange={(rooms) => setFormData(prev => ({ ...prev, wgRooms: rooms }))}
+          livingArea={formData.livingArea || 0}
           disabled={formData.vacancyStatus === 'rented'}
         />
 
@@ -573,7 +654,7 @@ export function SingleApartmentForm() {
                     id="floorPlan"
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => updateFormData('floorPlanFile', e.target.files?.[0] || null)}
+                    onChange={(e) => setFormData(prev => ({ ...prev, floorPlanFile: e.target.files?.[0] || null }))}
                     className="hidden"
                   />
                   <label
@@ -606,7 +687,7 @@ export function SingleApartmentForm() {
                     id="energyCert"
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => updateFormData('energyCertificateFile', e.target.files?.[0] || null)}
+                    onChange={(e) => setFormData(prev => ({ ...prev, energyCertificateFile: e.target.files?.[0] || null }))}
                     className="hidden"
                   />
                   <label
@@ -646,13 +727,33 @@ export function SingleApartmentForm() {
 
         {/* Action Buttons */}
         <div className="flex justify-between">
-          <Button variant="outline" onClick={handleSaveDraft}>
-            <Save className="mr-2 h-4 w-4" />
-            Save Draft
-          </Button>
-          <Button onClick={handleSubmit}>
-            <Send className="mr-2 h-4 w-4" />
-            Submit for Pre-Check
+          {!isEditMode && (
+            <Button variant="outline" onClick={handleSaveDraft}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Draft
+            </Button>
+          )}
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSaving}
+            className={isEditMode ? "ml-auto" : ""}
+          >
+            {isSaving ? (
+              <>
+                <Save className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : isEditMode ? (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Changes
+              </>
+            ) : (
+              <>
+                <Send className="mr-2 h-4 w-4" />
+                Submit for Pre-Check
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -662,12 +763,13 @@ export function SingleApartmentForm() {
         <div className="sticky top-4">
           {showTrafficLights ? (
             <LiveTrafficLights
-              livingArea={formData.livingArea}
+              livingArea={formData.livingArea || 0}
               purchasePrice={formData.purchasePrice}
               renovationBudget={formData.renovationBudget}
               furnishingBudget={formData.furnishingBudget}
               monthlyRent={monthlyRent}
-              hoaFees={formData.hoaFees}
+              hoaFeesLandlord={formData.hoaFeesLandlord}
+              hoaFeesReserve={formData.hoaFeesReserve}
               energyClass={formData.energyClass}
               constructionYear={formData.constructionYear}
               city={formData.city}

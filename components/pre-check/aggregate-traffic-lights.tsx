@@ -82,7 +82,8 @@ export function AggregateTrafficLights({ units, buildingData }: AggregateTraffic
       const yieldScore = grossYieldScore * 0.5 + priceScore * 0.25 + renovationScore * 0.25;
 
       // HOA Score (unit-level)
-      const hoaPerSqm = (unit.livingArea && unit.hoaFees) ? unit.hoaFees / unit.livingArea : 0;
+      const totalHoaFees = (unit.hoaFeesLandlord || 0) + (unit.hoaFeesReserve || 0);
+      const hoaPerSqm = (unit.livingArea && totalHoaFees) ? totalHoaFees / unit.livingArea : 0;
       const hoaScore =
         hoaPerSqm === 0 ? 5 :
         hoaPerSqm <= 2 ? 10 :

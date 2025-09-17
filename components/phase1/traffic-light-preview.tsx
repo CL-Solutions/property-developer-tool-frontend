@@ -212,10 +212,10 @@ export function TrafficLightPreview({
               </div>
               {showDetails && (
                 <div className="text-xs mt-1">
-                  {key === 'yield' && score.value !== undefined && (
+                  {key === 'yield' && 'value' in score && score.value !== undefined && (
                     <span>Yield: {score.value.toFixed(2)}%</span>
                   )}
-                  {key === 'hoa' && score.perSqm !== undefined && (
+                  {key === 'hoa' && 'perSqm' in score && score.perSqm !== undefined && (
                     <span>€{score.perSqm.toFixed(2)}/m²</span>
                   )}
                   {key === 'energy' && energyClass && (

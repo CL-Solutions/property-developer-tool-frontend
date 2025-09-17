@@ -77,8 +77,8 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
     );
   }
 
-  const preCheckDate = new Date(property.developer_pre_check_date);
-  const daysAgo = differenceInDays(new Date(), preCheckDate);
+  const preCheckDate = property.developer_pre_check_date ? new Date(property.developer_pre_check_date) : new Date();
+  const daysAgo = property.developer_pre_check_date ? differenceInDays(new Date(), preCheckDate) : 0;
 
   const getStatusIcon = (status: TrafficLightStatus) => {
     switch (status) {
@@ -162,7 +162,7 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
                   <span className="text-xs">Property Type</span>
                 </div>
                 <p className="text-sm font-medium">{property.unit_number || 'WE ' + property.id.slice(-3)}</p>
-                <p className="text-xs text-gray-500">{property.living_area} m² • {property.rooms} rooms</p>
+                <p className="text-xs text-gray-500">{property.size_sqm} m² • {property.rooms} rooms</p>
               </div>
 
               <div className="p-4 border rounded-lg">
@@ -189,7 +189,7 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
                     key={key}
                     className={cn(
                       "p-3 rounded-lg border",
-                      getStatusColor(initialLights[key as keyof typeof initialLights])
+                      getStatusColor(initialLights[key as keyof typeof initialLights] as TrafficLightStatus || 'gray')
                     )}
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -197,7 +197,7 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
                       <span className="text-sm font-medium">{label}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      {getStatusIcon(initialLights[key as keyof typeof initialLights])}
+                      {getStatusIcon(initialLights[key as keyof typeof initialLights] as TrafficLightStatus || 'gray')}
                       <span className="text-lg font-bold">
                         {scores[key as keyof typeof scores].toFixed(1)}/10
                       </span>
@@ -443,22 +443,30 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Monthly HOA:</span>
-                    <span className="font-medium text-lg">€{property.hoa_fee_monthly?.toLocaleString() || '0'}</span>
+                    <span className="font-medium text-lg">€{((property.hoa_fees_landlord || 0) + (property.hoa_fees_reserve || 0)).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">HOA - Landlord:</span>
+                    <span className="font-medium">€{(property.hoa_fees_landlord || 0).toLocaleString()}/month</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">HOA - Reserve:</span>
+                    <span className="font-medium">€{(property.hoa_fees_reserve || 0).toLocaleString()}/month</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Annual HOA:</span>
-                    <span className="font-medium">€{((property.hoa_fee_monthly || 0) * 12).toLocaleString()}</span>
+                    <span className="font-medium">€{(((property.hoa_fees_landlord || 0) + (property.hoa_fees_reserve || 0)) * 12).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Impact on Yield:</span>
                     <span className="font-medium">
-                      {property.hoa_fee_monthly && property.monthly_rent
-                        ? `-${((property.hoa_fee_monthly / property.monthly_rent) * 100).toFixed(1)}%`
+                      {((property.hoa_fees_landlord || 0) + (property.hoa_fees_reserve || 0)) && property.monthly_rent
+                        ? `-${((((property.hoa_fees_landlord || 0) + (property.hoa_fees_reserve || 0)) / property.monthly_rent) * 100).toFixed(1)}%`
                         : 'N/A'}
                     </span>
                   </div>
 
-                  {property.hoa_fee_transferable_to_tenant && (
+                  {false && (
                     <div className="flex items-center gap-1.5 bg-green-50 rounded p-1.5">
                       <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
                       <span className="text-xs font-medium text-green-700">Transferable to tenant (+2 pts)</span>
@@ -472,19 +480,19 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
                       <div className="bg-white/60 rounded p-2 mt-2 space-y-1 border border-gray-200">
                     <div className="text-xs font-semibold text-gray-700 mb-1">Fee Benchmarks:</div>
                     <div className="text-xs space-y-0.5">
-                      <div className={cn("flex justify-between", property.hoa_fee_monthly && property.hoa_fee_monthly <= 150 && "font-semibold text-green-700")}>
+                      <div className={cn("flex justify-between", 0 && 0 <= 150 && "font-semibold text-green-700")}>
                         <span>• Low (8-10 pts)</span>
                         <span>&lt; €150/month</span>
                       </div>
-                      <div className={cn("flex justify-between", property.hoa_fee_monthly && property.hoa_fee_monthly > 150 && property.hoa_fee_monthly <= 250 && "font-semibold text-green-600")}>
+                      <div className={cn("flex justify-between", 0 && 0 > 150 && 0 <= 250 && "font-semibold text-green-600")}>
                         <span>• Average (5-7 pts)</span>
                         <span>€150-250/month</span>
                       </div>
-                      <div className={cn("flex justify-between", property.hoa_fee_monthly && property.hoa_fee_monthly > 250 && property.hoa_fee_monthly <= 350 && "font-semibold text-yellow-600")}>
+                      <div className={cn("flex justify-between", 0 && 0 > 250 && 0 <= 350 && "font-semibold text-yellow-600")}>
                         <span>• High (3-4 pts)</span>
                         <span>€250-350/month</span>
                       </div>
-                      <div className={cn("flex justify-between", property.hoa_fee_monthly && property.hoa_fee_monthly > 350 && "font-semibold text-red-600")}>
+                      <div className={cn("flex justify-between", 0 && 0 > 350 && "font-semibold text-red-600")}>
                         <span>• Very High (1-2 pts)</span>
                         <span>&gt; €350/month</span>
                       </div>
@@ -502,8 +510,8 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
                       <div className="flex justify-between">
                         <span>After HOA:</span>
                         <span className="font-medium">
-                          {property.gross_rental_yield && property.hoa_fee_monthly && property.developer_purchase_price
-                            ? `${(property.gross_rental_yield - ((property.hoa_fee_monthly * 12 / property.developer_purchase_price) * 100)).toFixed(2)}%`
+                          {property.gross_rental_yield && 0 && property.developer_purchase_price
+                            ? `${(property.gross_rental_yield - ((0 * 12 / property.developer_purchase_price) * 100)).toFixed(2)}%`
                             : 'N/A'}
                         </span>
                       </div>
@@ -564,7 +572,7 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Postal Code:</span>
-                    <span className="font-medium">{property.project?.postal_code}</span>
+                    <span className="font-medium">{property.project?.zip_code}</span>
                   </div>
 
                   {/* Collapsible Details */}

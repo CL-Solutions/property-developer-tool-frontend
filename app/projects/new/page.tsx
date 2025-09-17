@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { BuildingType } from '@/lib/types';
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -28,7 +29,12 @@ import {
 
 export default function NewProjectPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('edit');
+  const isEditMode = !!editId;
+  
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(isEditMode);
   const [salesPartner, setSalesPartner] = useState<'blackvesto' | 'internal'>('blackvesto');
 
   const [formData, setFormData] = useState({
@@ -55,7 +61,59 @@ export default function NewProjectPage() {
     propertyDeveloper: 'CL Immobilien GmbH'
   });
 
-  const handleInputChange = (field: string, value: any) => {
+  // Load existing project data when in edit mode
+  useEffect(() => {
+    const loadProjectData = async () => {
+      if (isEditMode && editId) {
+        setDataLoading(true);
+        try {
+          // In a real app, this would be an API call to get the project
+          // For now, we'll decode the project ID to get the name
+          const decodedProjectId = decodeURIComponent(editId);
+          
+          // Mock loading existing project data
+          // You would normally fetch this from your API
+          const projectData = await MockDataService.getProject(editId);
+          
+          if (projectData) {
+            setFormData({
+              name: projectData.name || '',
+              street: projectData.street || '',
+              houseNumber: projectData.house_number || '',
+              city: projectData.city || '',
+              district: projectData.district || '',
+              state: projectData.state || 'Bayern',
+              zipCode: projectData.zip_code || '',
+              buildingType: projectData.building_type || 'apartment_building',
+              constructionYear: projectData.construction_year?.toString() || '',
+              renovationYear: projectData.renovation_year?.toString() || new Date().getFullYear().toString(),
+              totalFloors: projectData.total_floors?.toString() || '',
+              totalUnits: projectData.total_units?.toString() || '',
+              hasElevator: projectData.has_elevator ?? false,
+              hasParking: projectData.has_parking ?? true,
+              hasBasement: projectData.has_basement ?? true,
+              hasGarden: projectData.has_garden ?? false,
+              energyCertificateType: projectData.energy_certificate_type || 'consumption',
+              energyConsumption: projectData.energy_consumption?.toString() || '',
+              energyClass: projectData.energy_class || '',
+              heatingType: projectData.heating_type || 'Zentralheizung',
+              propertyDeveloper: projectData.property_developer || 'CL Immobilien GmbH'
+            });
+            setSalesPartner((projectData as any).developer_sales_partner || 'blackvesto');
+          }
+        } catch (error) {
+          console.error('Failed to load project data:', error);
+          toast.error('Failed to load project data');
+        } finally {
+          setDataLoading(false);
+        }
+      }
+    };
+
+    loadProjectData();
+  }, [isEditMode, editId]);
+
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -83,7 +141,7 @@ export default function NewProjectPage() {
         district: formData.district,
         state: formData.state,
         zip_code: formData.zipCode,
-        building_type: formData.buildingType,
+        building_type: formData.buildingType as BuildingType,
         construction_year: formData.constructionYear ? parseInt(formData.constructionYear) : undefined,
         renovation_year: formData.renovationYear ? parseInt(formData.renovationYear) : undefined,
         total_floors: formData.totalFloors ? parseInt(formData.totalFloors) : undefined,
@@ -102,14 +160,19 @@ export default function NewProjectPage() {
         country: 'Germany',
       };
 
-      // Create the project
-      const newProject = await MockDataService.createProject(projectData);
-
-      // Create project ID from name for navigation
-      const projectId = `project-${formData.name.toLowerCase()}`;
-
-      toast.success('Project created successfully!');
-      router.push(`/projects/${projectId}`);
+      if (isEditMode && editId) {
+        // Update existing project
+        await MockDataService.updateProject(editId, projectData);
+        toast.success('Project updated successfully!');
+        router.push(`/projects/${editId}`);
+      } else {
+        // Create the project
+        const newProject = await MockDataService.createProject(projectData);
+        // Create project ID from name for navigation
+        const projectId = `project-${formData.name.toLowerCase()}`;
+        toast.success('Project created successfully!');
+        router.push(`/projects/${projectId}`);
+      }
     } catch (error) {
       toast.error('Failed to create project');
       console.error('Error creating project:', error);
@@ -142,17 +205,17 @@ export default function NewProjectPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building className="h-5 w-5" />
-                    Create New Project
+                    {isEditMode ? 'Edit Project' : 'Create New Project'}
                   </CardTitle>
                   <CardDescription>
-                    Add a new development project to your portfolio
+                    {isEditMode ? 'Update project information' : 'Add a new development project to your portfolio'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Sales Partner Selection */}
                   <div className="space-y-3">
                     <Label>Sales Partner</Label>
-                    <RadioGroup value={salesPartner} onValueChange={(value: any) => setSalesPartner(value)}>
+                    <RadioGroup value={salesPartner} onValueChange={(value) => setSalesPartner(value as 'blackvesto' | 'internal')}>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="blackvesto" id="blackvesto" />
                         <Label htmlFor="blackvesto" className="font-normal cursor-pointer">
@@ -183,14 +246,14 @@ export default function NewProjectPage() {
                         <Input
                           id="name"
                           placeholder="e.g., Gotenstraße 69"
-                          value={formData.name}
+                          value={formData.name || ''}
                           onChange={(e) => handleInputChange('name', e.target.value)}
                           required
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="buildingType">Building Type</Label>
-                        <Select value={formData.buildingType} onValueChange={(value) => handleInputChange('buildingType', value)}>
+                        <Select value={formData.buildingType || 'apartment_building'} onValueChange={(value) => handleInputChange('buildingType', value)}>
                           <SelectTrigger id="buildingType">
                             <SelectValue />
                           </SelectTrigger>
@@ -217,7 +280,7 @@ export default function NewProjectPage() {
                         <Input
                           id="street"
                           placeholder="Street name"
-                          value={formData.street}
+                          value={formData.street || ''}
                           onChange={(e) => handleInputChange('street', e.target.value)}
                           required
                         />
@@ -227,7 +290,7 @@ export default function NewProjectPage() {
                         <Input
                           id="houseNumber"
                           placeholder="69"
-                          value={formData.houseNumber}
+                          value={formData.houseNumber || ''}
                           onChange={(e) => handleInputChange('houseNumber', e.target.value)}
                           required
                         />
@@ -239,7 +302,7 @@ export default function NewProjectPage() {
                         <Input
                           id="zipCode"
                           placeholder="80336"
-                          value={formData.zipCode}
+                          value={formData.zipCode || ''}
                           onChange={(e) => handleInputChange('zipCode', e.target.value)}
                           required
                         />
@@ -249,7 +312,7 @@ export default function NewProjectPage() {
                         <Input
                           id="city"
                           placeholder="Munich"
-                          value={formData.city}
+                          value={formData.city || ''}
                           onChange={(e) => handleInputChange('city', e.target.value)}
                           required
                         />
@@ -259,7 +322,7 @@ export default function NewProjectPage() {
                         <Input
                           id="district"
                           placeholder="Schwanthalerhöhe"
-                          value={formData.district}
+                          value={formData.district || ''}
                           onChange={(e) => handleInputChange('district', e.target.value)}
                         />
                       </div>
@@ -276,7 +339,7 @@ export default function NewProjectPage() {
                           id="constructionYear"
                           type="number"
                           placeholder="1965"
-                          value={formData.constructionYear}
+                          value={formData.constructionYear || ''}
                           onChange={(e) => handleInputChange('constructionYear', e.target.value)}
                         />
                       </div>
@@ -286,7 +349,7 @@ export default function NewProjectPage() {
                           id="renovationYear"
                           type="number"
                           placeholder="2024"
-                          value={formData.renovationYear}
+                          value={formData.renovationYear || ''}
                           onChange={(e) => handleInputChange('renovationYear', e.target.value)}
                         />
                       </div>
@@ -296,7 +359,7 @@ export default function NewProjectPage() {
                           id="totalFloors"
                           type="number"
                           placeholder="5"
-                          value={formData.totalFloors}
+                          value={formData.totalFloors || ''}
                           onChange={(e) => handleInputChange('totalFloors', e.target.value)}
                         />
                       </div>
@@ -306,7 +369,7 @@ export default function NewProjectPage() {
                           id="totalUnits"
                           type="number"
                           placeholder="12"
-                          value={formData.totalUnits}
+                          value={formData.totalUnits || ''}
                           onChange={(e) => handleInputChange('totalUnits', e.target.value)}
                         />
                       </div>
@@ -357,7 +420,7 @@ export default function NewProjectPage() {
                     <div className="grid gap-4 md:grid-cols-3">
                       <div className="space-y-2">
                         <Label htmlFor="energyCertificateType">Certificate Type</Label>
-                        <Select value={formData.energyCertificateType} onValueChange={(value) => handleInputChange('energyCertificateType', value)}>
+                        <Select value={formData.energyCertificateType || 'consumption'} onValueChange={(value) => handleInputChange('energyCertificateType', value)}>
                           <SelectTrigger id="energyCertificateType">
                             <SelectValue />
                           </SelectTrigger>
@@ -373,13 +436,13 @@ export default function NewProjectPage() {
                           id="energyConsumption"
                           type="number"
                           placeholder="125.5"
-                          value={formData.energyConsumption}
+                          value={formData.energyConsumption || ''}
                           onChange={(e) => handleInputChange('energyConsumption', e.target.value)}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="energyClass">Energy Class</Label>
-                        <Select value={formData.energyClass} onValueChange={(value) => handleInputChange('energyClass', value)}>
+                        <Select value={formData.energyClass || ''} onValueChange={(value) => handleInputChange('energyClass', value)}>
                           <SelectTrigger id="energyClass">
                             <SelectValue placeholder="Select class" />
                           </SelectTrigger>

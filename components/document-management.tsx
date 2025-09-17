@@ -235,7 +235,7 @@ export function DocumentManagement({
             <Badge variant="outline">Shared across all units</Badge>
           </div>
           <CardDescription>
-            Documents that apply to the entire building - {property?.project?.title || 'Project'}
+            Documents that apply to the entire building - {property?.project?.name || 'Project'}
           </CardDescription>
         </CardHeader>
         {expandedSections.project && (
