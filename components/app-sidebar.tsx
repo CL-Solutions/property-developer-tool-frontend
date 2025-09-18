@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   AlertTriangle,
+  BedDouble,
   BuildingIcon,
   ClipboardListIcon,
   DatabaseIcon,
@@ -49,6 +50,11 @@ const data = {
       title: "Document Requests",
       url: "/document-requests",
       icon: AlertTriangle,
+    },
+    {
+      title: "Open Rooms",
+      url: "/open-rooms",
+      icon: BedDouble,
     },
     {
       title: "Analytics",

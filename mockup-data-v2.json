@@ -555,6 +555,130 @@
       "developer_construction_visible_blackvesto": false,
       "created_at": "2024-01-10T10:30:00Z",
       "updated_at": "2024-03-20T14:35:00Z"
+    },
+    {
+      "id": "prop-phase6-handover",
+      "tenant_id": "550e8400-e29b-41d4-a716-446655440001",
+      "project_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "comment": "Property in Phase 6 - Handover & Rental Management",
+      "unit_number": "WE12",
+      "floor": "4. OG",
+      "city": "Munich",
+      "state": "Bayern",
+      "zip_code": "80336",
+      "property_type": "apartment",
+      "size_sqm": 78.5,
+      "rooms": 3,
+      "bathrooms": 1,
+      "balcony": "west",
+      "selling_price": 420000,
+      "monthly_rent": 1650,
+      "additional_costs": 220,
+      "management_fee": 40,
+      "hoa_fees_landlord": 140,
+      "hoa_fees_tenant": 110,
+      "hoa_fees_reserve": 75,
+      "total_purchase_price": 420000,
+      "total_monthly_rent": 1650,
+      "gross_rental_yield": 4.71,
+      "energy_class": "D",
+      "heating_type": "Zentralheizung",
+      "has_cellar": true,
+      "active": 8,
+      "visibility": 1,
+      "comment_developer": "=== PHASE 6: HANDOVER & RENTAL ===",
+      "developer_phase": 6,
+      "developer_phase_status": "active",
+      "developer_sales_partner": "blackvesto",
+      "developer_sales_partner_id": "bv-partner-001",
+      "developer_purchase_price": 340000,
+      "developer_renovation_budget": 55000,
+      "developer_furnishing_budget": 10000,
+      "developer_rental_strategy": "wg",
+      "has_erstvermietungsgarantie": false,
+      "developer_wg_room_pricing": [
+        {
+          "room": "Room 1",
+          "size": 28,
+          "price": 650
+        },
+        {
+          "room": "Room 2",
+          "size": 25,
+          "price": 600
+        },
+        {
+          "room": "Room 3",
+          "size": 25.5,
+          "price": 600
+        }
+      ],
+      "developer_traffic_light_energy": "yellow",
+      "developer_traffic_light_yield": "green",
+      "developer_traffic_light_hoa": "green",
+      "developer_traffic_light_location": "green",
+      "developer_pre_check_result": "approved",
+      "developer_pre_check_date": "2023-11-15T10:00:00Z",
+      "developer_purchase_decision": "proceed",
+      "developer_purchase_decision_date": "2023-11-20T14:00:00Z",
+      "developer_notary_appointment_date": "2024-01-10T14:00:00Z",
+      "developer_sale_completed_date": "2024-01-15T16:00:00Z",
+      "developer_buyer_name": "Thomas Schmidt",
+      "developer_buyer_financing_status": "confirmed",
+      "developer_construction_status": "completed",
+      "developer_construction_progress": 100,
+      "developer_construction_completion_date": "2024-03-01T12:00:00Z",
+      "developer_construction_visible_blackvesto": true,
+      "developer_handover_scheduled_date": "2024-03-25T10:00:00Z",
+      "developer_handover_status": "scheduled",
+      "developer_meter_readings": {
+        "electricity": {
+          "meter_number": "EL-2024-012",
+          "previous_reading": 45678,
+          "current_reading": null,
+          "unit": "kWh"
+        },
+        "gas": {
+          "meter_number": "GAS-2024-012",
+          "previous_reading": 12345,
+          "current_reading": null,
+          "unit": "m³"
+        },
+        "water": {
+          "meter_number": "H2O-2024-012",
+          "previous_reading": 567,
+          "current_reading": null,
+          "unit": "m³"
+        }
+      },
+      "developer_nebenkosten_settlement": {
+        "period_from": "2024-01-15",
+        "period_to": "2024-03-25",
+        "prepaid_amount": 440,
+        "actual_costs": null,
+        "settlement_amount": null
+      },
+      "developer_tenant_info": {
+        "name": "Maria Weber",
+        "email": "maria.weber@email.de",
+        "phone": "+49 170 1234567",
+        "move_in_date": "2024-04-01",
+        "contract_start": "2024-04-01",
+        "contract_end": "2025-03-31",
+        "monthly_rent": 1650,
+        "deposit": 4950,
+        "sepa_mandate": false
+      },
+      "developer_handover_checklist": {
+        "keys_handed": false,
+        "protocol_signed": false,
+        "deposit_received": false,
+        "first_rent_received": false,
+        "meters_read": false,
+        "damages_documented": false
+      },
+      "created_at": "2023-11-10T10:00:00Z",
+      "updated_at": "2024-03-20T16:00:00Z"
     }
   ],
   "comment_tables": "=== DEVELOPER TOOL SPECIFIC TABLES ===",

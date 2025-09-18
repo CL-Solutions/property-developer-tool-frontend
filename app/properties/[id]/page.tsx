@@ -11,7 +11,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { EnhancedTrafficLights } from '@/components/enhanced-traffic-lights';
 import { PhaseTimeline, PhaseIndicator } from '@/components/phase-indicator';
 import { DocumentManagement } from '@/components/document-management';
+import { ConstructionTracking } from '@/components/construction-tracking';
 import { PreCheckSummary } from '@/components/phase1/pre-check-summary';
+import { HandoverTab } from '@/components/handover-tab';
 import { MockDataService } from '@/lib/mock-data';
 import { Property, DeveloperConstructionMilestone, DeveloperHandoverProtocol, DeveloperDocumentRequest } from '@/lib/types';
 import {
@@ -51,6 +53,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { PropertyGanttChart } from "@/components/property-gantt-chart"
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -238,6 +241,7 @@ export default function PropertyDetailPage() {
             <TabsTrigger value="construction">Construction</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="handover">Handover</TabsTrigger>
+            <TabsTrigger value="timeline">Timeline</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
@@ -748,42 +752,14 @@ export default function PropertyDetailPage() {
           </TabsContent>
 
           <TabsContent value="construction" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Construction Progress</CardTitle>
-                <CardDescription>Overall progress: {totalConstructionProgress}%</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Progress value={totalConstructionProgress} className="mb-6" />
-
-                <div className="space-y-4">
-                  {milestones.map((milestone) => (
-                    <div key={milestone.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">{milestone.milestone_name}</h4>
-                        <Badge variant={milestone.status === 'completed' ? 'default' : 'secondary'}>
-                          {milestone.status}
-                        </Badge>
-                      </div>
-                      <Progress value={milestone.progress_percentage} className="mb-2" />
-                      <p className="text-sm text-gray-600">Progress: {milestone.progress_percentage}%</p>
-                      {milestone.completed_at && (
-                        <p className="text-sm text-gray-600">
-                          Completed: {new Date(milestone.completed_at).toLocaleDateString()}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {milestones.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <Construction className="h-12 w-12 mx-auto mb-3" />
-                    <p>No construction milestones available</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <ConstructionTracking
+              propertyId={propertyId}
+              currentPhase={property.developer_phase}
+              salesPartner={property.developer_sales_partner}
+              onVisibilityToggle={(visible) => {
+                console.log('Construction visibility changed:', visible);
+              }}
+            />
           </TabsContent>
 
           <TabsContent value="documents" className="space-y-4">
@@ -806,57 +782,17 @@ export default function PropertyDetailPage() {
           </TabsContent>
 
           <TabsContent value="handover" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Handover Protocols</CardTitle>
-                <CardDescription>Property handover documentation</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {handoverProtocols.length > 0 ? (
-                  <div className="space-y-4">
-                    {handoverProtocols.map((protocol) => (
-                      <div key={protocol.id} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">
-                            {protocol.handover_type === 'buyer' ? 'Buyer Handover' : 'Tenant Handover'}
-                          </h4>
-                          <Badge variant={protocol.protocol_signed ? 'default' : 'secondary'}>
-                            {protocol.protocol_signed ? 'Signed' : 'Pending'}
-                          </Badge>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                          <div>
-                            <p className="text-sm text-gray-500">Handover Date</p>
-                            <p>{new Date(protocol.handover_date).toLocaleDateString()}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Recipient</p>
-                            <p>{protocol.buyer_name || 'N/A'}</p>
-                          </div>
-                          {protocol.electricity_meter_reading && (
-                            <div>
-                              <p className="text-sm text-gray-500">Electricity Meter</p>
-                              <p>{protocol.electricity_meter_reading}</p>
-                            </div>
-                          )}
-                          {protocol.gas_meter_reading && (
-                            <div>
-                              <p className="text-sm text-gray-500">Gas Meter</p>
-                              <p>{protocol.gas_meter_reading}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <HandHeart className="h-12 w-12 mx-auto mb-3" />
-                    <p>No handover protocols available</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <HandoverTab property={property} />
+          </TabsContent>
+
+          <TabsContent value="timeline" className="space-y-4">
+            <PropertyGanttChart 
+              propertyId={propertyId}
+              currentPhase={property.developer_phase}
+              purchaseDate={property.developer_purchase_date ? new Date(property.developer_purchase_date) : new Date()}
+              projectName={property.project?.name}
+              unitNumber={property.unit_number}
+            />
           </TabsContent>
         </Tabs>
       </div>

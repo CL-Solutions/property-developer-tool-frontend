@@ -184,7 +184,7 @@ export function FurnitureCalculator({
 
   useEffect(() => {
     onBudgetChange(total);
-  }, [total, onBudgetChange]);
+  }, [total]); // Removed onBudgetChange from dependencies to prevent infinite loop
 
   return (
     <Card>

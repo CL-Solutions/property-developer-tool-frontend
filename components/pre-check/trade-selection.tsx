@@ -158,7 +158,7 @@ export function TradeSelection({
       setLocalSelected(autoSelected);
       onTradesChange(autoSelected);
     }
-  }, [renovationLevel, selectedTrades.length, onTradesChange]);
+  }, [renovationLevel]); // Removed onTradesChange from dependencies to prevent infinite loop
 
   const handleTradeToggle = (tradeId: string) => {
     const newSelected = localSelected.includes(tradeId)

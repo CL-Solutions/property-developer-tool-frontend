@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppSidebar } from "@/components/app-sidebar"
+import { ProjectGanttChart } from '@/components/project-gantt-chart';
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { PropertyCard, PropertyCardSkeleton } from '@/components/property-card';
@@ -218,6 +219,10 @@ export default function ProjectDetailPage() {
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </TabsTrigger>
+                  <TabsTrigger value="timeline">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Timeline
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="properties" className="space-y-4">
@@ -292,6 +297,13 @@ export default function ProjectDetailPage() {
                       </div>
                     </CardContent>
                   </Card>
+                </TabsContent>
+
+                <TabsContent value="timeline" className="space-y-4">
+                  <ProjectGanttChart 
+                    projectId={projectId}
+                    projectName={projectName}
+                  />
                 </TabsContent>
               </Tabs>
             </>

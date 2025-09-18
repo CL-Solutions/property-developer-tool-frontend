@@ -13,15 +13,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { LiveTrafficLights } from './live-traffic-lights';
 import { RentalStrategySelector } from './rental-strategy-selector';
-import { TradeSelection } from './trade-selection';
-import { ConstructionDescription } from './construction-description';
-import { FurnitureCalculator } from './furniture-calculator';
 import { MockDataService } from '@/lib/mock-data';
 import {
   MapPin,
   Building,
   Euro,
-  Calculator,
   FileText,
   Zap,
   AlertCircle,
@@ -58,7 +54,6 @@ interface FormData {
   purchasePrice: number | null;
   sellingPrice: number | null; // Abgabepreis
   renovationBudget: number | null;
-  furnishingBudget: number | null;
 
   // Sales Partner
   salesPartner: 'internal' | 'blackvesto';
@@ -82,10 +77,7 @@ interface FormData {
   floorPlanFile: File | null;
   energyCertificateFile: File | null;
 
-  // New fields for Phase 2 features
-  selectedTrades: string[];
   renovationLevel: 'light' | 'standard' | 'complete';
-  constructionDescription: string;
 }
 
 // Mock BlackVesto partners
@@ -110,7 +102,6 @@ export function SingleApartmentForm({
   onSave,
   isEditMode = false,
   isSaving = false,
-  isUnitInMFH = false,
   readOnlyFields = []
 }: SingleApartmentFormProps = {}) {
   const router = useRouter();
@@ -131,7 +122,6 @@ export function SingleApartmentForm({
     purchasePrice: initialData?.purchasePrice || 0,
     sellingPrice: initialData?.sellingPrice || 0,
     renovationBudget: initialData?.renovationBudget || 0,
-    furnishingBudget: initialData?.furnishingBudget || 0,
     salesPartner: initialData?.salesPartner || 'blackvesto',
     blackvestoPartner: initialData?.blackvestoPartner || '',
     rentalStrategy: initialData?.rentalStrategy || 'standard',
@@ -144,9 +134,7 @@ export function SingleApartmentForm({
     encumbrances: initialData?.encumbrances || '',
     floorPlanFile: initialData?.floorPlanFile || null,
     energyCertificateFile: initialData?.energyCertificateFile || null,
-    selectedTrades: initialData?.selectedTrades || [],
-    renovationLevel: initialData?.renovationLevel || 'standard',
-    constructionDescription: initialData?.constructionDescription || ''
+    renovationLevel: initialData?.renovationLevel || 'standard'
   });
 
   const [showTrafficLights, setShowTrafficLights] = useState(false);
@@ -182,7 +170,10 @@ export function SingleApartmentForm({
         await onSave(formData);
       } else {
         // Otherwise, create new property (create mode)
-        const newProperty = await MockDataService.createPropertyFromPreCheck(formData);
+        const newProperty = await MockDataService.createPropertyFromPreCheck({
+          ...formData,
+          furnishingBudget: 0
+        });
         // Navigate to the property detail page
         router.push(`/properties/${newProperty.id}`);
       }
@@ -199,8 +190,7 @@ export function SingleApartmentForm({
 
   // Calculate total investment
   const totalInvestment = (formData.purchasePrice || 0) +
-                          (formData.renovationBudget || 0) +
-                          (formData.furnishingBudget || 0);
+                          (formData.renovationBudget || 0);
 
   // Calculate WG total rent if applicable
   const totalWgRent = formData.wgRooms?.reduce((sum, room) => sum + (room.rent || 0), 0) || 0;
@@ -396,16 +386,6 @@ export function SingleApartmentForm({
                   placeholder="30000"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="furnishingBudget">Furnishing Budget (€)</Label>
-                <Input
-                  id="furnishingBudget"
-                  type="number"
-                  value={formData.furnishingBudget || ''}
-                  onChange={(e) => updateFormData('furnishingBudget', e.target.value ? parseFloat(e.target.value) : 0)}
-                  placeholder="10000"
-                />
-              </div>
             </div>
 
             <Separator />
@@ -463,34 +443,6 @@ export function SingleApartmentForm({
             )}
           </CardContent>
         </Card>
-
-        {/* Trade Selection */}
-        <TradeSelection
-          selectedTrades={formData.selectedTrades}
-          onTradesChange={(trades) => updateFormData('selectedTrades', trades)}
-          propertyType="single"
-          renovationLevel={formData.renovationLevel}
-        />
-
-        {/* Construction Description */}
-        <ConstructionDescription
-          selectedTrades={formData.selectedTrades}
-          propertyType="single"
-          livingArea={formData.livingArea || undefined}
-          rooms={formData.rooms || undefined}
-          bathrooms={1}
-          description={formData.constructionDescription}
-          onDescriptionChange={(desc) => updateFormData('constructionDescription', desc)}
-        />
-
-        {/* Furniture Calculator */}
-        <FurnitureCalculator
-          rooms={formData.rooms || 2}
-          propertyType="single"
-          isWG={formData.rentalStrategy === 'wg'}
-          totalBudget={formData.furnishingBudget || 0}
-          onBudgetChange={(budget) => updateFormData('furnishingBudget', budget)}
-        />
 
         {/* Sales Partner */}
         <Card>
@@ -766,7 +718,7 @@ export function SingleApartmentForm({
               livingArea={formData.livingArea || 0}
               purchasePrice={formData.purchasePrice}
               renovationBudget={formData.renovationBudget}
-              furnishingBudget={formData.furnishingBudget}
+              furnishingBudget={0}
               monthlyRent={monthlyRent}
               hoaFeesLandlord={formData.hoaFeesLandlord}
               hoaFeesReserve={formData.hoaFeesReserve}

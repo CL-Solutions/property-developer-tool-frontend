@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from 'react';
+import { DocumentPreview } from './document-preview';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -105,6 +106,16 @@ export function DocumentManagement({
     afterSale: true,
     requests: true
   });
+  const [previewDocument, setPreviewDocument] = useState<{
+    id: string;
+    name: string;
+    fileName: string;
+    type: 'pdf' | 'image' | 'other';
+    size: string;
+    uploadedAt: string;
+    uploadedBy: string;
+    pages?: number;
+  } | null>(null);
   const requestsSectionRef = useRef<HTMLDivElement>(null);
 
   // Mock data for document status - in real app would come from API
@@ -270,8 +281,22 @@ export function DocumentManagement({
                       Phase {doc.phase}
                     </Badge>
                     {status === 'uploaded' ? (
-                      <Button size="sm" variant="ghost">
-                        <Download className="h-3 w-3" />
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => setPreviewDocument({
+                          id: doc.key,
+                          name: doc.name,
+                          fileName: `${doc.key}.pdf`,
+                          type: doc.key === 'energy_certificate' ? 'pdf' : 'pdf',
+                          size: '2.4 MB',
+                          uploadedAt: '2 days ago',
+                          uploadedBy: 'Anna Schmidt',
+                          pages: 8
+                        })}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
                       </Button>
                     ) : status !== 'optional' && (
                       <Button size="sm" variant="outline" disabled>
@@ -356,7 +381,20 @@ export function DocumentManagement({
                     )}
                     {status === 'uploaded' ? (
                       <div className="flex gap-1">
-                        <Button size="sm" variant="ghost">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => setPreviewDocument({
+                            id: doc.key,
+                            name: doc.name,
+                            fileName: `${doc.key}_${property?.unit_number || propertyId.slice(-3)}.pdf`,
+                            type: doc.key === 'unit_photos' ? 'image' : 'pdf',
+                            size: '2.3 MB',
+                            uploadedAt: '2024-01-16',
+                            uploadedBy: 'Max Mustermann',
+                            pages: 5
+                          })}
+                        >
                           <Eye className="h-3 w-3" />
                         </Button>
                         <Button size="sm" variant="ghost">
@@ -566,6 +604,15 @@ export function DocumentManagement({
           </div>
         </CardContent>
       </Card>
+
+      {/* Document Preview Dialog */}
+      {previewDocument && (
+        <DocumentPreview
+          isOpen={!!previewDocument}
+          onClose={() => setPreviewDocument(null)}
+          document={previewDocument}
+        />
+      )}
     </div>
   );
 }

@@ -99,7 +99,7 @@ export default function NewProjectPage() {
               heatingType: projectData.heating_type || 'Zentralheizung',
               propertyDeveloper: projectData.property_developer || 'CL Immobilien GmbH'
             });
-            setSalesPartner((projectData as any).developer_sales_partner || 'blackvesto');
+            setSalesPartner('blackvesto'); // Default for new projects
           }
         } catch (error) {
           console.error('Failed to load project data:', error);
