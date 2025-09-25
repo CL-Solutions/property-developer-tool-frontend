@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ConstructionDescription } from './pre-check/construction-description';
 import { FurnitureCalculator } from './pre-check/furniture-calculator';
@@ -111,6 +112,7 @@ export function ConstructionTracking({
   salesPartner = 'blackvesto',
   onVisibilityToggle
 }: ConstructionTrackingProps) {
+  const t = useTranslations();
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
   const [showMilestoneDetail, setShowMilestoneDetail] = useState(false);
@@ -131,18 +133,18 @@ export function ConstructionTracking({
 
   // Predefined milestone templates
   const MILESTONE_TEMPLATES = [
-    { id: 'demo', name: 'Demolition & Preparation', duration: 7, trades: ['demolition'], description: 'Remove old fixtures, prepare surfaces for renovation' },
-    { id: 'electric', name: 'Electrical & Plumbing', duration: 14, trades: ['electrical', 'plumbing'], description: 'Update electrical wiring and plumbing systems' },
-    { id: 'bathroom', name: 'Bathroom Renovation', duration: 14, trades: ['plumbing', 'tiling'], description: 'Complete bathroom remodel with new fixtures' },
-    { id: 'kitchen', name: 'Kitchen Installation', duration: 14, trades: ['carpentry', 'electrical', 'plumbing'], description: 'Install new kitchen cabinets and appliances' },
-    { id: 'walls', name: 'Wall Repairs & Insulation', duration: 7, trades: ['construction'], description: 'Repair walls and improve insulation' },
-    { id: 'windows', name: 'Window Replacement', duration: 5, trades: ['construction'], description: 'Replace old windows with energy-efficient models' },
-    { id: 'painting', name: 'Painting & Decoration', duration: 10, trades: ['painting'], description: 'Paint all walls and decorative work' },
-    { id: 'flooring', name: 'Flooring Installation', duration: 7, trades: ['flooring'], description: 'Install new flooring throughout property' },
-    { id: 'heating', name: 'Heating System', duration: 5, trades: ['plumbing', 'electrical'], description: 'Install or update heating system' },
-    { id: 'furnishing', name: 'Furnishing & Staging', duration: 5, trades: ['furnishing'], description: 'Furnish property for viewing or rental' },
-    { id: 'exterior', name: 'Exterior Work', duration: 10, trades: ['construction', 'painting'], description: 'Facade repairs and exterior improvements' },
-    { id: 'final', name: 'Final Touches & Cleaning', duration: 3, trades: ['cleaning'], description: 'Final details and deep cleaning' }
+    { id: 'demo', name: t('properties.demolitionPreparation'), duration: 7, trades: ['demolition'], description: t('properties.demolitionPreparationDesc') },
+    { id: 'electric', name: t('properties.electricalPlumbing'), duration: 14, trades: ['electrical', 'plumbing'], description: t('properties.electricalPlumbingDesc') },
+    { id: 'bathroom', name: t('properties.bathroomRenovation'), duration: 14, trades: ['plumbing', 'tiling'], description: t('properties.bathroomRenovationDesc') },
+    { id: 'kitchen', name: t('properties.kitchenInstallation'), duration: 14, trades: ['carpentry', 'electrical', 'plumbing'], description: t('properties.kitchenInstallationDesc') },
+    { id: 'walls', name: t('properties.wallRepairsInsulation'), duration: 7, trades: ['construction'], description: t('properties.wallRepairsInsulationDesc') },
+    { id: 'windows', name: t('properties.windowReplacement'), duration: 5, trades: ['construction'], description: t('properties.windowReplacementDesc') },
+    { id: 'painting', name: t('properties.paintingDecoration'), duration: 10, trades: ['painting'], description: t('properties.paintingDecorationDesc') },
+    { id: 'flooring', name: t('properties.flooringInstallation'), duration: 7, trades: ['flooring'], description: t('properties.flooringInstallationDesc') },
+    { id: 'heating', name: t('properties.heatingSystem'), duration: 5, trades: ['plumbing', 'electrical'], description: t('properties.heatingSystemDesc') },
+    { id: 'furnishing', name: t('properties.furnishingStaging'), duration: 5, trades: ['furnishing'], description: t('properties.furnishingStagingDesc') },
+    { id: 'exterior', name: t('properties.exteriorWork'), duration: 10, trades: ['construction', 'painting'], description: t('properties.exteriorWorkDesc') },
+    { id: 'final', name: t('properties.finalTouchesCleaning'), duration: 3, trades: ['cleaning'], description: t('properties.finalTouchesCleaningDesc') }
   ];
 
   // Available contractors
@@ -396,8 +398,8 @@ export function ConstructionTracking({
                   <Badge className={cn(getStatusColor(milestone.status))}>
                     {milestone.status === 'delayed' && milestone.delayDays && `${milestone.delayDays}d late`}
                     {milestone.status === 'in-progress' && `${milestone.progress}%`}
-                    {milestone.status === 'completed' && 'Completed'}
-                    {milestone.status === 'not-started' && 'Not Started'}
+                    {milestone.status === 'completed' && t('properties.completed')}
+                    {milestone.status === 'not-started' && t('properties.notStarted')}
                   </Badge>
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
@@ -421,29 +423,29 @@ export function ConstructionTracking({
           <div className="flex-1 overflow-auto">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full justify-start rounded-none border-b">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="overview">{t('properties.overview')}</TabsTrigger>
                 <TabsTrigger value="photos">
-                  Photos ({photos.length})
+                  {t('properties.photos')} ({photos.length})
                 </TabsTrigger>
-                <TabsTrigger value="notes">Notes</TabsTrigger>
+                <TabsTrigger value="notes">{t('properties.notes')}</TabsTrigger>
                 <TabsTrigger value="blockers">
-                  Blockers ({blockers.length})
+                  {t('properties.blockers')} ({blockers.length})
                 </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
               <TabsContent value="overview" className="p-6 space-y-6">
                 <div>
-                  <h3 className="font-medium mb-3">Progress</h3>
+                  <h3 className="font-medium mb-3">{t('properties.progress')}</h3>
                   <Progress value={milestone.progress} className="h-3 mb-2" />
                   <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span>{milestone.progress}% Complete</span>
-                    <span>{100 - milestone.progress}% Remaining</span>
+                    <span>{milestone.progress}% {t('properties.complete')}</span>
+                    <span>{100 - milestone.progress}% {t('properties.remaining')}</span>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-medium mb-3">Assigned Trades</h3>
+                  <h3 className="font-medium mb-3">{t('properties.assignedTrades')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {milestone.trades.map(trade => {
                       const Icon = getTradeIcon(trade);
@@ -696,13 +698,13 @@ export function ConstructionTracking({
           <CardContent className="py-12">
             <div className="text-center">
               <HardHat className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Construction Not Started</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('properties.constructionNotStarted')}</h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Begin planning your renovation project by selecting milestones and assigning contractors
+                {t('properties.beginPlanningRenovation')}
               </p>
               <Button size="lg" onClick={handleStartConstruction}>
                 <Plus className="h-5 w-5 mr-2" />
-                Start Construction Planning
+                {t('properties.startConstructionPlanning')}
               </Button>
             </div>
           </CardContent>
@@ -721,35 +723,32 @@ export function ConstructionTracking({
                 <AccordionTrigger className="hover:no-underline px-6 py-4">
                   <div className="flex items-center justify-between flex-1 mr-2">
                     <div className="text-left">
-                      <div className="font-semibold text-base">Select Construction Milestones</div>
+                      <div className="font-semibold text-base">{t('properties.selectMilestones')}</div>
                       <div className="text-sm text-muted-foreground font-normal">
                         {milestoneCollapsed
-                          ? `${selectedMilestones.length} milestones selected`
-                          : "Choose the renovation work needed for this property"
+                          ? t('properties.milestonesSelected', { count: selectedMilestones.length })
+                          : t('properties.selectMilestonesDesc')
                         }
                       </div>
                     </div>
                     {selectedMilestones.length > 0 && !milestoneCollapsed && (
-                      <div className="ml-4">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowContractorSelector(true);
-                            setMilestoneCollapsed(true);
-                            // Smooth scroll to contractor section after accordion closes
-                            setTimeout(() => {
-                              contractorSectionRef.current?.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start',
-                                inline: 'nearest'
-                              });
-                            }, 300);
-                          }}>
-                          Next: Assign Contractors
-                          <ChevronRight className="h-4 w-4 ml-1" />
-                        </Button>
+                      <div 
+                        className="ml-4 px-3 py-1 text-sm border rounded-md hover:bg-gray-50 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowContractorSelector(true);
+                          setMilestoneCollapsed(true);
+                          // Smooth scroll to contractor section after accordion closes
+                          setTimeout(() => {
+                            contractorSectionRef.current?.scrollIntoView({
+                              behavior: 'smooth',
+                              block: 'start',
+                              inline: 'nearest'
+                            });
+                          }, 300);
+                        }}>
+                        {t('properties.nextAssignContractors')}
+                        <ChevronRight className="h-4 w-4 ml-1 inline" />
                       </div>
                     )}
                   </div>
@@ -827,9 +826,9 @@ export function ConstructionTracking({
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Assign Contractors</CardTitle>
+                  <CardTitle>{t('properties.assignContractors')}</CardTitle>
                   <CardDescription>
-                    Select contractors for your construction project
+                    {t('properties.selectContractorsForProject')}
                   </CardDescription>
                 </div>
                 {selectedContractors.length > 0 && (
@@ -838,13 +837,13 @@ export function ConstructionTracking({
                       variant="outline"
                       size="sm"
                       onClick={() => setShowContractorSelector(false)}>
-                      Back
+                      {t('properties.back')}
                     </Button>
                     <Button
                       size="sm"
                       onClick={handleConfirmConstruction}>
                       <CheckCircle2 className="h-4 w-4 mr-2" />
-                      Start Construction
+                      {t('properties.startConstruction')}
                     </Button>
                   </div>
                 )}
@@ -855,7 +854,7 @@ export function ConstructionTracking({
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Required trades based on your milestones: {
+                  {t('properties.requiredTradesBasedOnMilestones')}: {
                     [...new Set(
                       MILESTONE_TEMPLATES
                         .filter(m => selectedMilestones.includes(m.id))
@@ -917,9 +916,9 @@ export function ConstructionTracking({
                 <>
                   <Separator />
                   <div>
-                    <p className="font-medium">Selected Contractors: {selectedContractors.length}</p>
+                    <p className="font-medium">{t('properties.selectedContractorsCount', { count: selectedContractors.length })}</p>
                     <p className="text-sm text-gray-600">
-                      Ready to begin construction planning
+                      {t('properties.readyToBeginConstruction')}
                     </p>
                   </div>
                 </>
@@ -949,7 +948,7 @@ export function ConstructionTracking({
                   ) : (
                     <Lock className="h-4 w-4 text-gray-600" />
                   )}
-                  <CardTitle className="text-sm font-medium">Partner Visibility</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('construction.partnerVisibility')}</CardTitle>
                 </div>
               </div>
             </CardHeader>
@@ -1037,11 +1036,11 @@ export function ConstructionTracking({
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="planning">Planning</TabsTrigger>
-          <TabsTrigger value="milestones">Milestones</TabsTrigger>
-          <TabsTrigger value="contractors">Contractors</TabsTrigger>
-          <TabsTrigger value="photos">Photos</TabsTrigger>
+          <TabsTrigger value="overview">{t('construction.overview')}</TabsTrigger>
+          <TabsTrigger value="planning">{t('construction.planning')}</TabsTrigger>
+          <TabsTrigger value="milestones">{t('construction.milestones')}</TabsTrigger>
+          <TabsTrigger value="contractors">{t('construction.contractors')}</TabsTrigger>
+          <TabsTrigger value="photos">{t('construction.photos')}</TabsTrigger>
         </TabsList>
 
         {/* Planning Tab */}
@@ -1050,9 +1049,9 @@ export function ConstructionTracking({
             {/* Construction Description */}
             <Card>
               <CardHeader>
-                <CardTitle>Construction Planning</CardTitle>
+                <CardTitle>{t('construction.constructionPlanning')}</CardTitle>
                 <CardDescription>
-                  Plan your renovation work and budget
+                  {t('construction.planYourRenovation')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -1091,19 +1090,19 @@ export function ConstructionTracking({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader className="pb-2">
-                <CardDescription>Total Budget</CardDescription>
+                <CardDescription>{t('construction.totalBudget')}</CardDescription>
                 <CardTitle className="text-2xl">€62,000</CardTitle>
               </CardHeader>
               <CardContent>
                 <Progress value={75} className="h-2" />
-                <p className="text-xs text-gray-500 mt-1">€46,500 spent</p>
+                <p className="text-xs text-gray-500 mt-1">€46,500 {t('construction.spent')}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardDescription>Active Trades</CardDescription>
-                <CardTitle className="text-2xl">2 of 5</CardTitle>
+                <CardDescription>{t('construction.activeTrades')}</CardDescription>
+                <CardTitle className="text-2xl">2 {t('construction.of')} 5</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex gap-1">
@@ -1115,11 +1114,11 @@ export function ConstructionTracking({
 
             <Card>
               <CardHeader className="pb-2">
-                <CardDescription>Days Remaining</CardDescription>
+                <CardDescription>{t('construction.daysRemaining')}</CardDescription>
                 <CardTitle className="text-2xl">52</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-gray-500">Until expected completion</p>
+                <p className="text-xs text-gray-500">{t('construction.untilExpectedCompletion')}</p>
               </CardContent>
             </Card>
           </div>
@@ -1127,7 +1126,7 @@ export function ConstructionTracking({
           {/* Current Activities */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Current Activities</CardTitle>
+              <CardTitle className="text-lg">{t('construction.currentActivities')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {milestones.filter(m => m.status === 'in-progress').map(milestone => (
@@ -1273,9 +1272,9 @@ export function ConstructionTracking({
                       contractor.status === 'scheduled' && "bg-blue-100 text-blue-800",
                       contractor.status === 'completed' && "bg-gray-100 text-gray-800"
                     )}>
-                      {contractor.status === 'on-site' && 'On Site'}
-                      {contractor.status === 'scheduled' && 'Scheduled'}
-                      {contractor.status === 'completed' && 'Completed'}
+                      {contractor.status === 'on-site' && t('construction.onSiteStatus')}
+                      {contractor.status === 'scheduled' && t('construction.scheduledStatus')}
+                      {contractor.status === 'completed' && t('construction.completedStatus')}
                     </Badge>
                   </div>
                 </CardHeader>

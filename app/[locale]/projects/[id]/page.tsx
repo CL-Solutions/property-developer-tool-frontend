@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useLocaleRouter } from '@/hooks/use-locale-router';
+import { LocaleLink } from '@/components/locale-link';
 import { AppSidebar } from "@/components/app-sidebar"
 import { ProjectGanttChart } from '@/components/project-gantt-chart';
 import { SiteHeader } from "@/components/site-header"
@@ -30,7 +32,8 @@ import {
 
 export default function ProjectDetailPage() {
   const params = useParams();
-  const router = useRouter();
+  const router = useLocaleRouter();
+  const t = useTranslations();
   const projectId = params.id as string;
 
   const [properties, setProperties] = useState<PropertySummary[]>([]);
@@ -95,7 +98,7 @@ export default function ProjectDetailPage() {
               onClick={() => router.push('/projects')}
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Projects
+              {t('projects.backToProjects')}
             </Button>
           </div>
 
@@ -116,13 +119,13 @@ export default function ProjectDetailPage() {
           ) : properties.length === 0 ? (
             <Card className="flex flex-col items-center justify-center p-12">
               <AlertTriangle className="h-12 w-12 text-yellow-500 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Project not found</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('projects.projectNotFound')}</h3>
               <p className="text-muted-foreground text-center mb-4">
-                The project you&apos;re looking for doesn&apos;t exist.
+                {t('projects.projectNotFoundDescription')}
               </p>
               <Button variant="outline" size="default" onClick={() => router.push('/projects')}>
                 <ArrowLeft className="h-4 w-4" />
-                Back to Projects
+                {t('projects.backToProjects')}
               </Button>
             </Card>
           ) : (
@@ -143,11 +146,11 @@ export default function ProjectDetailPage() {
                   <div className="flex gap-2">
                     <Button variant="outline" size="default" onClick={() => router.push(`/projects/new?edit=${projectId}`)}>
                       <Edit className="h-4 w-4 mr-1" />
-                      Edit Project
+                      {t('projects.editProject')}
                     </Button>
                     <Button size="default" onClick={() => router.push(`/projects/${projectId}/properties/new`)}>
                       <Plus className="h-4 w-4 mr-1" />
-                      Add Property
+                      {t('projects.addProperty')}
                     </Button>
                   </div>
                 </div>
@@ -158,7 +161,7 @@ export default function ProjectDetailPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Total Properties
+                      {t('projects.totalProperties')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -169,7 +172,7 @@ export default function ProjectDetailPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Critical Alerts
+                      {t('projects.criticalAlerts')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -182,7 +185,7 @@ export default function ProjectDetailPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Avg. Progress
+                      {t('projects.averageProgress')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -193,7 +196,7 @@ export default function ProjectDetailPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Total Value
+                      {t('projects.totalValue')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -209,19 +212,19 @@ export default function ProjectDetailPage() {
                 <TabsList>
                   <TabsTrigger value="properties">
                     <Home className="mr-2 h-4 w-4" />
-                    Properties ({properties.length})
+                    {t('projects.properties')} ({properties.length})
                   </TabsTrigger>
                   <TabsTrigger value="documents">
                     <FileText className="mr-2 h-4 w-4" />
-                    Documents
+                    {t('projects.documents')}
                   </TabsTrigger>
                   <TabsTrigger value="settings">
                     <Settings className="mr-2 h-4 w-4" />
-                    Settings
+                    {t('navigation.settings')}
                   </TabsTrigger>
                   <TabsTrigger value="timeline">
                     <Calendar className="mr-2 h-4 w-4" />
-                    Timeline
+                    {t('projects.timeline')}
                   </TabsTrigger>
                 </TabsList>
 
@@ -241,18 +244,18 @@ export default function ProjectDetailPage() {
                 <TabsContent value="documents">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Project Documents</CardTitle>
+                      <CardTitle>{t('projects.projectDocuments')}</CardTitle>
                       <CardDescription>
-                        All documents related to this project
+                        {t('projects.projectDocumentsDescription')}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                         <FileText className="h-12 w-12 mb-4" />
-                        <p>No documents uploaded yet</p>
+                        <p>{t('projects.noDocumentsYet')}</p>
                         <Button variant="outline" size="default" className="mt-4">
                           <Plus className="h-4 w-4" />
-                          Upload Document
+                          {t('projects.uploadDocument')}
                         </Button>
                       </div>
                     </CardContent>
@@ -262,37 +265,37 @@ export default function ProjectDetailPage() {
                 <TabsContent value="settings">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Project Settings</CardTitle>
+                      <CardTitle>{t('projects.projectSettings')}</CardTitle>
                       <CardDescription>
-                        Manage project configuration and preferences
+                        {t('projects.projectSettingsDescription')}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between py-3 border-b">
                           <div>
-                            <div className="font-medium">Project Name</div>
+                            <div className="font-medium">{t('projects.projectName')}</div>
                             <div className="text-sm text-muted-foreground">{projectName}</div>
                           </div>
-                          <Button variant="outline" size="sm">Edit</Button>
+                          <Button variant="outline" size="sm">{t('common.edit')}</Button>
                         </div>
                         <div className="flex items-center justify-between py-3 border-b">
                           <div>
-                            <div className="font-medium">Location</div>
+                            <div className="font-medium">{t('properties.location')}</div>
                             <div className="text-sm text-muted-foreground">
                               {properties[0]?.city}
                             </div>
                           </div>
-                          <Button variant="outline" size="sm">Edit</Button>
+                          <Button variant="outline" size="sm">{t('common.edit')}</Button>
                         </div>
                         <div className="flex items-center justify-between py-3">
                           <div>
-                            <div className="font-medium">Sales Partner</div>
+                            <div className="font-medium">{t('properties.salesPartner')}</div>
                             <div className="text-sm text-muted-foreground">
                               {properties[0]?.sales_partner === 'blackvesto' ? 'BlackVesto' : 'Internal'}
                             </div>
                           </div>
-                          <Button variant="outline" size="sm">Change</Button>
+                          <Button variant="outline" size="sm">{t('common.change')}</Button>
                         </div>
                       </div>
                     </CardContent>

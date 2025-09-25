@@ -6,7 +6,8 @@ import { PropertySummary } from '@/lib/types';
 import { MockDataService } from '@/lib/mock-data';
 import { TrafficLightGrid } from './traffic-light-indicator';
 import { PhaseIndicator } from './phase-indicator';
-import { MapPin, Calendar, AlertTriangle } from 'lucide-react';
+import { MapPin, Calendar, AlertTriangle, Users, TrendingUp } from 'lucide-react';
+import { SalesStatusIndicator } from './sales-status-indicator';
 
 interface PropertyCardProps {
   property: PropertySummary;
@@ -57,8 +58,8 @@ export function PropertyCard({ property, onClick, className }: PropertyCardProps
           )}
         </div>
 
-        {/* Sales Partner Badge */}
-        <div className="flex justify-start">
+        {/* Sales Partner Badge and Reservation Status */}
+        <div className="flex justify-between items-center">
           <Badge
             variant="secondary"
             className={cn(
@@ -67,6 +68,13 @@ export function PropertyCard({ property, onClick, className }: PropertyCardProps
           >
             {MockDataService.getSalesPartnerLabel(property.sales_partner)}
           </Badge>
+          
+          {/* Reservation Status for Phase 4+ */}
+          {property.phase >= 4 && property.reservation_status && (
+            <div className="flex items-center gap-2">
+              <SalesStatusIndicator property={property} detailed={false} />
+            </div>
+          )}
         </div>
       </CardHeader>
 

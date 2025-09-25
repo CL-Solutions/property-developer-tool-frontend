@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -87,6 +88,7 @@ interface HandoverTabProps {
 }
 
 export function HandoverTab({ property }: HandoverTabProps) {
+  const t = useTranslations();
   const [activeTab, setActiveTab] = useState('meters');
   const [handoverComplete, setHandoverComplete] = useState(false);
   const [showContractPreview, setShowContractPreview] = useState(false);
@@ -479,17 +481,17 @@ export function HandoverTab({ property }: HandoverTabProps) {
       {/* Header with completion status */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Property Handover</h2>
+          <h2 className="text-2xl font-bold">{t('handover.title')}</h2>
           <p className="text-muted-foreground">
             {property.unit_number} - {property.project?.street} {property.project?.house_number}
           </p>
         </div>
         <div className="text-right">
           <Badge variant={handoverComplete ? "success" : "secondary"}>
-            {handoverComplete ? "Handover Complete" : "In Progress"}
+            {handoverComplete ? t('handover.handoverComplete') : t('handover.inProgress')}
           </Badge>
           <div className="mt-2">
-            <span className="text-sm text-muted-foreground">Completion: {getCompletionProgress()}%</span>
+            <span className="text-sm text-muted-foreground">{t('handover.completion')}: {getCompletionProgress()}%</span>
             <Progress value={getCompletionProgress()} className="w-32 mt-1" />
           </div>
         </div>
@@ -501,10 +503,10 @@ export function HandoverTab({ property }: HandoverTabProps) {
           <Home className="h-4 w-4" />
           <AlertDescription>
             <div className="flex items-center justify-between">
-              <span>WG Property with {roomTenants.length} rooms</span>
+              <span>{t('handover.wgPropertyWithRooms', { count: roomTenants.length })}</span>
               <span className="font-semibold">
-                {getOccupiedRoomsCount()} of {roomTenants.length} rooms occupied •
-                Total rent: €{getTotalMonthlyRent()}/month
+                {t('handover.roomsOccupied', { occupied: getOccupiedRoomsCount(), total: roomTenants.length })} •
+                {t('handover.totalRent')}: {t('handover.perMonth', { amount: getTotalMonthlyRent() })}
               </span>
             </div>
           </AlertDescription>
@@ -513,21 +515,21 @@ export function HandoverTab({ property }: HandoverTabProps) {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="meters">Meter Readings</TabsTrigger>
-          <TabsTrigger value="checklist">Checklist</TabsTrigger>
-          <TabsTrigger value="nebenkosten">Nebenkosten</TabsTrigger>
+          <TabsTrigger value="meters">{t('handover.tabs.meterReadings')}</TabsTrigger>
+          <TabsTrigger value="checklist">{t('handover.tabs.checklist')}</TabsTrigger>
+          <TabsTrigger value="nebenkosten">{t('handover.tabs.nebenkosten')}</TabsTrigger>
           <TabsTrigger value="tenant">
-            {isWG ? 'Room Tenants' : 'Tenant Info'}
+            {isWG ? t('handover.tabs.roomTenants') : t('handover.tabs.tenantInfo')}
           </TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="documents">{t('handover.tabs.documents')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="meters" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Utility Meter Readings</CardTitle>
+              <CardTitle>{t('handover.meterReadings.title')}</CardTitle>
               <CardDescription>
-                Record current meter readings for handover documentation
+                {t('handover.meterReadings.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -543,7 +545,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <Label>Previous Reading</Label>
+                      <Label>{t('handover.meterReadings.previousReading')}</Label>
                       <Input
                         value={reading.previousReading}
                         disabled
@@ -551,19 +553,19 @@ export function HandoverTab({ property }: HandoverTabProps) {
                       />
                     </div>
                     <div>
-                      <Label>Current Reading</Label>
+                      <Label>{t('handover.meterReadings.currentReading')}</Label>
                       <Input
                         value={reading.currentReading}
                         onChange={(e) => handleMeterReadingChange(reading.id, 'currentReading', e.target.value)}
-                        placeholder="Enter reading"
+                        placeholder={t('handover.meterReadings.enterReading')}
                       />
                     </div>
                     <div>
-                      <Label>Unit</Label>
+                      <Label>{t('handover.meterReadings.unit')}</Label>
                       <Input value={reading.unit} disabled />
                     </div>
                     <div>
-                      <Label>Photo Evidence</Label>
+                      <Label>{t('handover.meterReadings.photoEvidence')}</Label>
                       <div className="flex gap-2">
                         <Button
                           size="sm"
@@ -571,7 +573,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                           onClick={() => document.getElementById(`photo-${reading.id}`)?.click()}
                         >
                           <Camera className="h-4 w-4 mr-1" />
-                          Upload
+                          {t('handover.meterReadings.upload')}
                         </Button>
                         <input
                           id={`photo-${reading.id}`}
@@ -586,7 +588,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                         {reading.photoUrl && (
                           <Badge variant="success">
                             <CheckCircle2 className="h-3 w-3 mr-1" />
-                            Photo attached
+                            {t('handover.meterReadings.photoAttached')}
                           </Badge>
                         )}
                       </div>
@@ -601,9 +603,9 @@ export function HandoverTab({ property }: HandoverTabProps) {
         <TabsContent value="checklist" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Handover Checklist</CardTitle>
+              <CardTitle>{t('handover.checklist.title')}</CardTitle>
               <CardDescription>
-                Complete all required items before finalizing handover
+                {t('handover.checklist.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -644,7 +646,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Items marked with * are required for handover completion
+                    {t('handover.checklist.requiredItemsNote')}
                   </AlertDescription>
                 </Alert>
               </div>
@@ -655,15 +657,15 @@ export function HandoverTab({ property }: HandoverTabProps) {
         <TabsContent value="nebenkosten" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Nebenkosten Settlement</CardTitle>
+              <CardTitle>{t('handover.nebenkosten.title')}</CardTitle>
               <CardDescription>
-                Annual utility cost settlement and adjustment
+                {t('handover.nebenkosten.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4">
                 <div className="flex justify-between items-center p-3 bg-muted rounded">
-                  <Label htmlFor="prepaidAmount">Prepaid Amount (Annual)</Label>
+                  <Label htmlFor="prepaidAmount">{t('handover.nebenkosten.prepaidAmountAnnual')}</Label>
                   <div className="flex items-center gap-1">
                     <span>€</span>
                     <Input
@@ -700,12 +702,12 @@ export function HandoverTab({ property }: HandoverTabProps) {
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">Total Actual Costs</span>
+                    <span className="font-semibold">{t('handover.nebenkosten.actualCosts')}</span>
                     <span className="font-semibold">€{calculateNebenkosten().totalActual}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">
-                      {calculateNebenkosten().difference >= 0 ? 'Refund Due' : 'Additional Payment Due'}
+                      {calculateNebenkosten().difference >= 0 ? t('handover.nebenkosten.refundDue') : t('handover.nebenkosten.additionalPaymentDue')}
                     </span>
                     <Badge variant={calculateNebenkosten().difference >= 0 ? "success" : "destructive"}>
                       €{Math.abs(calculateNebenkosten().difference)}
@@ -722,9 +724,9 @@ export function HandoverTab({ property }: HandoverTabProps) {
             // WG Room Management
             <Card>
               <CardHeader>
-                <CardTitle>WG Room Tenants</CardTitle>
+                <CardTitle>{t('handover.tenant.wgRoomTenants')}</CardTitle>
                 <CardDescription>
-                  Manage tenant information for each room individually
+                  {t('handover.tenant.manageRoomTenants')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -736,7 +738,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     onClick={addRoom}
                   >
                     <Home className="h-4 w-4 mr-1" />
-                    Add Room
+                    {t('handover.tenant.addRoom')}
                   </Button>
                 </div>
 
@@ -752,7 +754,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                 value={roomTenant.roomName}
                                 onChange={(e) => updateRoomTenant(index, 'roomName', e.target.value)}
                                 className="w-28 h-8"
-                                placeholder="Room name"
+                                placeholder={t('handover.tenant.roomNamePlaceholder')}
                               />
                               <div className="flex items-center gap-1">
                                 <Input
@@ -760,7 +762,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                   value={roomTenant.roomSize}
                                   onChange={(e) => updateRoomTenant(index, 'roomSize', Number(e.target.value))}
                                   className="w-16 h-8"
-                                  placeholder="Size"
+                                  placeholder={t('handover.tenant.sizePlaceholder')}
                                 />
                                 <span className="text-sm">m²</span>
                               </div>
@@ -770,7 +772,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                           </div>
                           <div className="flex items-center gap-2">
                             <Badge variant={roomTenant.name && roomTenant.name.trim() !== '' ? "success" : "secondary"}>
-                              {roomTenant.name && roomTenant.name.trim() !== '' ? 'Occupied' : 'Vacant'}
+                              {roomTenant.name && roomTenant.name.trim() !== '' ? t('handover.tenant.occupied') : t('handover.tenant.vacant')}
                             </Badge>
                             {roomTenants.length > 1 && (
                               <Button
@@ -788,31 +790,31 @@ export function HandoverTab({ property }: HandoverTabProps) {
                       <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                               <div>
-                                <Label>Tenant Name</Label>
+                                <Label>{t('handover.tenant.tenantName')}</Label>
                                 <Input
                                   value={roomTenant.name}
                                   onChange={(e) => updateRoomTenant(index, 'name', e.target.value)}
-                                  placeholder="Enter tenant name"
+                                  placeholder={t('handover.tenant.enterTenantName')}
                                 />
                               </div>
                               <div>
-                                <Label>Email</Label>
+                                <Label>{t('handover.tenant.email')}</Label>
                                 <Input
                                   value={roomTenant.email}
                                   onChange={(e) => updateRoomTenant(index, 'email', e.target.value)}
-                                  placeholder="tenant@email.com"
+                                  placeholder={t('handover.tenant.emailPlaceholder')}
                                 />
                               </div>
                               <div>
-                                <Label>Phone</Label>
+                                <Label>{t('handover.tenant.phone')}</Label>
                                 <Input
                                   value={roomTenant.phone}
                                   onChange={(e) => updateRoomTenant(index, 'phone', e.target.value)}
-                                  placeholder="+49..."
+                                  placeholder={t('handover.tenant.phonePlaceholder')}
                                 />
                               </div>
                               <div>
-                                <Label>Move-in Date</Label>
+                                <Label>{t('handover.tenant.moveInDate')}</Label>
                                 <Input
                                   type="date"
                                   value={roomTenant.moveInDate}
@@ -820,7 +822,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                 />
                               </div>
                               <div>
-                                <Label>Monthly Rent (€)</Label>
+                                <Label>{t('handover.tenant.monthlyRentEuro')}</Label>
                                 <Input
                                   type="number"
                                   value={roomTenant.monthlyRent}
@@ -828,7 +830,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                 />
                               </div>
                               <div>
-                                <Label>Deposit (€)</Label>
+                                <Label>{t('handover.tenant.depositEuro')}</Label>
                                 <Input
                                   type="number"
                                   value={roomTenant.deposit}
@@ -836,7 +838,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                 />
                               </div>
                               <div>
-                                <Label>Contract Start</Label>
+                                <Label>{t('handover.tenant.contractStart')}</Label>
                                 <Input
                                   type="date"
                                   value={roomTenant.contractStartDate}
@@ -844,12 +846,12 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                 />
                               </div>
                               <div>
-                                <Label>Contract End (Optional)</Label>
+                                <Label>{t('handover.tenant.contractEndOptional')}</Label>
                                 <Input
                                   type="date"
                                   value={roomTenant.contractEndDate || ''}
                                   onChange={(e) => updateRoomTenant(index, 'contractEndDate', e.target.value)}
-                                  placeholder="Unbefristet"
+                                  placeholder={t('handover.tenant.indefinitePlaceholder')}
                                 />
                               </div>
                             </div>
@@ -861,7 +863,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                   updateRoomTenant(index, 'sepaMandate', checked)
                                 }
                               />
-                              <Label>SEPA Direct Debit Mandate signed</Label>
+                              <Label>{t('handover.tenant.sepaSignedLabel')}</Label>
                             </div>
 
                             <div className="flex gap-2">
@@ -874,7 +876,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                 }}
                               >
                                 <FileText className="h-4 w-4 mr-1" />
-                                Generate Contract
+                                {t('handover.documents.generateContract')}
                               </Button>
                               <Button
                                 variant="outline"
@@ -885,7 +887,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                                 }}
                               >
                                 <CreditCard className="h-4 w-4 mr-1" />
-                                Generate SEPA
+                                {t('handover.documents.generateSEPA')}
                               </Button>
                             </div>
                       </CardContent>
@@ -898,9 +900,9 @@ export function HandoverTab({ property }: HandoverTabProps) {
                   <Users className="h-4 w-4" />
                   <AlertDescription>
                     <div className="space-y-1">
-                      <div>Occupied rooms: {getOccupiedRoomsCount()} of {roomTenants.length}</div>
-                      <div>Total monthly rent: €{getTotalMonthlyRent()}</div>
-                      <div>Vacant rooms: {roomTenants.length - getOccupiedRoomsCount()}</div>
+                      <div>{t('handover.tenant.occupiedRoomsOf', { occupied: getOccupiedRoomsCount(), total: roomTenants.length })}</div>
+                      <div>{t('handover.tenant.totalMonthlyRent')}: €{getTotalMonthlyRent()}</div>
+                      <div>{t('handover.tenant.vacantRooms')}: {roomTenants.length - getOccupiedRoomsCount()}</div>
                     </div>
                   </AlertDescription>
                 </Alert>
@@ -910,39 +912,39 @@ export function HandoverTab({ property }: HandoverTabProps) {
             // Standard Single Tenant
             <Card>
               <CardHeader>
-                <CardTitle>Tenant Information</CardTitle>
+                <CardTitle>{t('handover.tenant.title')}</CardTitle>
                 <CardDescription>
-                  Primary tenant details and contract information
+                  {t('handover.tenant.singleTenantDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Tenant Name</Label>
+                    <Label>{t('handover.tenant.tenantName')}</Label>
                     <Input
                       value={tenantInfo.name}
                       onChange={(e) => setTenantInfo({...tenantInfo, name: e.target.value})}
-                      placeholder="Enter tenant name"
+                      placeholder={t('handover.tenant.enterTenantName')}
                     />
                   </div>
                   <div>
-                    <Label>Email</Label>
+                    <Label>{t('handover.tenant.email')}</Label>
                     <Input
                       value={tenantInfo.email}
                       onChange={(e) => setTenantInfo({...tenantInfo, email: e.target.value})}
-                      placeholder="tenant@email.com"
+                      placeholder={t('handover.tenant.emailPlaceholder')}
                     />
                   </div>
                   <div>
-                    <Label>Phone</Label>
+                    <Label>{t('handover.tenant.phone')}</Label>
                     <Input
                       value={tenantInfo.phone}
                       onChange={(e) => setTenantInfo({...tenantInfo, phone: e.target.value})}
-                      placeholder="+49..."
+                      placeholder={t('handover.tenant.phonePlaceholder')}
                     />
                   </div>
                   <div>
-                    <Label>Move-in Date</Label>
+                    <Label>{t('handover.tenant.moveInDate')}</Label>
                     <Input
                       type="date"
                       value={tenantInfo.moveInDate}
@@ -950,7 +952,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     />
                   </div>
                   <div>
-                    <Label>Monthly Rent (€)</Label>
+                    <Label>{t('handover.tenant.monthlyRentEuro')}</Label>
                     <Input
                       type="number"
                       value={tenantInfo.monthlyRent}
@@ -958,7 +960,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     />
                   </div>
                   <div>
-                    <Label>Deposit (€)</Label>
+                    <Label>{t('handover.tenant.depositEuro')}</Label>
                     <Input
                       type="number"
                       value={tenantInfo.deposit}
@@ -966,7 +968,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     />
                   </div>
                   <div>
-                    <Label>Contract Start Date</Label>
+                    <Label>{t('handover.tenant.contractStart')}</Label>
                     <Input
                       type="date"
                       value={tenantInfo.contractStartDate}
@@ -974,7 +976,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     />
                   </div>
                   <div>
-                    <Label>Contract End Date (Optional)</Label>
+                    <Label>{t('handover.tenant.contractEndOptional')}</Label>
                     <Input
                       type="date"
                       value={tenantInfo.contractEndDate || ''}
@@ -991,7 +993,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                       setTenantInfo({...tenantInfo, sepaMandate: !!checked})
                     }
                   />
-                  <Label>SEPA Direct Debit Mandate signed</Label>
+                  <Label>{t('handover.tenant.sepaSignedLabel')}</Label>
                 </div>
 
                 <Separator />
@@ -1002,14 +1004,14 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     onClick={() => setShowContractPreview(true)}
                   >
                     <FileText className="h-4 w-4 mr-1" />
-                    Generate Rental Contract
+                    {t('handover.documents.generateContract')}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => setShowSEPAPreview(true)}
                   >
                     <CreditCard className="h-4 w-4 mr-1" />
-                    Generate SEPA Mandate
+                    {t('handover.documents.generateSEPAMandate')}
                   </Button>
                 </div>
               </CardContent>
@@ -1020,9 +1022,9 @@ export function HandoverTab({ property }: HandoverTabProps) {
         <TabsContent value="documents" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Handover Documents</CardTitle>
+              <CardTitle>{t('handover.documents.title')}</CardTitle>
               <CardDescription>
-                Generate and manage all required handover documentation
+                {t('handover.documents.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1033,25 +1035,25 @@ export function HandoverTab({ property }: HandoverTabProps) {
                   onClick={generateHandoverProtocol}
                 >
                   <FileSignature className="h-4 w-4 mr-2" />
-                  Generate Handover Protocol
+                  {t('handover.documents.generateProtocol')}
                   <Badge className="ml-auto">PDF</Badge>
                 </Button>
 
                 <Button className="justify-start" variant="outline">
                   <Download className="h-4 w-4 mr-2" />
-                  Download Energy Certificate
+                  {t('handover.documents.downloadEnergyCertificate')}
                   <Badge className="ml-auto">PDF</Badge>
                 </Button>
 
                 <Button className="justify-start" variant="outline">
                   <Printer className="h-4 w-4 mr-2" />
-                  Print Full Handover Package
-                  <Badge className="ml-auto">All Docs</Badge>
+                  {t('handover.documents.printFullPackage')}
+                  <Badge className="ml-auto">{t('handover.documents.allDocs')}</Badge>
                 </Button>
 
                 <Button className="justify-start" variant="outline">
                   <Send className="h-4 w-4 mr-2" />
-                  Send Documents to Tenant
+                  {t('handover.documents.sendToTenant')}
                   <Badge className="ml-auto">Email</Badge>
                 </Button>
               </div>
@@ -1061,7 +1063,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
               <Alert>
                 <Clock className="h-4 w-4" />
                 <AlertDescription>
-                  Last document generated: {format(new Date(), 'dd.MM.yyyy HH:mm')}
+                  {t('handover.documents.lastGenerated', { date: format(new Date(), 'dd.MM.yyyy HH:mm') })}
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -1072,7 +1074,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
       {/* Action Buttons */}
       <div className="flex justify-between">
         <Button variant="outline">
-          Save Draft
+          {t('handover.actions.saveDraft')}
         </Button>
         <div className="flex gap-2">
           <Button
@@ -1080,7 +1082,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
             disabled={getCompletionProgress() < 100}
             onClick={() => setHandoverComplete(true)}
           >
-            Complete Handover
+            {t('handover.actions.completeHandover')}
           </Button>
         </div>
       </div>
@@ -1089,9 +1091,9 @@ export function HandoverTab({ property }: HandoverTabProps) {
       <Dialog open={showContractPreview} onOpenChange={setShowContractPreview}>
         <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle>Rental Contract Preview</DialogTitle>
+            <DialogTitle>{t('handover.documents.contractPreview')}</DialogTitle>
             <DialogDescription>
-              Review the generated rental contract before printing
+              {t('handover.documents.contractPreviewDescription')}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[60vh] p-6 border rounded">
@@ -1110,13 +1112,13 @@ export function HandoverTab({ property }: HandoverTabProps) {
               return (
                 <div className="space-y-6 font-mono text-sm">
                   <div className="text-center text-lg font-bold">
-                    MIETVERTRAG / RENTAL CONTRACT
+                    {t('handover.documents.contractTitle')}
                   </div>
 
                   <div>
-                    <h3 className="font-semibold mb-2">Zwischen / Between:</h3>
+                    <h3 className="font-semibold mb-2">{t('handover.documents.between')}</h3>
                     <div className="ml-4">
-                      <p><strong>Vermieter / Landlord:</strong></p>
+                      <p><strong>{t('handover.documents.landlord')}:</strong></p>
                       <p>{contractData.landlord.name}</p>
                       <p>{contractData.landlord.address}</p>
                       <p>{contractData.landlord.city}</p>
@@ -1126,7 +1128,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                   <div>
                     <h3 className="font-semibold mb-2">Und / And:</h3>
                     <div className="ml-4">
-                      <p><strong>Mieter / Tenant:</strong></p>
+                      <p><strong>{t('handover.documents.tenant')}:</strong></p>
                       <p>{contractData.tenant.name}</p>
                       <p>{contractData.tenant.email}</p>
                       <p>{contractData.tenant.phone}</p>
@@ -1197,11 +1199,11 @@ export function HandoverTab({ property }: HandoverTabProps) {
           </ScrollArea>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setShowContractPreview(false)}>
-              Close
+              {t('common.close')}
             </Button>
             <Button>
               <Printer className="h-4 w-4 mr-1" />
-              Print Contract
+              {t('handover.documents.printContract')}
             </Button>
           </div>
         </DialogContent>
@@ -1211,9 +1213,9 @@ export function HandoverTab({ property }: HandoverTabProps) {
       <Dialog open={showSEPAPreview} onOpenChange={setShowSEPAPreview}>
         <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle>SEPA Direct Debit Mandate</DialogTitle>
+            <DialogTitle>{t('handover.sepa.title')}</DialogTitle>
             <DialogDescription>
-              Review the SEPA mandate before printing
+              {t('handover.sepa.reviewDescription')}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[60vh] p-6 border rounded">
@@ -1311,11 +1313,11 @@ export function HandoverTab({ property }: HandoverTabProps) {
           </ScrollArea>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setShowSEPAPreview(false)}>
-              Close
+              {t('common.close')}
             </Button>
             <Button>
               <Printer className="h-4 w-4 mr-1" />
-              Print SEPA Mandate
+              {t('handover.sepa.printMandate')}
             </Button>
           </div>
         </DialogContent>

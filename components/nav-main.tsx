@@ -1,7 +1,8 @@
 "use client"
 
+import { useTranslations } from 'next-intl'
 import { MailIcon, PlusCircleIcon, type LucideIcon } from "lucide-react"
-import Link from "next/link"
+import { LocaleLink } from '@/components/locale-link'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -47,10 +48,10 @@ export function NavMain({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <Link href={item.url}>
+                <LocaleLink href={item.url}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
-                </Link>
+                </LocaleLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

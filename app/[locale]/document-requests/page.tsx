@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -129,6 +130,7 @@ const MOCK_REQUESTS = [
 ];
 
 export default function DocumentRequestsPage() {
+  const t = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
@@ -161,11 +163,11 @@ export default function DocumentRequestsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">{t('documents.pending')}</Badge>;
       case 'overdue':
-        return <Badge variant="destructive">Overdue</Badge>;
+        return <Badge variant="destructive">{t('documents.overdue')}</Badge>;
       case 'uploaded':
-        return <Badge variant="default" className="bg-green-100 text-green-800">Completed</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800">{t('documents.completed')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -174,11 +176,11 @@ export default function DocumentRequestsPage() {
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'high':
-        return <Badge variant="destructive" className="text-xs">High</Badge>;
+        return <Badge variant="destructive" className="text-xs">{t('documents.priorityHigh')}</Badge>;
       case 'medium':
-        return <Badge variant="secondary" className="text-xs">Medium</Badge>;
+        return <Badge variant="secondary" className="text-xs">{t('documents.priorityMedium')}</Badge>;
       case 'low':
-        return <Badge variant="outline" className="text-xs">Low</Badge>;
+        return <Badge variant="outline" className="text-xs">{t('documents.priorityLow')}</Badge>;
       default:
         return null;
     }
@@ -197,8 +199,8 @@ export default function DocumentRequestsPage() {
           <div className="space-y-6">
             {/* Header */}
             <div>
-              <h1 className="text-3xl font-bold">Document Requests</h1>
-              <p className="text-gray-600">Manage all document requests across your properties</p>
+              <h1 className="text-3xl font-bold">{t('documents.requests')}</h1>
+              <p className="text-gray-600">{t('documents.requestsDescription')}</p>
             </div>
 
         {/* Summary Cards */}
@@ -208,11 +210,11 @@ export default function DocumentRequestsPage() {
             activeTab === 'all' && "ring-2 ring-primary"
           )} onClick={() => setActiveTab('all')}>
             <CardHeader className="pb-2">
-              <CardDescription>Total Requests</CardDescription>
+              <CardDescription>{t('documents.totalRequests')}</CardDescription>
               <CardTitle className="text-2xl">{MOCK_REQUESTS.length}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">Across all properties</p>
+              <p className="text-xs text-muted-foreground">{t('documents.acrossAllProperties')}</p>
             </CardContent>
           </Card>
 
@@ -222,13 +224,13 @@ export default function DocumentRequestsPage() {
           )} onClick={() => setActiveTab('pending')}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardDescription>Pending</CardDescription>
+                <CardDescription>{t('documents.pending')}</CardDescription>
                 <Clock className="h-4 w-4 text-orange-600" />
               </div>
               <CardTitle className="text-2xl text-orange-600">{pendingCount}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-orange-600">Awaiting upload</p>
+              <p className="text-xs text-orange-600">{t('documents.awaitingUpload')}</p>
             </CardContent>
           </Card>
 
@@ -238,13 +240,13 @@ export default function DocumentRequestsPage() {
           )} onClick={() => setActiveTab('overdue')}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardDescription>Overdue</CardDescription>
+                <CardDescription>{t('documents.overdue')}</CardDescription>
                 <AlertTriangle className="h-4 w-4 text-red-600" />
               </div>
               <CardTitle className="text-2xl text-red-600">{overdueCount}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-red-600">Immediate attention needed</p>
+              <p className="text-xs text-red-600">{t('documents.immediateAttention')}</p>
             </CardContent>
           </Card>
 
@@ -254,13 +256,13 @@ export default function DocumentRequestsPage() {
           )} onClick={() => setActiveTab('completed')}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardDescription>Completed</CardDescription>
+                <CardDescription>{t('documents.completed')}</CardDescription>
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
               </div>
               <CardTitle className="text-2xl text-green-600">{completedCount}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-green-600">This week</p>
+              <p className="text-xs text-green-600">{t('documents.thisWeek')}</p>
             </CardContent>
           </Card>
         </div>
@@ -269,12 +271,12 @@ export default function DocumentRequestsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>All Document Requests</CardTitle>
+              <CardTitle>{t('documents.allRequests')}</CardTitle>
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search documents..."
+                    placeholder={t('documents.searchPlaceholder')}
                     className="pl-8 w-[200px]"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -285,10 +287,10 @@ export default function DocumentRequestsPage() {
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="overdue">Overdue</SelectItem>
-                    <SelectItem value="uploaded">Completed</SelectItem>
+                    <SelectItem value="all">{t('documents.allStatus')}</SelectItem>
+                    <SelectItem value="pending">{t('documents.pending')}</SelectItem>
+                    <SelectItem value="overdue">{t('documents.overdue')}</SelectItem>
+                    <SelectItem value="uploaded">{t('documents.completed')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={priorityFilter} onValueChange={setPriorityFilter}>
@@ -296,10 +298,10 @@ export default function DocumentRequestsPage() {
                     <SelectValue placeholder="Priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Priority</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="all">{t('documents.allPriority')}</SelectItem>
+                    <SelectItem value="high">{t('documents.priorityHigh')}</SelectItem>
+                    <SelectItem value="medium">{t('documents.priorityMedium')}</SelectItem>
+                    <SelectItem value="low">{t('documents.priorityLow')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -315,21 +317,21 @@ export default function DocumentRequestsPage() {
                       <Building2 className="h-4 w-4" />
                       {projectName}
                       <Badge variant="outline" className="text-xs">
-                        {requests.length} request{requests.length > 1 ? 's' : ''}
+                        {t('documents.requestCount', { count: requests.length })}
                       </Badge>
                     </div>
                     <div className="rounded-lg border">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Document</TableHead>
-                            <TableHead>Property</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Requested By</TableHead>
-                            <TableHead>Due Date</TableHead>
-                            <TableHead>Priority</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('documents.document')}</TableHead>
+                            <TableHead>{t('documents.property')}</TableHead>
+                            <TableHead>{t('documents.type')}</TableHead>
+                            <TableHead>{t('documents.requestedBy')}</TableHead>
+                            <TableHead>{t('documents.dueDate')}</TableHead>
+                            <TableHead>{t('documents.priority')}</TableHead>
+                            <TableHead>{t('documents.status')}</TableHead>
+                            <TableHead className="text-right">{t('documents.actions')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -347,12 +349,12 @@ export default function DocumentRequestsPage() {
                                   {request.targetSection === 'project' ? (
                                     <>
                                       <Building2 className="h-3 w-3 mr-1" />
-                                      Building
+                                      {t('documents.building')}
                                     </>
                                   ) : (
                                     <>
                                       <Home className="h-3 w-3 mr-1" />
-                                      Unit
+                                      {t('documents.unit')}
                                     </>
                                   )}
                                 </Badge>
@@ -373,7 +375,7 @@ export default function DocumentRequestsPage() {
                                   <div className="flex items-center justify-end gap-2">
                                     <Button size="sm" variant="outline">
                                       <Upload className="h-3 w-3 mr-1" />
-                                      Upload
+                                      {t('documents.upload')}
                                     </Button>
                                     <Link href={`/properties/${request.propertyId}?tab=documents`}>
                                       <Button size="sm" variant="ghost">
@@ -384,7 +386,7 @@ export default function DocumentRequestsPage() {
                                 ) : (
                                   <Link href={`/properties/${request.propertyId}?tab=documents`}>
                                     <Button size="sm" variant="ghost">
-                                      View
+                                      {t('common.view')}
                                     </Button>
                                   </Link>
                                 )}
@@ -400,7 +402,7 @@ export default function DocumentRequestsPage() {
             ) : (
               <div className="text-center py-8">
                 <FileText className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No document requests found</p>
+                <p className="text-gray-500">{t('documents.noRequestsFound')}</p>
               </div>
             )}
           </CardContent>

@@ -11,6 +11,39 @@ export type PreCheckResult = 'approved' | 'approved_with_modifications' | 'rejec
 export type PurchaseDecision = 'proceed' | 'modify' | 'reject';
 export type ConstructionStatus = 'planning' | 'in_progress' | 'completed' | 'delayed';
 
+// Sales Process Types
+export type ReservationStatus = 'available' | 'requested' | 'reserved' | 'sold' | 'cancelled';
+export type BuyerFinancingStatus = 'not_required' | 'pending' | 'confirmed' | 'rejected';
+export type NotaryAppointmentStatus = 'not_scheduled' | 'preparation' | 'scheduled' | 'completed';
+
+export interface NotaryAppointment {
+  id: string;
+  property_id: string;
+  status: NotaryAppointmentStatus;
+  proposed_dates?: Date[];
+  selected_date?: Date;
+  confirmed_date?: Date;
+  notary_name?: string;
+  notary_contact?: string;
+  customer_confirmed?: boolean;
+  backoffice_confirmed?: boolean;
+  documents_prepared?: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BuyerInfo {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  financing_status: BuyerFinancingStatus;
+  financing_bank?: string;
+  financing_amount?: number;
+  reservation_date?: string;
+  deposit_paid?: boolean;
+}
+
 export interface WGRoomPricing {
   room: string;
   size: number;
@@ -125,6 +158,16 @@ export interface Property {
   developer_construction_status?: ConstructionStatus;
   developer_construction_progress?: number;
   developer_construction_visible_blackvesto: boolean;
+
+  // Sales Process Fields (Phase 4 & 5)
+  reservation_status?: ReservationStatus;
+  buyer_financing_status?: BuyerFinancingStatus;
+  notary_appointment_status?: NotaryAppointmentStatus;
+  notary_appointment_date?: string;
+  waitlist_count?: number;
+  buyer_info?: BuyerInfo;
+  notary_appointment?: NotaryAppointment;
+  sales_status_sync_date?: string; // Last sync with BlackVesto
 
   // Phase 1 Pre-Check specific fields
   developer_selected_trades?: string[];

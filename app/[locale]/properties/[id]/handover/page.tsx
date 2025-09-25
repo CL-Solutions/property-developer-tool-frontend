@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -78,6 +79,7 @@ interface TenantInfo {
 }
 
 export default function HandoverPage() {
+  const t = useTranslations();
   const params = useParams();
   const router = useRouter();
   const propertyId = params.id as string;
@@ -244,7 +246,7 @@ export default function HandoverPage() {
       <SidebarProvider>
         <AppSidebar />
         <main className="flex-1 p-6">
-          <div className="animate-pulse">Loading...</div>
+          <div className="animate-pulse">{t('common.loading')}</div>
         </main>
       </SidebarProvider>
     );
@@ -267,10 +269,10 @@ export default function HandoverPage() {
                 onClick={() => router.push(`/properties/${propertyId}`)}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Property
+                {t('handover.backToProperty')}
               </Button>
               <div>
-                <h1 className="text-2xl font-bold">Property Handover</h1>
+                <h1 className="text-2xl font-bold">{t('handover.title')}</h1>
                 <p className="text-gray-600">
                   {property?.address} - {property?.unitNumber}
                 </p>
@@ -280,12 +282,12 @@ export default function HandoverPage() {
               {handoverComplete ? (
                 <Badge className="bg-green-100 text-green-800">
                   <CheckCircle2 className="h-4 w-4 mr-1" />
-                  Handover Complete
+                  {t('handover.handoverComplete')}
                 </Badge>
               ) : (
                 <Badge variant="secondary">
                   <Clock className="h-4 w-4 mr-1" />
-                  In Progress
+                  {t('handover.inProgress')}
                 </Badge>
               )}
             </div>
@@ -294,15 +296,15 @@ export default function HandoverPage() {
           {/* Progress Overview */}
           <Card>
             <CardHeader>
-              <CardTitle>Handover Progress</CardTitle>
+              <CardTitle>{t('handover.progress.title')}</CardTitle>
               <CardDescription>
-                Complete all required items before finalizing the handover
+                {t('handover.progress.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Completion</span>
+                  <span>{t('handover.completion')}</span>
                   <span className="font-medium">{progress}%</span>
                 </div>
                 <Progress value={progress} className="h-2" />
@@ -310,7 +312,7 @@ export default function HandoverPage() {
                   <Alert className="mt-4">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      {checklist.filter(item => item.required && !item.checked).length} required items remaining
+                      {t('handover.progress.itemsRemaining', { count: checklist.filter(item => item.required && !item.checked).length })}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -323,19 +325,19 @@ export default function HandoverPage() {
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="meters">
                 <Camera className="h-4 w-4 mr-2" />
-                Meter Readings
+                {t('handover.tabs.meterReadings')}
               </TabsTrigger>
               <TabsTrigger value="nebenkosten">
                 <Euro className="h-4 w-4 mr-2" />
-                Nebenkosten
+                {t('handover.tabs.nebenkosten')}
               </TabsTrigger>
               <TabsTrigger value="checklist">
                 <ClipboardCheck className="h-4 w-4 mr-2" />
-                Checklist
+                {t('handover.tabs.checklist')}
               </TabsTrigger>
               <TabsTrigger value="tenant">
                 <Users className="h-4 w-4 mr-2" />
-                Tenant Info
+                {t('handover.tabs.tenantInfo')}
               </TabsTrigger>
             </TabsList>
 
@@ -343,9 +345,9 @@ export default function HandoverPage() {
             <TabsContent value="meters" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Meter Readings (Zählerstände)</CardTitle>
+                  <CardTitle>{t('handover.meterReadings.title')}</CardTitle>
                   <CardDescription>
-                    Record current meter readings with photo documentation
+                    {t('handover.meterReadings.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -357,12 +359,12 @@ export default function HandoverPage() {
                           <span className="font-medium capitalize">{reading.type}</span>
                           <Badge variant="outline">{reading.meterNumber}</Badge>
                         </div>
-                        <span className="text-sm text-gray-500">Unit: {reading.unit}</span>
+                        <span className="text-sm text-gray-500">{t('handover.meterReadings.unit')}: {reading.unit}</span>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <Label htmlFor={`prev-${reading.id}`}>Previous Reading</Label>
+                          <Label htmlFor={`prev-${reading.id}`}>{t('handover.meterReadings.previousReading')}</Label>
                           <Input
                             id={`prev-${reading.id}`}
                             value={reading.previousReading || ''}
@@ -371,16 +373,16 @@ export default function HandoverPage() {
                           />
                         </div>
                         <div>
-                          <Label htmlFor={`current-${reading.id}`}>Current Reading</Label>
+                          <Label htmlFor={`current-${reading.id}`}>{t('handover.meterReadings.currentReading')}</Label>
                           <Input
                             id={`current-${reading.id}`}
                             value={reading.currentReading}
                             onChange={(e) => handleMeterReadingChange(reading.id, 'currentReading', e.target.value)}
-                            placeholder="Enter current reading"
+                            placeholder={t('handover.meterReadings.enterReading')}
                           />
                         </div>
                         <div>
-                          <Label htmlFor={`date-${reading.id}`}>Reading Date</Label>
+                          <Label htmlFor={`date-${reading.id}`}>{t('handover.meterReadings.readingDate')}</Label>
                           <Input
                             id={`date-${reading.id}`}
                             type="date"
@@ -402,7 +404,7 @@ export default function HandoverPage() {
                             </div>
                             <Badge className="bg-green-100 text-green-800">
                               <Camera className="h-3 w-3 mr-1" />
-                              Photo uploaded
+                              {t('handover.meterReadings.photoAttached')}
                             </Badge>
                           </div>
                         ) : (
@@ -419,7 +421,7 @@ export default function HandoverPage() {
                             <Button variant="outline" size="sm" asChild>
                               <span>
                                 <Upload className="h-4 w-4 mr-2" />
-                                Upload Photo
+                                {t('handover.meterReadings.upload')}
                               </span>
                             </Button>
                           </label>
@@ -435,15 +437,15 @@ export default function HandoverPage() {
             <TabsContent value="nebenkosten" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Nebenkostenabrechnung</CardTitle>
+                  <CardTitle>{t('handover.nebenkosten.title')}</CardTitle>
                   <CardDescription>
-                    Calculate utility cost settlement for the handover period
+                    {t('handover.nebenkosten.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="period-from">Period From</Label>
+                      <Label htmlFor="period-from">{t('handover.nebenkosten.periodFrom')}</Label>
                       <Input
                         id="period-from"
                         type="date"
@@ -455,7 +457,7 @@ export default function HandoverPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="period-to">Period To</Label>
+                      <Label htmlFor="period-to">{t('handover.nebenkosten.periodTo')}</Label>
                       <Input
                         id="period-to"
                         type="date"
@@ -469,7 +471,7 @@ export default function HandoverPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="prepaid">Prepaid Amount (Vorauszahlung)</Label>
+                    <Label htmlFor="prepaid">{t('handover.nebenkosten.prepaidAmountAnnual')}</Label>
                     <Input
                       id="prepaid"
                       type="number"
@@ -483,11 +485,11 @@ export default function HandoverPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <h3 className="font-medium">Actual Costs</h3>
+                    <h3 className="font-medium">{t('handover.nebenkosten.actualCosts')}</h3>
                     {Object.entries(nebenkostenData.actualCosts).map(([key, value]) => (
                       <div key={key} className="grid grid-cols-2 gap-4 items-center">
                         <Label htmlFor={`cost-${key}`} className="capitalize">
-                          {key === 'propertyTax' ? 'Property Tax' : key}
+                          {t(`handover.nebenkosten.${key}`)}
                         </Label>
                         <Input
                           id={`cost-${key}`}
@@ -507,15 +509,15 @@ export default function HandoverPage() {
 
                   <div className="border-t pt-4 space-y-2">
                     <div className="flex justify-between">
-                      <span>Total Actual Costs:</span>
+                      <span>{t('handover.nebenkosten.actualCosts')}:</span>
                       <span className="font-medium">€{totalActual.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Prepaid Amount:</span>
+                      <span>{t('handover.nebenkosten.prepaidAmount')}:</span>
                       <span className="font-medium">€{nebenkostenData.prepaidAmount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold">
-                      <span>{difference >= 0 ? 'Credit Balance:' : 'Amount Due:'}</span>
+                      <span>{difference >= 0 ? t('handover.nebenkosten.refundDue') : t('handover.nebenkosten.additionalPaymentDue')}:</span>
                       <span className={difference >= 0 ? 'text-green-600' : 'text-red-600'}>
                         €{Math.abs(difference).toFixed(2)}
                       </span>
@@ -529,9 +531,9 @@ export default function HandoverPage() {
             <TabsContent value="checklist" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Handover Checklist</CardTitle>
+                  <CardTitle>{t('handover.checklist.title')}</CardTitle>
                   <CardDescription>
-                    Ensure all items are completed before finalizing
+                    {t('handover.checklist.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -543,7 +545,7 @@ export default function HandoverPage() {
                       return (
                         <div key={category} className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <h3 className="font-medium">{category}</h3>
+                            <h3 className="font-medium">{t(`handover.checklist.${category.toLowerCase()}`)}</h3>
                             <Badge variant={checkedCount === categoryItems.length ? 'default' : 'secondary'}>
                               {checkedCount} / {categoryItems.length}
                             </Badge>
@@ -581,43 +583,43 @@ export default function HandoverPage() {
             <TabsContent value="tenant" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Tenant Information</CardTitle>
+                  <CardTitle>{t('handover.tenant.title')}</CardTitle>
                   <CardDescription>
-                    Record tenant details and contract information
+                    {t('handover.tenant.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="tenant-name">Full Name</Label>
+                      <Label htmlFor="tenant-name">{t('handover.tenant.fullName')}</Label>
                       <Input
                         id="tenant-name"
                         value={tenantInfo.name}
                         onChange={(e) => setTenantInfo(prev => ({ ...prev, name: e.target.value }))}
-                        placeholder="Enter tenant name"
+                        placeholder={t('handover.tenant.enterTenantName')}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="tenant-email">Email</Label>
+                      <Label htmlFor="tenant-email">{t('handover.tenant.email')}</Label>
                       <Input
                         id="tenant-email"
                         type="email"
                         value={tenantInfo.email}
                         onChange={(e) => setTenantInfo(prev => ({ ...prev, email: e.target.value }))}
-                        placeholder="tenant@example.com"
+                        placeholder={t('handover.tenant.emailPlaceholder')}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="tenant-phone">Phone</Label>
+                      <Label htmlFor="tenant-phone">{t('handover.tenant.phone')}</Label>
                       <Input
                         id="tenant-phone"
                         value={tenantInfo.phone}
                         onChange={(e) => setTenantInfo(prev => ({ ...prev, phone: e.target.value }))}
-                        placeholder="+49 123 456789"
+                        placeholder={t('handover.tenant.phonePlaceholder')}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="move-in-date">Move-in Date</Label>
+                      <Label htmlFor="move-in-date">{t('handover.tenant.moveInDate')}</Label>
                       <Input
                         id="move-in-date"
                         type="date"
@@ -628,10 +630,10 @@ export default function HandoverPage() {
                   </div>
 
                   <div className="border-t pt-6">
-                    <h3 className="font-medium mb-4">Contract Details</h3>
+                    <h3 className="font-medium mb-4">{t('handover.tenant.contractDetails')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="monthly-rent">Monthly Rent</Label>
+                        <Label htmlFor="monthly-rent">{t('handover.tenant.monthlyRent')}</Label>
                         <Input
                           id="monthly-rent"
                           type="number"
@@ -640,7 +642,7 @@ export default function HandoverPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="deposit">Security Deposit</Label>
+                        <Label htmlFor="deposit">{t('handover.tenant.deposit')}</Label>
                         <Input
                           id="deposit"
                           type="number"
@@ -649,7 +651,7 @@ export default function HandoverPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="contract-start">Contract Start</Label>
+                        <Label htmlFor="contract-start">{t('handover.tenant.contractStart')}</Label>
                         <Input
                           id="contract-start"
                           type="date"
@@ -658,7 +660,7 @@ export default function HandoverPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="contract-end">Contract End (Optional)</Label>
+                        <Label htmlFor="contract-end">{t('handover.tenant.contractEndOptional')}</Label>
                         <Input
                           id="contract-end"
                           type="date"
@@ -670,7 +672,7 @@ export default function HandoverPage() {
                   </div>
 
                   <div className="border-t pt-6">
-                    <h3 className="font-medium mb-4">SEPA Mandate</h3>
+                    <h3 className="font-medium mb-4">{t('handover.sepa.title')}</h3>
                     <div className="flex items-center space-x-3 p-4 border rounded-lg">
                       <Checkbox
                         id="sepa-mandate"
@@ -678,7 +680,7 @@ export default function HandoverPage() {
                         onCheckedChange={(checked) => setTenantInfo(prev => ({ ...prev, sepaMandate: !!checked }))}
                       />
                       <Label htmlFor="sepa-mandate" className="flex-1 cursor-pointer">
-                        SEPA direct debit mandate signed and received
+                        {t('handover.tenant.sepaSignedLabel')}
                       </Label>
                       <CreditCard className="h-5 w-5 text-gray-400" />
                     </div>
@@ -695,17 +697,17 @@ export default function HandoverPage() {
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={generateHandoverProtocol}>
                     <Download className="h-4 w-4 mr-2" />
-                    Generate Protocol
+                    {t('handover.documents.generateProtocol')}
                   </Button>
                   <Button variant="outline" onClick={() => window.print()}>
                     <Printer className="h-4 w-4 mr-2" />
-                    Print Documents
+                    {t('handover.documents.printFullPackage')}
                   </Button>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={sendToTenant}>
                     <Send className="h-4 w-4 mr-2" />
-                    Send to Tenant
+                    {t('handover.documents.sendToTenant')}
                   </Button>
                   <Button
                     onClick={() => {
@@ -716,7 +718,7 @@ export default function HandoverPage() {
                     disabled={progress < 100}
                   >
                     <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Complete Handover
+                    {t('handover.actions.completeHandover')}
                   </Button>
                 </div>
               </div>

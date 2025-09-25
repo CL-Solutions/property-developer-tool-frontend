@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { LocaleLink } from '@/components/locale-link';
 import { MockDataService } from '@/lib/mock-data';
 import { PropertySummary } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +35,7 @@ interface ProjectSummary {
 }
 
 export function PropertyDashboard() {
+  const t = useTranslations();
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -116,88 +118,88 @@ export function PropertyDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.activeProjects')}</CardTitle>
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.activeProjects}</div>
             <p className="text-xs text-muted-foreground">
-              Development projects in progress
+              {t('dashboard.developmentProjectsInProgress')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.totalProperties')}</CardTitle>
             <Home className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalProperties}</div>
             <p className="text-xs text-muted-foreground">
-              Across all projects
+              {t('dashboard.acrossAllProjects')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Critical Alerts</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.criticalAlerts')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.criticalAlerts}</div>
             <p className="text-xs text-muted-foreground">
-              Require immediate attention
+              {t('dashboard.requireImmediateAttention')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.averageProgress')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.averageProgress}%</div>
             <p className="text-xs text-muted-foreground">
-              Overall construction completion
+              {t('dashboard.overallConstructionCompletion')}
             </p>
           </CardContent>
         </Card>
 
         {/* Pending Document Requests Card */}
-        <Link href="/document-requests">
+        <LocaleLink href="/document-requests">
           <Card className="cursor-pointer hover:shadow-md transition-all border-orange-200 bg-gradient-to-br from-orange-50 to-transparent">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Document Requests</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('navigation.documentRequests')}</CardTitle>
               <FileText className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
                 <div className="text-2xl font-bold text-orange-600">{stats.pendingRequests}</div>
                 <Badge variant="secondary" className="bg-orange-100 text-orange-700 text-xs">
-                  Pending
+                  {t('dashboard.pending')}
                 </Badge>
               </div>
               <p className="text-xs text-orange-600 mt-1">
-                Requires immediate attention
+                {t('dashboard.requiresImmediateAttention')}
               </p>
             </CardContent>
           </Card>
-        </Link>
+        </LocaleLink>
       </div>
 
       {/* Projects Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Recent Projects</h2>
-          <Link href="/projects">
+          <h2 className="text-xl font-semibold">{t('dashboard.recentProjects')}</h2>
+          <LocaleLink href="/projects">
             <Button variant="ghost" size="default">
-              View all projects
+              {t('dashboard.viewAllProjects')}
               <ArrowRight className="h-4 w-4" />
             </Button>
-          </Link>
+          </LocaleLink>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
@@ -220,7 +222,7 @@ export function PropertyDashboard() {
           ) : (
             projects.map((project) => (
               <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                <Link href={`/projects/${project.id}`}>
+                <LocaleLink href={`/projects/${project.id}`}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
@@ -235,7 +237,7 @@ export function PropertyDashboard() {
                       </div>
                       {project.criticalAlerts > 0 && (
                         <Badge variant="destructive" className="ml-2">
-                          {project.criticalAlerts} Alert{project.criticalAlerts > 1 ? 's' : ''}
+                          {project.criticalAlerts} {project.criticalAlerts > 1 ? t('projects.alerts') : t('projects.alert')}
                         </Badge>
                       )}
                     </div>
@@ -244,23 +246,23 @@ export function PropertyDashboard() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm">
                         <Home className="h-4 w-4 text-muted-foreground" />
-                        <span>{project.propertyCount} Properties</span>
+                        <span>{project.propertyCount} {t('projects.properties')}</span>
                       </div>
                       <Button variant="ghost" size="sm">
-                        View Details
+                        {t('common.viewDetails')}
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
 
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">Progress</span>
+                        <span className="text-muted-foreground">{t('dashboard.progress')}</span>
                         <span className="font-medium">{project.averageProgress}%</span>
                       </div>
                       <Progress value={project.averageProgress} className="h-2" />
                     </div>
                   </CardContent>
-                </Link>
+                </LocaleLink>
               </Card>
             ))
           )}
@@ -269,49 +271,49 @@ export function PropertyDashboard() {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold mb-4">{t('dashboard.quickActions')}</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="cursor-pointer hover:shadow-md transition-shadow">
-            <Link href="/pre-check">
+            <LocaleLink href="/pre-check">
               <CardHeader className="flex flex-row items-center space-x-2 pb-2">
                 <ClipboardCheck className="h-4 w-4" />
-                <CardTitle className="text-sm">Pre-Check</CardTitle>
+                <CardTitle className="text-sm">{t('navigation.preCheck')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">Quick property assessment</p>
+                <p className="text-xs text-muted-foreground">{t('dashboard.quickPropertyAssessment')}</p>
               </CardContent>
-            </Link>
+            </LocaleLink>
           </Card>
 
           <Card className="cursor-pointer hover:shadow-md transition-shadow">
-            <Link href="/analytics">
+            <LocaleLink href="/analytics">
               <CardHeader className="flex flex-row items-center space-x-2 pb-2">
                 <Activity className="h-4 w-4" />
-                <CardTitle className="text-sm">Analytics</CardTitle>
+                <CardTitle className="text-sm">{t('navigation.analytics')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">View performance metrics</p>
+                <p className="text-xs text-muted-foreground">{t('dashboard.viewPerformanceMetrics')}</p>
               </CardContent>
-            </Link>
+            </LocaleLink>
           </Card>
 
           <Card className="cursor-pointer hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center space-x-2 pb-2">
               <Briefcase className="h-4 w-4" />
-              <CardTitle className="text-sm">Sales Partners</CardTitle>
+              <CardTitle className="text-sm">{t('dashboard.salesPartners')}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">Manage partner relationships</p>
+              <p className="text-xs text-muted-foreground">{t('dashboard.managePartnerRelationships')}</p>
             </CardContent>
           </Card>
 
           <Card className="cursor-pointer hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center space-x-2 pb-2">
               <Clock className="h-4 w-4" />
-              <CardTitle className="text-sm">Timeline</CardTitle>
+              <CardTitle className="text-sm">{t('projects.timeline')}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">View project schedules</p>
+              <p className="text-xs text-muted-foreground">{t('dashboard.viewProjectSchedules')}</p>
             </CardContent>
           </Card>
         </div>

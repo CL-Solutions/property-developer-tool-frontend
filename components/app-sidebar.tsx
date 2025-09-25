@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import { useTranslations } from 'next-intl'
+import { LocaleLink } from '@/components/locale-link'
 import {
   AlertTriangle,
   BedDouble,
@@ -29,76 +31,78 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const data = {
-  user: {
-    name: "Property Developer",
-    email: "developer@example.com",
-    avatar: "/avatars/developer.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Projects",
-      url: "/projects",
-      icon: BuildingIcon,
-    },
-    {
-      title: "Document Requests",
-      url: "/document-requests",
-      icon: AlertTriangle,
-    },
-    {
-      title: "Open Rooms",
-      url: "/open-rooms",
-      icon: BedDouble,
-    },
-    {
-      title: "Analytics",
-      url: "/analytics",
-      icon: TrendingUpIcon,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: SettingsIcon,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: HelpCircleIcon,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: SearchIcon,
-    },
-  ],
-  documents: [
-    {
-      name: "Property Documents",
-      url: "/documents",
-      icon: FileTextIcon,
-    },
-    {
-      name: "Reports",
-      url: "/reports",
-      icon: ClipboardListIcon,
-    },
-    {
-      name: "Data Library",
-      url: "/data",
-      icon: DatabaseIcon,
-    },
-  ],
-}
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const t = useTranslations();
+  
+  const data = {
+    user: {
+      name: t('sidebar.user.name'),
+      email: t('sidebar.user.email'),
+      avatar: "/avatars/developer.jpg",
+    },
+    navMain: [
+      {
+        title: t('navigation.dashboard'),
+        url: "/dashboard",
+        icon: LayoutDashboardIcon,
+      },
+      {
+        title: t('navigation.projects'),
+        url: "/projects",
+        icon: BuildingIcon,
+      },
+      {
+        title: t('navigation.documentRequests'),
+        url: "/document-requests",
+        icon: AlertTriangle,
+      },
+      {
+        title: t('navigation.openRooms'),
+        url: "/open-rooms",
+        icon: BedDouble,
+      },
+      {
+        title: t('navigation.analytics'),
+        url: "/analytics",
+        icon: TrendingUpIcon,
+      },
+    ],
+    navSecondary: [
+      {
+        title: t('navigation.settings'),
+        url: "#",
+        icon: SettingsIcon,
+      },
+      {
+        title: t('navigation.getHelp'),
+        url: "#",
+        icon: HelpCircleIcon,
+      },
+      {
+        title: t('navigation.search'),
+        url: "#",
+        icon: SearchIcon,
+      },
+    ],
+    documents: [
+      {
+        name: t('navigation.propertyDocuments'),
+        url: "/documents",
+        icon: FileTextIcon,
+      },
+      {
+        name: t('navigation.reports'),
+        url: "/reports",
+        icon: ClipboardListIcon,
+      },
+      {
+        name: t('navigation.dataLibrary'),
+        url: "/data",
+        icon: DatabaseIcon,
+      },
+    ],
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -108,10 +112,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="/dashboard">
+              <LocaleLink href="/dashboard">
                 <BuildingIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">Property Developer</span>
-              </a>
+                <span className="text-base font-semibold">{t('sidebar.propertyDeveloper')}</span>
+              </LocaleLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -62,7 +62,7 @@ export default function PropertyEditPage() {
     loadPropertyData();
   }, [propertyId]);
 
-  const handleSave = async (formData: Record<string, unknown>) => {
+  const handleSave = async (formData: any) => {
     setSaving(true);
     try {
       // In a real app, this would update the property via API
@@ -197,24 +197,18 @@ export default function PropertyEditPage() {
                     houseNumber: project?.house_number || '',
                     zipCode: project?.zip_code || '',
                     city: project?.city || '',
-                    size: property.size_sqm || 0,
+                    livingArea: property.size_sqm || 0,
                     rooms: property.rooms || 0,
                     floor: property.floor || '',
-                    buildYear: project?.build_year || new Date().getFullYear(),
-                    purchasePrice: property.purchase_price || 0,
-                    sellingPrice: property.developer_selling_price || 0,
+                    constructionYear: project?.construction_year || new Date().getFullYear(),
+                    purchasePrice: property.total_purchase_price || 0,
+                    sellingPrice: property.selling_price || 0,
                     renovationBudget: property.developer_renovation_budget || 0,
-                    furnishingBudget: property.developer_furnishing_budget || 0,
-                    hoaFeeTotal: property.hoa_fee || 0,
-                    hoaFeeLandlord: property.developer_hoa_fee_landlord || 0,
-                    hoaFeeReserve: property.developer_hoa_fee_reserve || 0,
-                    rentalType: property.developer_rental_type || 'standard',
-                    standardRent: property.rental_price_net || 0,
-                    wgRooms: property.developer_wg_rooms || [],
-                    specialConditions: property.developer_special_conditions || [],
+                    hoaFeesLandlord: property.hoa_fees_landlord || 0,
+                    hoaFeesReserve: property.hoa_fees_reserve || 0,
+                    rentalStrategy: property.developer_rental_strategy || 'standard',
+                    plannedRent: property.monthly_rent || 0,
                     energyClass: project?.energy_class || '',
-                    energyValue: project?.energy_value || 0,
-                    energyType: project?.energy_type || '',
                   }}
                   onSave={handleSave}
                   isEditMode={true}

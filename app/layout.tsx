@@ -1,34 +1,16 @@
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import "./globals.css"
-
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-})
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-})
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Property Developer Tool",
-  description: "Comprehensive property developer management system",
-}
+  title: 'Property Developer Tool',
+  description: 'Comprehensive property developer management system',
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  )
+}: {
+  children: React.ReactNode;
+}) {
+  // This is just a pass-through layout since the [locale]/layout.tsx handles the actual HTML structure
+  return children;
 }

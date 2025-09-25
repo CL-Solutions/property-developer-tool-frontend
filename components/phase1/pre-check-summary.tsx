@@ -30,6 +30,7 @@ import {
 import { Property, TrafficLightStatus, PreCheckResult } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { format, differenceInDays } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 interface PreCheckSummaryProps {
   property: Property;
@@ -37,6 +38,7 @@ interface PreCheckSummaryProps {
 }
 
 export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
+  const t = useTranslations();
   const [activeTab, setActiveTab] = useState('overview');
   const [showDetailedAnalysis, setShowDetailedAnalysis] = useState(false);
   const [expandedScores, setExpandedScores] = useState<{
@@ -67,9 +69,9 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
         <CardContent className="py-8">
           <div className="text-center space-y-3">
             <Clock className="h-12 w-12 text-gray-400 mx-auto" />
-            <p className="text-lg font-medium">Pre-Check Pending</p>
+            <p className="text-lg font-medium">{t('properties.preCheckPending')}</p>
             <p className="text-sm text-gray-600">
-              This property has not yet completed the Phase 1 Pre-Check assessment.
+              {t('properties.preCheckPendingDesc')}
             </p>
           </div>
         </CardContent>
@@ -99,11 +101,11 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
   const getResultBadge = (result: PreCheckResult) => {
     switch (result) {
       case 'approved':
-        return <Badge className="bg-green-100 text-green-800">Approved</Badge>;
+        return <Badge className="bg-green-100 text-green-800">{t('properties.approved')}</Badge>;
       case 'approved_with_modifications':
-        return <Badge className="bg-yellow-100 text-yellow-800">Approved with Modifications</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800">{t('properties.approvedWithModifications')}</Badge>;
       case 'rejected':
-        return <Badge variant="destructive">Rejected</Badge>;
+        return <Badge variant="destructive">{t('properties.rejected')}</Badge>;
     }
   };
 
@@ -127,10 +129,10 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle>Phase 1: Pre-Check Assessment</CardTitle>
+            <CardTitle>{t('properties.phasePreCheckAssessment')}</CardTitle>
             <CardDescription className="mt-2 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Completed {format(preCheckDate, 'MMM d, yyyy')} ({daysAgo} days ago)
+              {t('properties.completedDate', { date: format(preCheckDate, 'MMM d, yyyy'), days: daysAgo })}
             </CardDescription>
           </div>
           {getResultBadge(property.developer_pre_check_result!)}
@@ -139,9 +141,9 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-3 w-full">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="feedback">Feedback</TabsTrigger>
+            <TabsTrigger value="overview">{t('properties.overview')}</TabsTrigger>
+            <TabsTrigger value="details">{t('properties.details')}</TabsTrigger>
+            <TabsTrigger value="feedback">{t('properties.feedback')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6 mt-6">
@@ -150,28 +152,28 @@ export function PreCheckSummary({ property, className }: PreCheckSummaryProps) {
               <div className="p-4 border rounded-lg">
                 <div className="flex items-center gap-2 text-gray-600 mb-1">
                   <Calendar className="h-4 w-4" />
-                  <span className="text-xs">Assessment Date</span>
+                  <span className="text-xs">{t('properties.assessmentDate')}</span>
                 </div>
                 <p className="text-sm font-medium">{format(preCheckDate, 'dd.MM.yyyy')}</p>
-                <p className="text-xs text-gray-500">{daysAgo} days ago</p>
+                <p className="text-xs text-gray-500">{t('properties.daysAgo', { days: daysAgo })}</p>
               </div>
 
               <div className="p-4 border rounded-lg">
                 <div className="flex items-center gap-2 text-gray-600 mb-1">
                   <Building2 className="h-4 w-4" />
-                  <span className="text-xs">Property Type</span>
+                  <span className="text-xs">{t('properties.propertyType')}</span>
                 </div>
                 <p className="text-sm font-medium">{property.unit_number || 'WE ' + property.id.slice(-3)}</p>
-                <p className="text-xs text-gray-500">{property.size_sqm} m² • {property.rooms} rooms</p>
+                <p className="text-xs text-gray-500">{property.size_sqm} m² • {property.rooms} {t('properties.rooms')}</p>
               </div>
 
               <div className="p-4 border rounded-lg">
                 <div className="flex items-center gap-2 text-gray-600 mb-1">
                   <Euro className="h-4 w-4" />
-                  <span className="text-xs">Investment</span>
+                  <span className="text-xs">{t('properties.investment')}</span>
                 </div>
                 <p className="text-sm font-medium">€{property.developer_purchase_price?.toLocaleString()}</p>
-                <p className="text-xs text-gray-500">Yield: {property.gross_rental_yield?.toFixed(2)}%</p>
+                <p className="text-xs text-gray-500">{t('properties.yield')}: {property.gross_rental_yield?.toFixed(2)}%</p>
               </div>
             </div>
 

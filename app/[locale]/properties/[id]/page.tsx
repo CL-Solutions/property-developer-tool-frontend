@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { useLocaleRouter } from '@/hooks/use-locale-router';
+import { LocaleLink } from '@/components/locale-link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -54,10 +57,14 @@ import {
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { PropertyGanttChart } from "@/components/property-gantt-chart"
+import { SalesStatusIndicator } from '@/components/sales-status-indicator'
+import { NotaryAppointmentManager } from '@/components/notary-appointment-manager'
 
 export default function PropertyDetailPage() {
   const params = useParams();
-  const router = useRouter();
+  const router = useLocaleRouter();
+  const t = useTranslations();
+  const locale = useLocale();
   const propertyId = params.id as string;
 
   const [property, setProperty] = useState<Property | null>(null);
@@ -113,11 +120,11 @@ export default function PropertyDetailPage() {
         <SidebarInset>
           <div className="flex flex-1 flex-col items-center justify-center p-4">
             <AlertTriangle className="h-12 w-12 text-yellow-500 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Property not found</h2>
-            <p className="text-gray-600 mb-4">The property you&apos;re looking for doesn&apos;t exist.</p>
+            <h2 className="text-xl font-semibold mb-2">{t('properties.propertyNotFound')}</h2>
+            <p className="text-gray-600 mb-4">{t('properties.propertyNotFoundDescription')}</p>
             <Button variant="outline" size="default" onClick={() => router.push('/dashboard')}>
               <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
+              {t('properties.backToDashboard')}
             </Button>
           </div>
         </SidebarInset>
@@ -143,14 +150,14 @@ export default function PropertyDetailPage() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard">
-                  Dashboard
+                <BreadcrumbLink href={`/${locale}/dashboard`}>
+                  {t('navigation.dashboard')}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard">
-                  Properties
+                <BreadcrumbLink href={`/${locale}/dashboard`}>
+                  {t('navigation.properties')}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
@@ -186,7 +193,7 @@ export default function PropertyDetailPage() {
                     onClick={() => router.push(`/properties/new?edit=${propertyId}`)}
                   >
                     <Edit className="h-4 w-4 mr-1" />
-                    Edit Property
+                    {t('properties.editProperty')}
                   </Button>
                   <Badge variant={property.developer_sales_partner === 'blackvesto' ? 'default' : 'secondary'}>
                     {property.developer_sales_partner === 'blackvesto' ? 'BlackVesto' : 'Internal'}
@@ -197,19 +204,19 @@ export default function PropertyDetailPage() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-500">Size</p>
+                  <p className="text-sm text-gray-500">{t('properties.size')}</p>
                   <p className="font-semibold">{property.size_sqm} m²</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Rooms</p>
+                  <p className="text-sm text-gray-500">{t('properties.rooms')}</p>
                   <p className="font-semibold">{property.rooms}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Floor</p>
+                  <p className="text-sm text-gray-500">{t('properties.floor')}</p>
                   <p className="font-semibold">{property.floor}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Type</p>
+                  <p className="text-sm text-gray-500">{t('properties.type')}</p>
                   <p className="font-semibold capitalize">{property.property_type}</p>
                 </div>
               </div>
@@ -221,8 +228,8 @@ export default function PropertyDetailPage() {
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle>Development Progress</CardTitle>
-                  <CardDescription>Current phase: {property.developer_phase} of 6</CardDescription>
+                  <CardTitle>{t('properties.developmentProgress')}</CardTitle>
+                  <CardDescription>{t('properties.currentPhase', {current: property.developer_phase, total: 6})}</CardDescription>
                 </div>
                 <PhaseIndicator currentPhase={property.developer_phase} status={property.developer_phase_status} size="sm" />
               </div>
@@ -236,12 +243,13 @@ export default function PropertyDetailPage() {
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="pre-check">Pre-Check Assessment</TabsTrigger>
-            <TabsTrigger value="construction">Construction</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="handover">Handover</TabsTrigger>
-            <TabsTrigger value="timeline">Timeline</TabsTrigger>
+            <TabsTrigger value="overview">{t('properties.tabs.overview')}</TabsTrigger>
+            <TabsTrigger value="pre-check">{t('properties.tabs.preCheck')}</TabsTrigger>
+            <TabsTrigger value="sales">{t('properties.tabs.sales')}</TabsTrigger>
+            <TabsTrigger value="construction">{t('properties.tabs.construction')}</TabsTrigger>
+            <TabsTrigger value="documents">{t('properties.tabs.documents')}</TabsTrigger>
+            <TabsTrigger value="handover">{t('properties.tabs.handover')}</TabsTrigger>
+            <TabsTrigger value="timeline">{t('properties.tabs.timeline')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
@@ -255,20 +263,20 @@ export default function PropertyDetailPage() {
                       <div>
                         <CardTitle className="flex items-center gap-2">
                           <FileCheck className="h-5 w-5" />
-                          Pre-Check Assessment
+                          {t('properties.preCheckAssessment')}
                         </CardTitle>
                         <CardDescription>
                           {!property.developer_pre_check_date
-                            ? "Gather property data and send for evaluation"
+                            ? t('properties.gatherPropertyData')
                             : property.developer_pre_check_result
-                            ? "BlackVesto feedback received"
-                            : "Awaiting BlackVesto evaluation"}
+                            ? t('properties.blackVestoFeedbackReceived')
+                            : t('properties.awaitingBlackVesto')}
                         </CardDescription>
                       </div>
                       {property.developer_pre_check_date && !property.developer_pre_check_result && (
                         <Badge variant="outline" className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          Pending Review
+                          {t('properties.pendingReview')}
                         </Badge>
                       )}
                     </div>
@@ -276,7 +284,7 @@ export default function PropertyDetailPage() {
                   <CardContent className="space-y-4">
                     {/* Traffic Lights Summary */}
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="text-sm font-semibold mb-3">Current Assessment</h4>
+                      <h4 className="text-sm font-semibold mb-3">{t('properties.currentAssessment')}</h4>
                       <div className="grid grid-cols-4 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
@@ -289,7 +297,7 @@ export default function PropertyDetailPage() {
                               property.energy_class && ['C', 'D'].includes(property.energy_class) ? "bg-yellow-500" :
                               "bg-red-500"
                             )}></div>
-                            <span className="text-sm font-medium">Energy</span>
+                            <span className="text-sm font-medium">{t('properties.trafficLights.energy')}</span>
                           </div>
                           <p className="text-xs text-gray-600 ml-10">
                             {property.developer_initial_traffic_lights?.scores?.energy
@@ -308,7 +316,7 @@ export default function PropertyDetailPage() {
                               property.gross_rental_yield && property.gross_rental_yield >= 3.5 ? "bg-yellow-500" :
                               "bg-red-500"
                             )}></div>
-                            <span className="text-sm font-medium">Yield</span>
+                            <span className="text-sm font-medium">{t('properties.trafficLights.yield')}</span>
                           </div>
                           <p className="text-xs text-gray-600 ml-10">
                             {property.developer_initial_traffic_lights?.scores?.yield
@@ -325,7 +333,7 @@ export default function PropertyDetailPage() {
                               property.developer_initial_traffic_lights?.hoa === 'red' ? "bg-red-500" :
                               "bg-gray-500" // Default if no traffic light data
                             )}></div>
-                            <span className="text-sm font-medium">HOA</span>
+                            <span className="text-sm font-medium">{t('properties.trafficLights.hoa')}</span>
                           </div>
                           <p className="text-xs text-gray-600 ml-10">
                             {property.developer_initial_traffic_lights?.scores?.hoa
@@ -342,7 +350,7 @@ export default function PropertyDetailPage() {
                               property.developer_initial_traffic_lights?.location === 'red' ? "bg-red-500" :
                               "bg-gray-500" // Default if no traffic light data
                             )}></div>
-                            <span className="text-sm font-medium">Location</span>
+                            <span className="text-sm font-medium">{t('properties.trafficLights.location')}</span>
                           </div>
                           <p className="text-xs text-gray-600 ml-10">
                             {property.developer_initial_traffic_lights?.scores?.location
@@ -357,7 +365,7 @@ export default function PropertyDetailPage() {
                           size="sm"
                           onClick={() => setActiveTab('pre-check')}
                         >
-                          View Detailed Assessment →
+                          {t('properties.viewDetailedAssessment')} →
                         </Button>
                       </div>
                     </div>
@@ -371,10 +379,10 @@ export default function PropertyDetailPage() {
                       }>
                         <CheckCircle2 className="h-4 w-4" />
                         <AlertDescription>
-                          <span className="font-semibold">BlackVesto Feedback: </span>
-                          {property.developer_pre_check_result === 'approved' && 'Property approved for purchase'}
-                          {property.developer_pre_check_result === 'approved_with_modifications' && 'Approved with suggested price adjustment'}
-                          {property.developer_pre_check_result === 'rejected' && 'Not recommended for purchase'}
+                          <span className="font-semibold">{t('properties.blackVestoFeedback')}: </span>
+                          {property.developer_pre_check_result === 'approved' && t('properties.propertyApproved')}
+                          {property.developer_pre_check_result === 'approved_with_modifications' && t('properties.approvedWithModifications')}
+                          {property.developer_pre_check_result === 'rejected' && t('properties.notRecommended')}
                         </AlertDescription>
                       </Alert>
                     )}
@@ -385,10 +393,10 @@ export default function PropertyDetailPage() {
                         <>
                           <Button className="flex items-center gap-2">
                             <Send className="h-4 w-4" />
-                            Send to BlackVesto Partner
+                            {t('properties.sendToBlackVesto')}
                           </Button>
                           <Button variant="outline">
-                            Complete Manually
+                            {t('properties.completeManually')}
                           </Button>
                         </>
                       ) : property.developer_pre_check_result ? (
@@ -413,8 +421,8 @@ export default function PropertyDetailPage() {
                       <div className="flex items-center gap-3">
                         <FileUp className="h-8 w-8 text-blue-500" />
                         <div>
-                          <p className="font-semibold">Upload Documents</p>
-                          <p className="text-sm text-gray-500">Floor plans, energy certificate</p>
+                          <p className="font-semibold">{t('properties.uploadDocuments')}</p>
+                          <p className="text-sm text-gray-500">{t('properties.uploadDocumentsDesc')}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -424,8 +432,8 @@ export default function PropertyDetailPage() {
                       <div className="flex items-center gap-3">
                         <DollarSign className="h-8 w-8 text-green-500" />
                         <div>
-                          <p className="font-semibold">Financial Calculator</p>
-                          <p className="text-sm text-gray-500">ROI and yield analysis</p>
+                          <p className="font-semibold">{t('properties.financialCalculator')}</p>
+                          <p className="text-sm text-gray-500">{t('properties.financialCalculatorDesc')}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -435,8 +443,8 @@ export default function PropertyDetailPage() {
                       <div className="flex items-center gap-3">
                         <FileCheck className="h-8 w-8 text-purple-500" />
                         <div>
-                          <p className="font-semibold">Pre-Check Details</p>
-                          <p className="text-sm text-gray-500">View full assessment</p>
+                          <p className="font-semibold">{t('properties.preCheckDetails')}</p>
+                          <p className="text-sm text-gray-500">{t('properties.viewFullAssessment')}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -452,9 +460,9 @@ export default function PropertyDetailPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <TrendingUp className="h-5 w-5" />
-                      Purchase Decision Required
+                      {t('properties.purchaseDecisionRequired')}
                     </CardTitle>
-                    <CardDescription>Review feedback and make final decision</CardDescription>
+                    <CardDescription>{t('properties.reviewFeedbackMakeDecision')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* BlackVesto Feedback Summary */}
@@ -462,16 +470,16 @@ export default function PropertyDetailPage() {
                       <div className="p-4 border rounded-lg">
                         <h4 className="font-semibold mb-2 flex items-center gap-2">
                           <FileCheck className="h-4 w-4" />
-                          BlackVesto Evaluation
+                          {t('properties.blackVestoEvaluation')}
                         </h4>
                         <Badge className={
                           property.developer_pre_check_result === 'approved' ? 'bg-green-100 text-green-800' :
                           property.developer_pre_check_result === 'approved_with_modifications' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-red-100 text-red-800'
                         }>
-                          {property.developer_pre_check_result === 'approved' && 'Fully Approved'}
-                          {property.developer_pre_check_result === 'approved_with_modifications' && 'Price Adjustment Suggested'}
-                          {property.developer_pre_check_result === 'rejected' && 'Not Recommended'}
+                          {property.developer_pre_check_result === 'approved' && t('properties.fullyApproved')}
+                          {property.developer_pre_check_result === 'approved_with_modifications' && t('properties.priceAdjustmentSuggested')}
+                          {property.developer_pre_check_result === 'rejected' && t('properties.notRecommended')}
                         </Badge>
                         {property.developer_pre_check_result === 'approved_with_modifications' && (
                           <Alert className="mt-3">
@@ -487,7 +495,7 @@ export default function PropertyDetailPage() {
 
                     {/* Traffic Lights Overview */}
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold mb-3">Assessment Results</h4>
+                      <h4 className="font-semibold mb-3">{t('properties.assessmentResults')}</h4>
                       <div className="grid grid-cols-4 gap-3">
                         <div className="text-center">
                           <div className={cn(
@@ -538,19 +546,19 @@ export default function PropertyDetailPage() {
 
                     {/* Decision Actions */}
                     <div className="space-y-2">
-                      <h4 className="font-semibold">Make Your Decision</h4>
+                      <h4 className="font-semibold">{t('properties.makeYourDecision')}</h4>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2">
                           <CheckCircle2 className="h-4 w-4" />
-                          GO - Purchase Property
+                          {t('properties.goPurchaseProperty')}
                         </Button>
                         <Button variant="outline" className="flex items-center gap-2">
                           <RefreshCw className="h-4 w-4" />
-                          Adjust & Negotiate
+                          {t('properties.adjustNegotiate')}
                         </Button>
                         <Button variant="destructive" className="flex items-center gap-2">
                           <XCircle className="h-4 w-4" />
-                          NO GO - Cancel
+                          {t('properties.noGoCancel')}
                         </Button>
                       </div>
                     </div>
@@ -560,16 +568,16 @@ export default function PropertyDetailPage() {
                 {/* Decision Criteria Checklist */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Decision Criteria</CardTitle>
+                    <CardTitle>{t('properties.decisionCriteria')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       {[
-                        'Positive BlackVesto feedback',
-                        'Yield meets target (>5%)',
-                        'Location assessment positive',
-                        'HOA fees acceptable',
-                        'Renovation budget confirmed'
+                        t('properties.criteria.positiveBlackVesto'),
+                        t('properties.criteria.yieldMeetsTarget'),
+                        t('properties.criteria.locationPositive'),
+                        t('properties.criteria.hoaAcceptable'),
+                        t('properties.criteria.renovationConfirmed')
                       ].map((criteria) => (
                         <div key={criteria} className="flex items-center gap-2">
                           <CheckSquare className="h-4 w-4 text-gray-400" />
@@ -589,21 +597,141 @@ export default function PropertyDetailPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <FileUp className="h-5 w-5" />
-                      Documentation & Preparation
+                      {t('properties.documentationPreparation')}
                     </CardTitle>
-                    <CardDescription>Complete all documentation and prepare marketing materials</CardDescription>
+                    <CardDescription>{t('properties.completeDocumentationDesc')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <Alert>
                         <CheckCircle2 className="h-4 w-4" />
                         <AlertDescription>
-                          Property purchased successfully. Now preparing for marketing.
+                          {t('properties.propertyPurchasedSuccess')}
                         </AlertDescription>
                       </Alert>
                       <div className="flex gap-2">
-                        <Button>Upload Documents</Button>
-                        <Button variant="outline">Generate Marketing Materials</Button>
+                        <Button>{t('properties.uploadDocuments')}</Button>
+                        <Button 
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => {
+                            // Move to Phase 4
+                            console.log('Moving to Phase 4: Marketing & Reservation');
+                            // In real app, this would update the property phase via API
+                          }}
+                        >
+                          {t('properties.startMarketing')}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Missing Information Checklist */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                      {t('properties.missingInfoDocuments')}
+                    </CardTitle>
+                    <CardDescription>{t('properties.completeBeforeMarketing')}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Missing Project Information */}
+                      <div>
+                        <h4 className="font-semibold text-sm mb-2">{t('properties.projectInformation')}</h4>
+                        <div className="space-y-2">
+                          {!property.project?.energy_certificate_type && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <XCircle className="h-4 w-4 text-red-500" />
+                              <span>{t('properties.energyCertificateType')}</span>
+                            </div>
+                          )}
+                          {!property.project?.construction_year && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <XCircle className="h-4 w-4 text-red-500" />
+                              <span>{t('properties.constructionYear')}</span>
+                            </div>
+                          )}
+                          {!property.project?.has_elevator && property.project?.total_floors && property.project.total_floors > 3 && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                              <span>{t('properties.elevatorInfo', {floors: property.project.total_floors})}</span>
+                            </div>
+                          )}
+                          {property.project?.energy_certificate_type && property.project?.construction_year && (
+                            <div className="flex items-center gap-2 text-sm text-green-600">
+                              <CheckCircle2 className="h-4 w-4" />
+                              <span>{t('properties.allInfoComplete')}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Missing Documents */}
+                      <div>
+                        <h4 className="font-semibold text-sm mb-2">{t('properties.requiredDocuments')}</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-sm">
+                            <XCircle className="h-4 w-4 text-red-500" />
+                            <span>{t('properties.floorPlan')}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <XCircle className="h-4 w-4 text-red-500" />
+                            <span>{t('properties.energyCertificate')}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <XCircle className="h-4 w-4 text-red-500" />
+                            <span>{t('properties.propertyPhotos')}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                            <span>{t('properties.purchaseContract')}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                            <span>{t('properties.hoaMeetingMinutes')}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Property Details */}
+                      <div>
+                        <h4 className="font-semibold text-sm mb-2">{t('properties.propertyDetails')}</h4>
+                        <div className="space-y-2">
+                          {!property.balcony && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                              <span>{t('properties.balconyTerraceInfo')}</span>
+                            </div>
+                          )}
+                          {!property.has_cellar && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                              <span>{t('properties.cellarStorageInfo')}</span>
+                            </div>
+                          )}
+                          {property.developer_furnishing_budget === 0 && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                              <span>{t('properties.furnishingBudgetNotSet')}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Progress Summary */}
+                      <div className="pt-4 border-t">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{t('properties.completionStatus')}</span>
+                          <Badge variant="outline" className="text-yellow-600">
+                            {t('properties.percentComplete', {percent: 60})}
+                          </Badge>
+                        </div>
+                        <Progress value={60} className="mt-2" />
+                        <p className="text-xs text-gray-500 mt-2">
+                          {t('properties.completeRequiredItems')}
+                        </p>
                       </div>
                     </div>
                   </CardContent>
@@ -618,28 +746,28 @@ export default function PropertyDetailPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5" />
-                      Active Marketing & Reservation
+                      {t('properties.activeMarketingReservation')}
                     </CardTitle>
-                    <CardDescription>Property is actively listed and accepting viewings</CardDescription>
+                    <CardDescription>{t('properties.propertyActivelyListed')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Viewing Requests</p>
+                        <p className="text-sm text-gray-500">{t('properties.viewingRequests')}</p>
                         <p className="text-2xl font-semibold">12</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Reservations</p>
+                        <p className="text-sm text-gray-500">{t('properties.reservations')}</p>
                         <p className="text-2xl font-semibold">2</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Days on Market</p>
+                        <p className="text-sm text-gray-500">{t('properties.daysOnMarket')}</p>
                         <p className="text-2xl font-semibold">7</p>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-4">
-                      <Button>Schedule Viewing</Button>
-                      <Button variant="outline">Create Reservation</Button>
+                      <Button>{t('properties.scheduleViewing')}</Button>
+                      <Button variant="outline">{t('properties.createReservation')}</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -653,20 +781,20 @@ export default function PropertyDetailPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Calendar className="h-5 w-5" />
-                      Buyer Process & Notary
+                      {t('properties.buyerProcessNotary')}
                     </CardTitle>
-                    <CardDescription>Finalizing sale with buyer and notary appointment</CardDescription>
+                    <CardDescription>{t('properties.finalizingSale')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="p-4 bg-gray-50 rounded">
-                        <p className="text-sm font-semibold">Buyer Information</p>
+                        <p className="text-sm font-semibold">{t('properties.buyerInformation')}</p>
                         <p className="text-sm mt-1">Max Mustermann</p>
-                        <p className="text-sm text-gray-500">Notary appointment: 15.01.2024</p>
+                        <p className="text-sm text-gray-500">{t('properties.notaryDate', { date: '15.01.2024' })}</p>
                       </div>
                       <div className="flex gap-2">
-                        <Button>View Contract</Button>
-                        <Button variant="outline">Contact Notary</Button>
+                        <Button>{t('properties.viewContract')}</Button>
+                        <Button variant="outline">{t('properties.contactNotary')}</Button>
                       </div>
                     </div>
                   </CardContent>
@@ -681,9 +809,9 @@ export default function PropertyDetailPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Key className="h-5 w-5" />
-                      Property Handover & Rental Setup
+                      {t('properties.propertyHandoverRental')}
                     </CardTitle>
-                    <CardDescription>Complete handover and setup rental management</CardDescription>
+                    <CardDescription>{t('properties.completeHandoverDesc')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -691,13 +819,13 @@ export default function PropertyDetailPage() {
                         <Alert>
                           <Home className="h-4 w-4" />
                           <AlertDescription>
-                            First rental guarantee active: €{property.monthly_rent}/month
+                            {t('properties.firstRentalGuarantee', { amount: property.monthly_rent })}
                           </AlertDescription>
                         </Alert>
                       )}
                       <div className="flex gap-2">
-                        <Button>Complete Handover</Button>
-                        <Button variant="outline">Setup Rental Management</Button>
+                        <Button>{t('properties.completeHandover')}</Button>
+                        <Button variant="outline">{t('properties.setupRentalManagement')}</Button>
                       </div>
                     </div>
                   </CardContent>
@@ -708,24 +836,24 @@ export default function PropertyDetailPage() {
             {/* Financial Overview - Always visible */}
             <Card>
               <CardHeader>
-                <CardTitle>Financial Overview</CardTitle>
+                <CardTitle>{t('properties.financialOverview')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500">Purchase Price</p>
+                    <p className="text-sm text-gray-500">{t('properties.purchasePrice')}</p>
                     <p className="text-xl font-semibold">€{property.developer_purchase_price?.toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Selling Price</p>
+                    <p className="text-sm text-gray-500">{t('properties.sellingPrice')}</p>
                     <p className="text-xl font-semibold">€{property.selling_price?.toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Renovation Budget</p>
+                    <p className="text-sm text-gray-500">{t('properties.renovationBudget')}</p>
                     <p className="text-xl font-semibold">€{property.developer_renovation_budget?.toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Gross Rental Yield</p>
+                    <p className="text-sm text-gray-500">{t('properties.grossRentalYield')}</p>
                     <p className="text-xl font-semibold">{property.gross_rental_yield}%</p>
                   </div>
                 </div>
@@ -739,13 +867,50 @@ export default function PropertyDetailPage() {
             ) : (
               <Card>
                 <CardHeader>
-                  <CardTitle>Pre-Check Assessment</CardTitle>
-                  <CardDescription>Initial property evaluation and traffic light assessment</CardDescription>
+                  <CardTitle>{t('properties.preCheckAssessment')}</CardTitle>
+                  <CardDescription>{t('properties.preCheckAssessmentDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center py-8">
                   <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-2">Pre-check assessment not yet completed</p>
-                  <p className="text-sm text-gray-400">The pre-check evaluation will be available once Phase 1 is initiated</p>
+                  <p className="text-gray-500 mb-2">{t('properties.preCheckNotCompleted')}</p>
+                  <p className="text-sm text-gray-400">{t('properties.preCheckAvailablePhase1')}</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="sales" className="space-y-4">
+            {property.developer_phase >= 4 ? (
+              <div className="space-y-4">
+                <SalesStatusIndicator property={property} detailed={true} />
+                <NotaryAppointmentManager 
+                  property={property}
+                  onUpdate={(appointment) => {
+                    // Update the property with new appointment data
+                    setProperty({
+                      ...property,
+                      notary_appointment: appointment,
+                      notary_appointment_status: appointment.status,
+                      notary_appointment_date: appointment.confirmed_date
+                    });
+                  }}
+                />
+              </div>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('properties.salesProcess')}</CardTitle>
+                  <CardDescription>{t('properties.salesProcessDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="text-center py-8">
+                  <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 mb-2">{t('properties.salesNotStarted')}</p>
+                  <p className="text-sm text-gray-400">
+                    {t('properties.salesStartsPhase4')}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    {t('properties.currentPhase', { current: property.developer_phase, total: 6 })}
+                  </p>
                 </CardContent>
               </Card>
             )}
