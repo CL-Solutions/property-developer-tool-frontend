@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ConstructionDescription } from './pre-check/construction-description';
@@ -32,26 +32,21 @@ import {
   Eye,
   Download,
   Plus,
-  Edit,
   Trash2,
   Users,
   HardHat,
   Wrench,
+  Hammer,
   PaintBucket,
   Zap,
   Droplets,
   Home,
-  Sofa,
-  Building,
   TrendingUp,
   Image as ImageIcon,
   ChevronRight,
-  ChevronDown,
-  MapPin,
   Phone,
   Mail,
   Euro,
-  CalendarDays,
   Lock,
   Unlock,
   AlertCircle,
@@ -59,7 +54,7 @@ import {
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format, differenceInDays, addDays } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 
 interface Milestone {
   id: string;
@@ -88,7 +83,6 @@ interface TradeContractor {
   id: string;
   name: string;
   trade: string;
-  tradeIcon: React.ReactNode;
   contact: {
     phone: string;
     email: string;
@@ -107,18 +101,17 @@ interface ConstructionTrackingProps {
 }
 
 export function ConstructionTracking({
-  propertyId,
   currentPhase,
   salesPartner = 'blackvesto',
   onVisibilityToggle
-}: ConstructionTrackingProps) {
+}: Omit<ConstructionTrackingProps, 'propertyId'>) {
   const t = useTranslations();
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
   const [showMilestoneDetail, setShowMilestoneDetail] = useState(false);
   const [isVisibleToPartner, setIsVisibleToPartner] = useState(currentPhase >= 8); // AFTERSALE status
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
-  const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; caption: string } | null>(null);
+  const [, setSelectedPhoto] = useState<{ url: string; caption: string } | null>(null);
   const [constructionStarted, setConstructionStarted] = useState(false);
   const [showMilestoneSelector, setShowMilestoneSelector] = useState(false);
   const [showContractorSelector, setShowContractorSelector] = useState(false);
@@ -129,7 +122,7 @@ export function ConstructionTracking({
 
   // Construction planning state
   const [constructionDescription, setConstructionDescription] = useState('');
-  const [furnishingBudget, setFurnishingBudget] = useState(0);
+
 
   // Predefined milestone templates
   const MILESTONE_TEMPLATES = [
@@ -247,13 +240,25 @@ export function ConstructionTracking({
     }
   ] : [];
 
+  // Helper function to get trade icon
+  const getTradeIcon = (trade: string, size: string = "h-5 w-5") => {
+    const iconClass = `${size} text-gray-600`;
+    switch(trade.toLowerCase()) {
+      case 'electrical': return <Zap className={iconClass} />;
+      case 'plumbing': return <Droplets className={iconClass} />;
+      case 'flooring': return <HardHat className={iconClass} />;
+      case 'painting': return <PaintBucket className={iconClass} />;
+      case 'insulation': return <Home className={iconClass} />;
+      default: return <Hammer className={iconClass} />;
+    }
+  };
+
   // Mock trade contractors
   const tradeContractors: TradeContractor[] = [
     {
       id: '1',
       name: 'Schmidt Elektro GmbH',
       trade: 'Electrical',
-      tradeIcon: Zap,
       contact: { phone: '+49 123 456789', email: 'info@schmidt-elektro.de' },
       status: 'on-site',
       assignedMilestones: ['2', '4'],
@@ -264,7 +269,6 @@ export function ConstructionTracking({
       id: '2',
       name: 'Müller Sanitär',
       trade: 'Plumbing',
-      tradeIcon: Droplets,
       contact: { phone: '+49 123 456788', email: 'kontakt@mueller-sanitaer.de' },
       status: 'on-site',
       assignedMilestones: ['2', '3', '4'],
@@ -275,7 +279,6 @@ export function ConstructionTracking({
       id: '3',
       name: 'Bau-Team Berlin',
       trade: 'General Construction',
-      tradeIcon: HardHat,
       contact: { phone: '+49 123 456787', email: 'info@bauteam-berlin.de' },
       status: 'completed',
       assignedMilestones: ['1'],
@@ -286,7 +289,6 @@ export function ConstructionTracking({
       id: '4',
       name: 'Malermeister Weber',
       trade: 'Painting',
-      tradeIcon: PaintBucket,
       contact: { phone: '+49 123 456786', email: 'weber@maler-berlin.de' },
       status: 'scheduled',
       assignedMilestones: ['5'],
@@ -297,7 +299,6 @@ export function ConstructionTracking({
       id: '5',
       name: 'Parkett Profi',
       trade: 'Flooring',
-      tradeIcon: Home,
       contact: { phone: '+49 123 456785', email: 'info@parkett-profi.de' },
       status: 'scheduled',
       assignedMilestones: ['5'],
@@ -329,25 +330,7 @@ export function ConstructionTracking({
     }
   };
 
-  // Get trade icon
-  const getTradeIcon = (trade: string) => {
-    switch (trade.toLowerCase()) {
-      case 'electrical':
-        return Zap;
-      case 'plumbing':
-        return Droplets;
-      case 'painting':
-        return PaintBucket;
-      case 'carpentry':
-        return Wrench;
-      case 'flooring':
-        return Home;
-      case 'furnishing':
-        return Sofa;
-      default:
-        return HardHat;
-    }
-  };
+
 
   const handleVisibilityToggle = () => {
     const newVisibility = !isVisibleToPartner;
@@ -360,7 +343,7 @@ export function ConstructionTracking({
     const [notes, setNotes] = useState(milestone.notes || '');
     const [blockers, setBlockers] = useState(milestone.blockers || []);
     const [newBlocker, setNewBlocker] = useState('');
-    const [photos, setPhotos] = useState(milestone.photos || []);
+    const [photos] = useState(milestone.photos || []);
     const [activeTab, setActiveTab] = useState('overview');
 
     const handleAddBlocker = () => {
@@ -448,10 +431,9 @@ export function ConstructionTracking({
                   <h3 className="font-medium mb-3">{t('properties.assignedTrades')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {milestone.trades.map(trade => {
-                      const Icon = getTradeIcon(trade);
                       return (
                         <Badge key={trade} variant="outline">
-                          <Icon className="h-3 w-3 mr-1" />
+                          {getTradeIcon(trade, "h-3 w-3 mr-1")}
                           {trade}
                         </Badge>
                       );
@@ -867,7 +849,6 @@ export function ConstructionTracking({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {AVAILABLE_CONTRACTORS.map(contractor => {
                   const isSelected = selectedContractors.includes(contractor.id);
-                  const Icon = getTradeIcon(contractor.trade.split(' ')[0].toLowerCase());
                   
                   return (
                     <div
@@ -883,7 +864,7 @@ export function ConstructionTracking({
                           "h-10 w-10 rounded-full flex items-center justify-center",
                           isSelected ? "bg-green-100" : "bg-gray-100"
                         )}>
-                          <Icon className="h-5 w-5 text-gray-600" />
+                          {getTradeIcon(contractor.trade.split(' ')[0].toLowerCase())}
                         </div>
                         <div className="flex-1">
                           <h4 className="font-medium">{contractor.name}</h4>
@@ -1064,7 +1045,6 @@ export function ConstructionTracking({
                         .flatMap(m => m.trades)
                     )]
                   }
-                  propertyType="single"
                   livingArea={72} // TODO: Get from property data
                   rooms={3} // TODO: Get from property data
                   bathrooms={1}
@@ -1077,10 +1057,8 @@ export function ConstructionTracking({
             {/* Furniture Calculator */}
             <FurnitureCalculator
               rooms={3} // TODO: Get from property data
-              propertyType="single"
               isWG={false} // TODO: Get from property data
-              totalBudget={furnishingBudget}
-              onBudgetChange={setFurnishingBudget}
+              onBudgetChange={() => {}} // No-op since we removed state
             />
           </div>
         </TabsContent>
@@ -1241,7 +1219,7 @@ export function ConstructionTracking({
                 <div className="flex flex-wrap gap-1 mt-3">
                   {milestone.trades.map(trade => (
                     <Badge key={trade} variant="outline" className="text-xs">
-                      {React.createElement(getTradeIcon(trade), { className: "h-3 w-3 mr-1" })}
+                      {getTradeIcon(trade, "h-3 w-3 mr-1")}
                       {trade}
                     </Badge>
                   ))}
@@ -1260,7 +1238,7 @@ export function ConstructionTracking({
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <contractor.tradeIcon className="h-5 w-5 text-gray-600" />
+                        {getTradeIcon(contractor.trade)}
                       </div>
                       <div>
                         <CardTitle className="text-lg">{contractor.name}</CardTitle>

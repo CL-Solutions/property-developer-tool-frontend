@@ -4,25 +4,23 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useLocaleRouter } from '@/hooks/use-locale-router';
-import { LocaleLink } from '@/components/locale-link';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { EnhancedTrafficLights } from '@/components/enhanced-traffic-lights';
+
 import { PhaseTimeline, PhaseIndicator } from '@/components/phase-indicator';
 import { DocumentManagement } from '@/components/document-management';
 import { ConstructionTracking } from '@/components/construction-tracking';
 import { PreCheckSummary } from '@/components/phase1/pre-check-summary';
 import { HandoverTab } from '@/components/handover-tab';
 import { MockDataService } from '@/lib/mock-data';
-import { Property, DeveloperConstructionMilestone, DeveloperHandoverProtocol, DeveloperDocumentRequest } from '@/lib/types';
+import { Property, DeveloperConstructionMilestone } from '@/lib/types';
 import {
   ArrowLeft,
-  Construction,
-  HandHeart,
   AlertTriangle,
   CheckCircle2,
   Clock,
@@ -68,8 +66,8 @@ export default function PropertyDetailPage() {
   const propertyId = params.id as string;
 
   const [property, setProperty] = useState<Property | null>(null);
-  const [milestones, setMilestones] = useState<DeveloperConstructionMilestone[]>([]);
-  const [handoverProtocols, setHandoverProtocols] = useState<DeveloperHandoverProtocol[]>([]);
+  const [, setMilestones] = useState<DeveloperConstructionMilestone[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -77,15 +75,13 @@ export default function PropertyDetailPage() {
     const loadPropertyData = async () => {
       setLoading(true);
       try {
-        const [propertyData, milestonesData, handoverData] = await Promise.all([
+        const [propertyData, milestonesData] = await Promise.all([
           MockDataService.getProperty(propertyId),
-          MockDataService.getConstructionMilestones(propertyId),
-          MockDataService.getHandoverProtocols(propertyId)
+          MockDataService.getConstructionMilestones(propertyId)
         ]);
 
         setProperty(propertyData);
         setMilestones(milestonesData);
-        setHandoverProtocols(handoverData);
       } catch (error) {
         console.error('Error loading property:', error);
       } finally {
@@ -132,9 +128,7 @@ export default function PropertyDetailPage() {
     );
   }
 
-  const totalConstructionProgress = milestones.length > 0
-    ? Math.round(milestones.reduce((sum, m) => sum + m.progress_percentage, 0) / milestones.length)
-    : property.developer_construction_progress || 0;
+
 
   return (
     <SidebarProvider>
@@ -891,7 +885,7 @@ export default function PropertyDetailPage() {
                       ...property,
                       notary_appointment: appointment,
                       notary_appointment_status: appointment.status,
-                      notary_appointment_date: appointment.confirmed_date
+                      notary_appointment_date: appointment.confirmed_date?.toISOString()
                     });
                   }}
                 />
@@ -918,7 +912,6 @@ export default function PropertyDetailPage() {
 
           <TabsContent value="construction" className="space-y-4">
             <ConstructionTracking
-              propertyId={propertyId}
               currentPhase={property.developer_phase}
               salesPartner={property.developer_sales_partner}
               onVisibilityToggle={(visible) => {
@@ -954,7 +947,7 @@ export default function PropertyDetailPage() {
             <PropertyGanttChart 
               propertyId={propertyId}
               currentPhase={property.developer_phase}
-              purchaseDate={property.developer_purchase_date ? new Date(property.developer_purchase_date) : new Date()}
+              purchaseDate={new Date()}
               projectName={property.project?.name}
               unitNumber={property.unit_number}
             />

@@ -23,7 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
   Camera,
-  Upload,
+
   Zap,
   Droplets,
   Flame,
@@ -37,8 +37,7 @@ import {
   FileText,
   FileSignature,
   Users,
-  Home,
-  User
+  Home
 } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Property } from '@/lib/types';
@@ -94,10 +93,10 @@ export function HandoverTab({ property }: HandoverTabProps) {
   const [showContractPreview, setShowContractPreview] = useState(false);
   const [showSEPAPreview, setShowSEPAPreview] = useState(false);
   const [selectedRoomIndex, setSelectedRoomIndex] = useState<number | null>(null);
-  const [forceWGMode, setForceWGMode] = useState(false);
+  const [forceWGMode] = useState(false);
 
   // Check if property is WG type
-  const isWG = forceWGMode || property.developer_rental_strategy === 'wg' || property.rental_type === 'wg';
+  const isWG = forceWGMode || property.developer_rental_strategy === 'wg';
 
   // Get WG room configuration from property
   const propertyWithWGRooms = property as Property & {
@@ -437,7 +436,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
     return mandateData;
   };
 
-  const updateRoomTenant = (roomIndex: number, field: keyof RoomTenantInfo, value: string | number | Date | null) => {
+  const updateRoomTenant = (roomIndex: number, field: keyof RoomTenantInfo, value: string | number | Date | boolean | null) => {
     setRoomTenants(prev => prev.map((tenant, idx) =>
       idx === roomIndex ? { ...tenant, [field]: value } : tenant
     ));
@@ -487,7 +486,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
           </p>
         </div>
         <div className="text-right">
-          <Badge variant={handoverComplete ? "success" : "secondary"}>
+          <Badge variant="default" className={handoverComplete ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
             {handoverComplete ? t('handover.handoverComplete') : t('handover.inProgress')}
           </Badge>
           <div className="mt-2">
@@ -586,7 +585,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                           }}
                         />
                         {reading.photoUrl && (
-                          <Badge variant="success">
+                          <Badge variant="default" className="bg-green-100 text-green-800">
                             <CheckCircle2 className="h-3 w-3 mr-1" />
                             {t('handover.meterReadings.photoAttached')}
                           </Badge>
@@ -618,7 +617,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     <div key={category} className="space-y-3">
                       <div className="flex items-center justify-between">
                         <h4 className="font-semibold">{category}</h4>
-                        <Badge variant={checkedCount === categoryItems.length ? "success" : "secondary"}>
+                        <Badge variant="default" className={checkedCount === categoryItems.length ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
                           {checkedCount}/{categoryItems.length}
                         </Badge>
                       </div>
@@ -709,7 +708,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                     <span className="font-semibold">
                       {calculateNebenkosten().difference >= 0 ? t('handover.nebenkosten.refundDue') : t('handover.nebenkosten.additionalPaymentDue')}
                     </span>
-                    <Badge variant={calculateNebenkosten().difference >= 0 ? "success" : "destructive"}>
+                    <Badge variant={calculateNebenkosten().difference >= 0 ? "default" : "destructive"} className={calculateNebenkosten().difference >= 0 ? "bg-green-100 text-green-800" : ""}>
                       €{Math.abs(calculateNebenkosten().difference)}
                     </Badge>
                   </div>
@@ -771,7 +770,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant={roomTenant.name && roomTenant.name.trim() !== '' ? "success" : "secondary"}>
+                            <Badge variant="default" className={roomTenant.name && roomTenant.name.trim() !== '' ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
                               {roomTenant.name && roomTenant.name.trim() !== '' ? t('handover.tenant.occupied') : t('handover.tenant.vacant')}
                             </Badge>
                             {roomTenants.length > 1 && (
@@ -860,7 +859,7 @@ export function HandoverTab({ property }: HandoverTabProps) {
                               <Checkbox
                                 checked={roomTenant.sepaMandate}
                                 onCheckedChange={(checked) =>
-                                  updateRoomTenant(index, 'sepaMandate', checked)
+                                  updateRoomTenant(index, 'sepaMandate', !!checked)
                                 }
                               />
                               <Label>{t('handover.tenant.sepaSignedLabel')}</Label>

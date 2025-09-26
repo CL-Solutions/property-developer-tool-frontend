@@ -10,9 +10,6 @@ import {
   XCircle,
   AlertTriangle,
   TrendingUp,
-  Home,
-  Zap,
-  MapPin,
   Building2,
   AlertCircle
 } from 'lucide-react';
@@ -194,7 +191,7 @@ export function AggregateTrafficLights({ units, buildingData }: AggregateTraffic
   // Count issues based on worst-case
   const redCount = Object.values(aggregateScores.worst).filter(s => s.status === 'red').length;
   const yellowCount = Object.values(aggregateScores.worst).filter(s => s.status === 'yellow').length;
-  const greenCount = Object.values(aggregateScores.worst).filter(s => s.status === 'green').length;
+
 
   const overallStatus = redCount > 0 ? 'critical' : yellowCount > 1 ? 'attention' : 'good';
 

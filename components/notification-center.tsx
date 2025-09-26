@@ -204,7 +204,7 @@ export function NotificationCenter() {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<DeveloperNotification[]>([]);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     const loadNotifications = async () => {

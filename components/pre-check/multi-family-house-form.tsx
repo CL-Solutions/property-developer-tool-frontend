@@ -14,16 +14,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { UnitCard } from './unit-card';
 import { AggregateTrafficLights } from './aggregate-traffic-lights';
 import {
-  MapPin,
+
   Building2,
   Plus,
   Save,
   Send,
-  Euro,
-  Zap,
   AlertCircle,
   Calculator,
-  TrendingUp,
   Users,
   Upload,
   File,
@@ -120,12 +117,7 @@ interface MultiFamilyHouseFormProps {
   isSaving?: boolean;
 }
 
-export function MultiFamilyHouseForm({
-  initialData,
-  onSave,
-  isEditMode = false,
-  isSaving = false
-}: MultiFamilyHouseFormProps = {}) {
+export function MultiFamilyHouseForm({}: MultiFamilyHouseFormProps = {}) {
   const [buildingData, setBuildingData] = useState<BuildingData>({
     street: '',
     houseNumber: '',
@@ -528,7 +520,7 @@ export function MultiFamilyHouseForm({
                       id="building-floorPlan"
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => {/* Handle file upload */}}
+                      onChange={() => {/* Handle file upload */}}
                       className="hidden"
                     />
                     <label
@@ -561,7 +553,7 @@ export function MultiFamilyHouseForm({
                       id="building-energyCert"
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => {/* Handle file upload */}}
+                      onChange={() => {/* Handle file upload */}}
                       className="hidden"
                     />
                     <label

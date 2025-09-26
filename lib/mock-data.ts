@@ -720,7 +720,7 @@ export class MockDataService {
     return true;
   }
 
-  static async getPreCheckHistory(propertyId: string): Promise<Array<{
+  static async getPreCheckHistory(): Promise<Array<{
     id: string;
     date: string;
     result: PreCheckResult;

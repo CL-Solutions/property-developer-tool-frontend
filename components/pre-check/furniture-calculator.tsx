@@ -75,11 +75,9 @@ interface FurnitureCalculatorProps {
 
 export function FurnitureCalculator({
   rooms = 2,
-  propertyType,
   isWG = false,
-  totalBudget,
   onBudgetChange
-}: FurnitureCalculatorProps) {
+}: Omit<FurnitureCalculatorProps, 'propertyType' | 'totalBudget'>) {
   const [items, setItems] = useState<FurnitureItem[]>(defaultFurnitureItems);
   const [qualityLevel, setQualityLevel] = useState<'basic' | 'standard' | 'premium'>('standard');
   const [customItemName, setCustomItemName] = useState('');
@@ -184,7 +182,7 @@ export function FurnitureCalculator({
 
   useEffect(() => {
     onBudgetChange(total);
-  }, [total]); // Removed onBudgetChange from dependencies to prevent infinite loop
+  }, [total, onBudgetChange]);
 
   return (
     <Card>

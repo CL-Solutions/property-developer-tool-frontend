@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -13,10 +13,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
+
 import { toast } from 'sonner';
 import { MockDataService } from '@/lib/mock-data';
 import { Property } from '@/lib/types';
@@ -25,13 +25,10 @@ import { TrafficLightPreview } from '@/components/phase1/traffic-light-preview';
 import {
   ArrowLeft,
   Home,
-  MapPin,
   Calculator,
   Euro,
-  FileText,
   AlertCircle,
   Users,
-  Bed,
   Maximize,
   Plus
 } from 'lucide-react';

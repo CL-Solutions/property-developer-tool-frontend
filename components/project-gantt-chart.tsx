@@ -473,19 +473,7 @@ export function ProjectGanttChart({ projectId, projectName = 'Project' }: Projec
                   return (
                     <GanttSidebarGroup 
                       key={propertyName} 
-                      name={
-                        <button
-                          onClick={() => togglePropertyExpanded(propertyId)}
-                          className="flex items-center gap-1 w-full text-left hover:bg-accent/50 rounded px-1"
-                        >
-                          {isExpanded ? (
-                            <ChevronDown className="h-3 w-3" />
-                          ) : (
-                            <ChevronRight className="h-3 w-3" />
-                          )}
-                          <span className="text-sm font-medium">{propertyName}</span>
-                        </button>
-                      }
+                      name={propertyName}
                     >
                       {isExpanded && phases.map((phase) => (
                         <GanttSidebarItem

@@ -9,7 +9,7 @@ import {
   ArrowLeft,
   AlertTriangle,
   Loader2,
-  Save,
+
   Info
 } from 'lucide-react';
 import {
@@ -29,7 +29,7 @@ import {
 import { AppSidebar } from "@/components/app-sidebar"
 import { MultiFamilyHouseForm } from '@/components/pre-check/multi-family-house-form';
 import { MockDataService } from '@/lib/mock-data';
-import { Project, PropertySummary } from '@/lib/types';
+import { Project } from '@/lib/types';
 
 export default function ProjectEditPage() {
   const params = useParams();
@@ -37,7 +37,7 @@ export default function ProjectEditPage() {
   const projectId = params.id as string;
 
   const [project, setProject] = useState<Project | null>(null);
-  const [properties, setProperties] = useState<PropertySummary[]>([]);
+  // const [properties, setProperties] = useState<PropertySummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -78,7 +78,7 @@ export default function ProjectEditPage() {
           };
           
           setProject(mockProject as Project);
-          setProperties(projectProperties);
+          // setProperties(projectProperties);
         }
       } catch (error) {
         console.error('Error loading project:', error);
@@ -90,7 +90,7 @@ export default function ProjectEditPage() {
     loadProjectData();
   }, [projectId]);
 
-  const handleSave = async (formData: Record<string, unknown>) => {
+  const handleSave = async () => {
     setSaving(true);
     try {
       // In a real app, this would update the project via API

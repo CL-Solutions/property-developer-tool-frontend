@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useLocaleRouter } from '@/hooks/use-locale-router';
-import { LocaleLink } from '@/components/locale-link';
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { ProjectGanttChart } from '@/components/project-gantt-chart';
 import { SiteHeader } from "@/components/site-header"
@@ -13,7 +13,7 @@ import { PropertyCard, PropertyCardSkeleton } from '@/components/property-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+
 import { MockDataService } from '@/lib/mock-data';
 import { PropertySummary } from '@/lib/types';
 import {
@@ -22,7 +22,7 @@ import {
   Plus,
   MapPin,
   Calendar,
-  TrendingUp,
+
   AlertTriangle,
   Home,
   FileText,

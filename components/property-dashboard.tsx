@@ -16,7 +16,6 @@ import {
   Activity,
   MapPin,
   Home,
-  Plus,
   ArrowRight,
   Briefcase,
   Clock,

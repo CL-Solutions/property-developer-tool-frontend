@@ -312,6 +312,15 @@ export interface PropertySummary {
   construction_progress: number;
   days_in_current_phase: number;
   has_critical_alerts: boolean;
+  reservation_status?: ReservationStatus;
+  buyer_financing_status?: BuyerFinancingStatus;
+  notary_appointment_status?: NotaryAppointmentStatus;
+  notary_appointment_date?: string;
+  waitlist_count?: number;
+  buyer_info?: BuyerInfo;
+  developer_sales_partner?: SalesPartner;
+  sales_status_sync_date?: string;
+  developer_phase?: DeveloperPhase;
 }
 
 export interface DashboardStats {

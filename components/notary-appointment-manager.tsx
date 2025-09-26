@@ -17,10 +17,9 @@ import {
   FileText,
   User,
   Phone,
-  Mail,
+
   Building,
-  AlertCircle,
-  ChevronRight
+  AlertCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Property, NotaryAppointment } from '@/lib/types';
@@ -93,9 +92,7 @@ export function NotaryAppointmentManager({ property, onUpdate }: NotaryAppointme
     return steps;
   };
 
-  const handleRequestDates = () => {
-    setShowDatePicker(true);
-  };
+
 
   const handleSendProposals = () => {
     if (selectedDates.length !== 3) {

@@ -23,7 +23,6 @@ import {
   Trash2,
   Home,
   Euro,
-  TrendingUp,
   Users
 } from 'lucide-react';
 import { cn } from '@/lib/utils';

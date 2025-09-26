@@ -50,7 +50,7 @@ export default function PropertyEntryPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [projects, setProjects] = useState<Project[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [loading, setLoading] = useState(isEditMode); // Loading state for fetching existing data
+
 
   // Form data
   const [formData, setFormData] = useState<PropertyEntryForm>({
@@ -99,37 +99,36 @@ export default function PropertyEntryPage() {
 
         // If in edit mode, load existing property data
         if (isEditMode && editId) {
-          setLoading(true);
+
           const property = await MockDataService.getProperty(editId);
           
           // Map property data to form fields
-          setFormData({
-            ...formData,
-            project_id: property.project_id || '',
-            unit_number: property.unit_number || '',
-            property_type: property.property_type || 'apartment',
-            size_sqm: property.size_sqm || 0,
-            rooms: property.rooms || 0,
-            floor: property.floor || '',
-            developer_purchase_price: property.purchase_price || 0,
-            developer_renovation_budget: property.developer_renovation_budget || 0,
-            developer_furnishing_budget: property.developer_furnishing_budget || 0,
-            selling_price: property.developer_selling_price || 0,
-            monthly_rent: property.rental_price_net || 0,
-            hoa_fees_landlord: property.developer_hoa_fee_landlord || 0,
-            hoa_fees_tenant: property.developer_hoa_fee_tenant || 0,
-            hoa_fees_reserve: property.developer_hoa_fee_reserve || 0,
-            developer_rental_strategy: property.developer_rental_type || 'standard',
-            has_erstvermietungsgarantie: property.has_erstvermietungsgarantie || false,
-            developer_wg_room_pricing: property.developer_wg_rooms || [],
-            required_trades: property.developer_required_trades || [],
+          setFormData(prev => ({
+            ...prev,
+            project_id: property?.project_id || '',
+            unit_number: property?.unit_number || '',
+            property_type: property?.property_type || 'apartment',
+            size_sqm: property?.size_sqm || 0,
+            rooms: property?.rooms || 0,
+            floor: property?.floor || '',
+            developer_purchase_price: property?.developer_purchase_price || 0,
+            developer_renovation_budget: property?.developer_renovation_budget || 0,
+            developer_furnishing_budget: property?.developer_furnishing_budget || 0,
+            selling_price: property?.selling_price || 0,
+            monthly_rent: property?.monthly_rent || 0,
+            hoa_fees_landlord: property?.hoa_fees_landlord || 0,
+            hoa_fees_tenant: property?.hoa_fees_tenant || 0,
+            hoa_fees_reserve: property?.hoa_fees_reserve || 0,
+            developer_rental_strategy: property?.developer_rental_strategy || 'standard',
+            has_erstvermietungsgarantie: property?.has_erstvermietungsgarantie || false,
+            developer_wg_room_pricing: property?.developer_wg_room_pricing || [],
+            required_trades: [],
             uploaded_documents: []
-          });
-          setLoading(false);
+          }));
+
         }
       } catch (error) {
         console.error('Failed to load data:', error);
-        setLoading(false);
       }
     };
 
@@ -203,7 +202,7 @@ export default function PropertyEntryPage() {
         router.push(`/properties/${editId}`);
       } else {
         // Create new property
-        const newProperty = await MockDataService.createProperty(formData as Partial<Property>);
+        await MockDataService.createProperty(formData as Partial<Property>);
         // Redirect to dashboard or property detail
         router.push('/dashboard');
       }

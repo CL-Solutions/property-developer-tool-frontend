@@ -19,11 +19,12 @@ import {
   ReservationStatus, 
   BuyerFinancingStatus, 
   NotaryAppointmentStatus,
-  Property
+  Property,
+  PropertySummary
 } from '@/lib/types';
 
 interface SalesStatusIndicatorProps {
-  property: Property;
+  property: Property | PropertySummary;
   detailed?: boolean;
 }
 

@@ -6,7 +6,7 @@ import { PropertySummary } from '@/lib/types';
 import { MockDataService } from '@/lib/mock-data';
 import { TrafficLightGrid } from './traffic-light-indicator';
 import { PhaseIndicator } from './phase-indicator';
-import { MapPin, Calendar, AlertTriangle, Users, TrendingUp } from 'lucide-react';
+import { MapPin, Calendar, AlertTriangle } from 'lucide-react';
 import { SalesStatusIndicator } from './sales-status-indicator';
 
 interface PropertyCardProps {

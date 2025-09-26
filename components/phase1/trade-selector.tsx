@@ -18,7 +18,7 @@ import {
   Bath,
   Sofa,
   TreePine,
-  Euro,
+
   Calculator,
   AlertCircle
 } from 'lucide-react';
@@ -92,7 +92,7 @@ export function TradeSelector({
       setDescription(desc);
       onDescriptionChange?.(desc);
     }
-  }, [selected]);
+  }, [selected, description, autoDescription, onDescriptionChange]);
 
   const handleTradeToggle = (tradeId: string) => {
     const newSelected = new Set(selected);

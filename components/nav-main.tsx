@@ -1,6 +1,6 @@
 "use client"
 
-import { useTranslations } from 'next-intl'
+
 import { MailIcon, PlusCircleIcon, type LucideIcon } from "lucide-react"
 import { LocaleLink } from '@/components/locale-link'
 

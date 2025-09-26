@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -14,16 +15,12 @@ import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import {
   ArrowLeft,
-  Key,
-  FileText,
   Users,
   CreditCard,
   CheckCircle2,
-  Calendar,
   Euro,
   Camera,
   Upload,
@@ -34,10 +31,6 @@ import {
   Download,
   Send,
   ClipboardCheck,
-  Home,
-  User,
-  Mail,
-  Phone,
   Clock,
   Printer
 } from 'lucide-react';
@@ -167,21 +160,17 @@ export default function HandoverPage() {
     sepaMandate: false
   });
 
-  useEffect(() => {
-    loadProperty();
-  }, [propertyId]);
-
-  const loadProperty = async () => {
+  const loadProperty = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await MockDataService.getPropertyById(propertyId);
+      const data = await MockDataService.getProperty(propertyId);
       if (data) {
         setProperty(data);
         // Set rental amount from property data
         setTenantInfo(prev => ({
           ...prev,
-          monthlyRent: data.monthlyRent || 0,
-          deposit: (data.monthlyRent || 0) * 3
+          monthlyRent: data.monthly_rent || 0,
+          deposit: (data.monthly_rent || 0) * 3
         }));
       }
     } catch (error) {
@@ -189,7 +178,11 @@ export default function HandoverPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [propertyId]);
+
+  useEffect(() => {
+    loadProperty();
+  }, [loadProperty]);
 
   const handleMeterReadingChange = (id: string, field: string, value: string) => {
     setMeterReadings(prev => prev.map(reading =>
@@ -274,7 +267,7 @@ export default function HandoverPage() {
               <div>
                 <h1 className="text-2xl font-bold">{t('handover.title')}</h1>
                 <p className="text-gray-600">
-                  {property?.address} - {property?.unitNumber}
+                  {property?.unit_number}
                 </p>
               </div>
             </div>
@@ -396,10 +389,11 @@ export default function HandoverPage() {
                         {reading.photoUrl ? (
                           <div className="flex items-center gap-2">
                             <div className="w-20 h-20 bg-gray-100 rounded overflow-hidden">
-                              <img
-                                src={reading.photoUrl}
+                              <Image
+                                src={reading.photoUrl!}
                                 alt="Meter photo"
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                               />
                             </div>
                             <Badge className="bg-green-100 text-green-800">

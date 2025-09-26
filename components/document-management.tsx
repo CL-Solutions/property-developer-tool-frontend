@@ -1,22 +1,20 @@
 "use client";
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { DocumentPreview } from './document-preview';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
+
 import {
   Upload,
-  FileText,
   CheckCircle2,
   AlertTriangle,
   Clock,
   Download,
   Eye,
-  X,
   Plus,
   Building2,
   Home,
@@ -94,9 +92,7 @@ export function DocumentManagement({
   propertyId,
   property,
   currentPhase,
-  documents = [],
-  onDocumentUpload,
-  onDocumentDelete
+  onDocumentUpload
 }: DocumentManagementProps) {
   const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
   const [dragActive, setDragActive] = useState(false);

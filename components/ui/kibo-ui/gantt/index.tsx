@@ -26,7 +26,7 @@ import {
   startOfMonth,
 } from "date-fns";
 import { atom, useAtom } from "jotai";
-import throttle from "lodash.throttle";
+
 import { PlusIcon, TrashIcon } from "lucide-react";
 import type {
   CSSProperties,
@@ -109,14 +109,11 @@ export type GanttContextProps = {
 };
 
 const getsDaysIn = (range: Range) => {
-  // For when range is daily
-  let fn = (_date: Date) => 1;
-
   if (range === "monthly" || range === "quarterly") {
-    fn = getDaysInMonth;
+    return getDaysInMonth;
   }
-
-  return fn;
+  // For when range is daily
+  return () => 1;
 };
 
 const getDifferenceIn = (range: Range) => {
@@ -1242,73 +1239,70 @@ export const GanttProvider: FC<GanttProviderProps> = ({
   }, []);
 
   // Fix the useCallback to include all dependencies
-  const handleScroll = useCallback(
-    throttle(() => {
-      const scrollElement = scrollRef.current;
-      if (!scrollElement) {
+  const handleScroll = useCallback(() => {
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) {
+      return;
+    }
+
+    const { scrollLeft, scrollWidth, clientWidth } = scrollElement;
+    setScrollX(scrollLeft);
+
+    if (scrollLeft === 0) {
+      // Extend timelineData to the past
+      const firstYear = timelineData[0]?.year;
+
+      if (!firstYear) {
         return;
       }
 
-      const { scrollLeft, scrollWidth, clientWidth } = scrollElement;
-      setScrollX(scrollLeft);
+      const newTimelineData: TimelineData = [...timelineData];
+      newTimelineData.unshift({
+        year: firstYear - 1,
+        quarters: new Array(4).fill(null).map((_, quarterIndex) => ({
+          months: new Array(3).fill(null).map((_, monthIndex) => {
+            const month = quarterIndex * 3 + monthIndex;
+            return {
+              days: getDaysInMonth(new Date(firstYear, month, 1)),
+            };
+          }),
+        })),
+      });
 
-      if (scrollLeft === 0) {
-        // Extend timelineData to the past
-        const firstYear = timelineData[0]?.year;
+      setTimelineData(newTimelineData);
 
-        if (!firstYear) {
-          return;
-        }
+      // Scroll a bit forward so it's not at the very start
+      scrollElement.scrollLeft = scrollElement.clientWidth;
+      setScrollX(scrollElement.scrollLeft);
+    } else if (scrollLeft + clientWidth >= scrollWidth) {
+      // Extend timelineData to the future
+      const lastYear = timelineData.at(-1)?.year;
 
-        const newTimelineData: TimelineData = [...timelineData];
-        newTimelineData.unshift({
-          year: firstYear - 1,
-          quarters: new Array(4).fill(null).map((_, quarterIndex) => ({
-            months: new Array(3).fill(null).map((_, monthIndex) => {
-              const month = quarterIndex * 3 + monthIndex;
-              return {
-                days: getDaysInMonth(new Date(firstYear, month, 1)),
-              };
-            }),
-          })),
-        });
-
-        setTimelineData(newTimelineData);
-
-        // Scroll a bit forward so it's not at the very start
-        scrollElement.scrollLeft = scrollElement.clientWidth;
-        setScrollX(scrollElement.scrollLeft);
-      } else if (scrollLeft + clientWidth >= scrollWidth) {
-        // Extend timelineData to the future
-        const lastYear = timelineData.at(-1)?.year;
-
-        if (!lastYear) {
-          return;
-        }
-
-        const newTimelineData: TimelineData = [...timelineData];
-        newTimelineData.push({
-          year: lastYear + 1,
-          quarters: new Array(4).fill(null).map((_, quarterIndex) => ({
-            months: new Array(3).fill(null).map((_, monthIndex) => {
-              const month = quarterIndex * 3 + monthIndex;
-              return {
-                days: getDaysInMonth(new Date(lastYear, month, 1)),
-              };
-            }),
-          })),
-        });
-
-        setTimelineData(newTimelineData);
-
-        // Scroll a bit back so it's not at the very end
-        scrollElement.scrollLeft =
-          scrollElement.scrollWidth - scrollElement.clientWidth;
-        setScrollX(scrollElement.scrollLeft);
+      if (!lastYear) {
+        return;
       }
-    }, 100),
-    []
-  );
+
+      const newTimelineData: TimelineData = [...timelineData];
+      newTimelineData.push({
+        year: lastYear + 1,
+        quarters: new Array(4).fill(null).map((_, quarterIndex) => ({
+          months: new Array(3).fill(null).map((_, monthIndex) => {
+            const month = quarterIndex * 3 + monthIndex;
+            return {
+              days: getDaysInMonth(new Date(lastYear, month, 1)),
+            };
+          }),
+        })),
+      });
+
+      setTimelineData(newTimelineData);
+
+      // Scroll a bit back so it's not at the very end
+      scrollElement.scrollLeft =
+        scrollElement.scrollWidth - scrollElement.clientWidth;
+      setScrollX(scrollElement.scrollLeft);
+    }
+  }, [timelineData, setScrollX, setTimelineData]);
 
   useEffect(() => {
     const scrollElement = scrollRef.current;

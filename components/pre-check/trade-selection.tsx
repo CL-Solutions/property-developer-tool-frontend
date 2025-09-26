@@ -138,9 +138,8 @@ interface TradeSelectionProps {
 export function TradeSelection({
   selectedTrades,
   onTradesChange,
-  propertyType = 'single',
   renovationLevel = 'standard'
-}: TradeSelectionProps) {
+}: Omit<TradeSelectionProps, 'propertyType'>) {
   const [localSelected, setLocalSelected] = useState<string[]>(selectedTrades);
 
   useEffect(() => {
@@ -158,7 +157,7 @@ export function TradeSelection({
       setLocalSelected(autoSelected);
       onTradesChange(autoSelected);
     }
-  }, [renovationLevel]); // Removed onTradesChange from dependencies to prevent infinite loop
+  }, [renovationLevel, onTradesChange, selectedTrades.length]);
 
   const handleTradeToggle = (tradeId: string) => {
     const newSelected = localSelected.includes(tradeId)

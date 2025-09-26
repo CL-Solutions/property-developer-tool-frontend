@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+
 import { BuildingType } from '@/lib/types';
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
+
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { MockDataService } from '@/lib/mock-data';
@@ -23,7 +23,7 @@ import {
   Building,
   MapPin,
   FileText,
-  Users,
+
   AlertCircle
 } from 'lucide-react';
 
@@ -34,7 +34,7 @@ export default function NewProjectPage() {
   const isEditMode = !!editId;
   
   const [loading, setLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(isEditMode);
+  // const [dataLoading, setDataLoading] = useState(isEditMode);
   const [salesPartner, setSalesPartner] = useState<'blackvesto' | 'internal'>('blackvesto');
 
   const [formData, setFormData] = useState({
@@ -65,11 +65,11 @@ export default function NewProjectPage() {
   useEffect(() => {
     const loadProjectData = async () => {
       if (isEditMode && editId) {
-        setDataLoading(true);
+        setLoading(true);
         try {
           // In a real app, this would be an API call to get the project
           // For now, we'll decode the project ID to get the name
-          const decodedProjectId = decodeURIComponent(editId);
+          // const decodedProjectId = decodeURIComponent(editId);
           
           // Mock loading existing project data
           // You would normally fetch this from your API
@@ -105,7 +105,7 @@ export default function NewProjectPage() {
           console.error('Failed to load project data:', error);
           toast.error('Failed to load project data');
         } finally {
-          setDataLoading(false);
+          setLoading(false);
         }
       }
     };
@@ -167,7 +167,7 @@ export default function NewProjectPage() {
         router.push(`/projects/${editId}`);
       } else {
         // Create the project
-        const newProject = await MockDataService.createProject(projectData);
+        await MockDataService.createProject(projectData);
         // Create project ID from name for navigation
         const projectId = `project-${formData.name.toLowerCase()}`;
         toast.success('Project created successfully!');
