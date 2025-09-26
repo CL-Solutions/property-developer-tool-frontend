@@ -1,12 +1,21 @@
 version: '3.8'
 
 services:
-  frontend:
+  property-frontend:
     image: lucabartelsen/property-developer-tool:frontend-latest
-    container_name: property-frontend
-    ports:
-      - "3001:3001"
+    container_name: property-developer-frontend
+    # No ports exposed - access via Cloudflare Tunnel only
     environment:
       - NODE_ENV=production
       - PORT=3001
     restart: unless-stopped
+    networks:
+      - public-network
+    labels:
+      - "com.property-developer.service=frontend"
+      - "com.property-developer.description=Property Developer Tool Frontend"
+
+networks:
+  public-network:
+    name: property-developer-public
+    driver: bridge
