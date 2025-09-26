@@ -43,9 +43,5 @@ ENV PORT=3001
 ENV HOSTNAME=0.0.0.0
 ENV NODE_ENV=production
 
-# Health check - Use 127.0.0.1 instead of localhost for reliability
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
-    CMD wget --no-verbose --tries=1 --spider http://0.0.0.0:3001/api/health || exit 1
-
 # Start the application directly
 CMD ["node", "server.js"]

@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: lucabartelsen/property-developer-tool:frontend-latest
+    container_name: property-frontend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: unless-stopped
